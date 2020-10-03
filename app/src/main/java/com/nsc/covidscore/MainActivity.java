@@ -19,11 +19,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        restTest("King");
+        getCounty("King");
         Log.d(TAG,"onCreate invoked");
     }
 
-    private void restTest(String county) {
+    private void getCounty(String county) {
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = "https://corona.lmao.ninja/v2/jhucsse/counties/" + county;
 
