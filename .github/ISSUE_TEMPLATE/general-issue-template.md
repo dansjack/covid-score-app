@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 ### User Story
-As a user, I want to <x>, so that I can <y>
+As a user, I want to \<x>, so that I can \<y>
 
 ### Additional Context
 Screenshots, links to resources or discussions, anything else that might help us understand more about this issue
