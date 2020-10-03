@@ -13,8 +13,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = MainActivity.class.getName();
-
     private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
