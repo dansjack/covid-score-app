@@ -15,11 +15,14 @@ import com.android.volley.toolbox.Volley;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getName();
 
+    private static final String TAG = MainActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         restTest("King");
+        Log.d(TAG,"onCreate invoked");
     }
 
     private void restTest(String county) {
@@ -42,7 +45,5 @@ public class MainActivity extends AppCompatActivity {
 
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
-
-
     }
 }
