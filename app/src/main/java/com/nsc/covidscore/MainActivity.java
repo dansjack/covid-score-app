@@ -25,7 +25,14 @@ public class MainActivity extends AppCompatActivity {
         requestManager = RequestSingleton.getInstance(this.getApplicationContext());
         queue = requestManager.getRequestQueue();
         textView = findViewById(R.id.hello_world);
-        Requests.getCounty(this, "King", TAG, new VolleyCallback() {
+        Requests.getCounty(this, "king", new VolleyCallback() {
+            @Override
+            public void getResponse(String response) {
+                Log.i(TAG, "getResponse: " + response);
+                textView.setText(response);
+            }
+        });
+        Requests.getCountyHistorical(this, "king,washington", "30", new VolleyCallback() {
             @Override
             public void getResponse(String response) {
                 Log.i(TAG, "getResponse: " + response);
