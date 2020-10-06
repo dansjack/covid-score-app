@@ -8,13 +8,17 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class Requests {
     /**
      * <p>Returns cumulative COVID stats for a U.S. county within a callback</p>
      * @param county the county selected by the user e.g. "king,washington" (lowercase)
-     * @param cb callback class (see VolleyCallback interface)
+     * @param cb callback class (see VolleyStringCallback interface)
      */
-    public static void getCounty(Context context, String county, final VolleyCallback cb) {
+    public static void getCounty(Context context, String county, final VolleyStringCallback cb) {
         String url = "https://corona.lmao.ninja/v2/jhucsse/counties/" + county;
         final String TAG = "getCounty";
 
@@ -22,7 +26,7 @@ public class Requests {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        cb.getResponse(response);
+                        cb.getStringData(response);
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -40,10 +44,10 @@ public class Requests {
      * @param location the county and state the user selected, separated by a comma.
      *                 e.g. "king,washington" (lowercase)
      * @param days how many days back to retrieve data. Get all available data with "all"
-     * @param cb callback class (see VolleyCallback interface)
+     * @param cb callback class (see VolleyStringCallback interface)
      */
-    public static void getCountyHistorical(Context context, String location, String days, final VolleyCallback cb) {
-        String county = location.split(",")[0];
+    public static void getCountyHistorical(Context context, String location, String days, final VolleyJsonCallback cb) {
+        final String county = location.split(",")[0];
         String state = location.split(",")[1];
         String url = "https://corona.lmao.ninja/v2/historical/usacounties/" + state + "?lastdays=" + days;
         final String TAG = "getCountyHistorical";
@@ -53,7 +57,26 @@ public class Requests {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        cb.getResponse(response);
+                        try {
+                            JSONArray counties = new JSONArray(response);
+                            boolean found = false;
+                            for (int i = 0; i < counties.length(); i++) {
+                                JSONObject jsonObject = counties.getJSONObject(i);
+                                String countyName = jsonObject.optString("county");
+                                if (countyName.equals(county)) {
+                                    found = true;
+                                    cb.getJsonData(jsonObject);
+                                    break;
+                                }
+                            }
+
+                            if (!found) {
+
+                            }
+                        } catch (JSONException e) {
+                            cb.getJsonException(e);
+                            e.printStackTrace();
+                        }
                     }
                 }, new Response.ErrorListener() {
             @Override

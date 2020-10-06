@@ -9,7 +9,10 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.nsc.covidscore.api.RequestSingleton;
 import com.nsc.covidscore.api.Requests;
-import com.nsc.covidscore.api.VolleyCallback;
+import com.nsc.covidscore.api.VolleyJsonCallback;
+import com.nsc.covidscore.api.VolleyStringCallback;
+
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -25,18 +28,28 @@ public class MainActivity extends AppCompatActivity {
         requestManager = RequestSingleton.getInstance(this.getApplicationContext());
         queue = requestManager.getRequestQueue();
         textView = findViewById(R.id.hello_world);
-        Requests.getCounty(this, "king", new VolleyCallback() {
+        Requests.getCounty(this, "king", new VolleyStringCallback() {
             @Override
-            public void getResponse(String response) {
-                Log.i(TAG, "getResponse: " + response);
+            public void getStringData(String response) {
+                Log.i(TAG, "getCounty: " + response);
                 textView.setText(response);
             }
         });
-        Requests.getCountyHistorical(this, "king,washington", "30", new VolleyCallback() {
+        Requests.getCountyHistorical(this, "puyallup,washington", "30", new VolleyJsonCallback() {
             @Override
-            public void getResponse(String response) {
-                Log.i(TAG, "getResponse: " + response);
+            public void getJsonData(JSONObject response) {
+                Log.i(TAG, "getCountyHistorical: " + response);
+//                JSONObject timeline = response.getJSONObject("timeline");
+//                JSONObject cases = timeline.getJSONObject("cases");
+//                JSONObject deaths = timeline.getJSONObject("deaths");
             }
+
+            @Override
+            public void getJsonException(Exception exception) {
+                Log.i(TAG, "getJsonException: " + exception);
+            }
+
+
         });
         Log.d(TAG,"onCreate invoked");
     }
