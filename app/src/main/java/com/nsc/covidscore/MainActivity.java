@@ -10,21 +10,25 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+import com.nsc.covidscore.api.RequestSingleton;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
+    RequestQueue queue;
+    RequestSingleton requestManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        requestManager = RequestSingleton.getInstance(this.getApplicationContext());
+        queue = requestManager.getRequestQueue();
         getCounty("King");
         Log.d(TAG,"onCreate invoked");
     }
 
     private void getCounty(String county) {
-        RequestQueue queue = Volley.newRequestQueue(this);
         String url = "https://corona.lmao.ninja/v2/jhucsse/counties/" + county;
 
         // Request a string response from the provided URL.
@@ -40,8 +44,17 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "onError: That didn't work!" + error);
             }
         });
+        stringRequest.setTag(TAG);
 
         // Add the request to the RequestQueue.
-        queue.add(stringRequest);
+        requestManager.addToRequestQueue(stringRequest);
     }
+    @Override
+    protected void onStop () {
+        super.onStop();
+        if (queue != null) {
+            requestManager.getRequestQueue().cancelAll(TAG);
+        }
+    }
+
 }
