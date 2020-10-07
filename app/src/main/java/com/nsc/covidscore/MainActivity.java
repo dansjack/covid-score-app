@@ -29,11 +29,15 @@ public class MainActivity extends AppCompatActivity {
         requestManager = RequestSingleton.getInstance(this.getApplicationContext());
         queue = requestManager.getRequestQueue();
         textView = findViewById(R.id.hello_world);
-        Requests.getCounty(this, "king", new VolleyStringCallback() {
+        Requests.getCounty(this, "king,washington", new VolleyJsonCallback() {
             @Override
-            public void getStringData(String response) {
-                Log.i(TAG, "getCounty: " + response);
-                textView.setText(response);
+            public void getJsonData(JSONObject response) throws JSONException {
+                Log.i(TAG, "getCounty : " + response);
+            }
+
+            @Override
+            public void getJsonException(Exception exception) {
+                Log.i(TAG, "getJsonException: " + exception.getMessage());
             }
         });
         Requests.getCountyHistorical(this, "whatcom,washington", "30", new VolleyJsonCallback() {

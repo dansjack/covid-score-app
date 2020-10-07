@@ -15,11 +15,14 @@ import org.json.JSONObject;
 public class Requests {
     /**
      * <p>Returns cumulative COVID stats for a U.S. county within a callback</p>
-     * @param county the county selected by the user e.g. "king,washington"
+     * @param location the county and state the user selected, separated by a comma.
+     *                 e.g. "king,washington"
      * @param cb callback class (see VolleyStringCallback interface)
      */
-    public static void getCounty(Context context, String county, final VolleyStringCallback cb) {
-        county = county.toLowerCase();
+    public static void getCounty(Context context, String location, final VolleyJsonCallback cb) {
+        location = location.toLowerCase();
+        String county = location.split(",")[0];
+        final String state = location.split(",")[1];
         String url = "https://corona.lmao.ninja/v2/jhucsse/counties/" + county;
         final String TAG = "getCounty";
 
@@ -27,7 +30,26 @@ public class Requests {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        cb.getStringData(response);
+                        try {
+                            JSONArray counties = new JSONArray(response);
+                            if (counties.length() > 1) {
+                                for (int i = 0; i < counties.length(); i++) {
+                                    JSONObject jsonObject = counties.getJSONObject(i);
+                                    String stateName = jsonObject.optString("province");
+                                    if (state.equals(stateName.toLowerCase())) {
+                                        cb.getJsonData(jsonObject);
+                                        break;
+                                    }
+                                }
+
+                            } else {
+                                Log.i(TAG, "onResponse: " + "singular");
+                                cb.getJsonData(counties.getJSONObject(0));
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 }, new Response.ErrorListener() {
             @Override
