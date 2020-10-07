@@ -12,6 +12,7 @@ import com.nsc.covidscore.api.Requests;
 import com.nsc.covidscore.api.VolleyJsonCallback;
 import com.nsc.covidscore.api.VolleyStringCallback;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
@@ -35,21 +36,20 @@ public class MainActivity extends AppCompatActivity {
                 textView.setText(response);
             }
         });
-        Requests.getCountyHistorical(this, "puyallup,washington", "30", new VolleyJsonCallback() {
+        Requests.getCountyHistorical(this, "whatcom,washington", "30", new VolleyJsonCallback() {
             @Override
-            public void getJsonData(JSONObject response) {
-                Log.i(TAG, "getCountyHistorical: " + response);
+            public void getJsonData(JSONObject response) throws JSONException {
+                Log.i(TAG, "getCountyHistorical : " + response);
 //                JSONObject timeline = response.getJSONObject("timeline");
 //                JSONObject cases = timeline.getJSONObject("cases");
 //                JSONObject deaths = timeline.getJSONObject("deaths");
+//                Log.i(TAG, "getCountyHistorical - cases, last 30 days - Whatcom, WA: " + cases);
             }
 
             @Override
             public void getJsonException(Exception exception) {
-                Log.i(TAG, "getJsonException: " + exception);
+                Log.i(TAG, "getJsonException: " + exception.getMessage());
             }
-
-
         });
         Log.d(TAG,"onCreate invoked");
     }
