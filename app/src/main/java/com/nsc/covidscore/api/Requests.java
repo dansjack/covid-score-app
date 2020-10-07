@@ -15,6 +15,8 @@ import org.json.JSONObject;
 public class Requests {
     /**
      * <p>Returns cumulative COVID stats for a U.S. county within a callback</p>
+     * <p>The data comes from John Hopkins University through the
+     * <a href="https://github.com/disease-sh/API">NovelCOVID api</a></p>
      * @param location the county and state the user selected, separated by a comma.
      *                 e.g. "king,washington"
      * @param cb callback class (see VolleyJsonCallback interface)
@@ -63,6 +65,8 @@ public class Requests {
 
     /**
      * <p>Returns the last x days of COVID stats for a U.S. county within a callback</p>
+     * <p>The data comes from John Hopkins University through the
+     * <a href="https://github.com/disease-sh/API">NovelCOVID api</a></p>
      * @param location the county and state the user selected, separated by a comma.
      *                 e.g. "king,washington"
      * @param days how many days back to retrieve data. Get all available data with "all"
@@ -111,5 +115,34 @@ public class Requests {
 
         // Add the request to the RequestQueue.
         RequestSingleton.getInstance(context.getApplicationContext()).addToRequestQueue(stringRequest);
+    }
+
+    public static void getUSHistorical(Context context, String days, final VolleyJsonCallback cb) {
+        String url = "https://corona.lmao.ninja/v2/historical/usa" + "?lastdays=" + days;
+        final String TAG = "getUSHistorical";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            cb.getJsonData(new JSONObject(response));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+        stringRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        RequestSingleton.getInstance(context.getApplicationContext()).addToRequestQueue(stringRequest);
+
+
+
     }
 }
