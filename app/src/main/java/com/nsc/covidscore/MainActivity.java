@@ -10,7 +10,6 @@ import com.android.volley.RequestQueue;
 import com.nsc.covidscore.api.RequestSingleton;
 import com.nsc.covidscore.api.Requests;
 import com.nsc.covidscore.api.VolleyJsonCallback;
-import com.nsc.covidscore.api.VolleyStringCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -17,7 +17,7 @@ public class Requests {
      * <p>Returns cumulative COVID stats for a U.S. county within a callback</p>
      * @param location the county and state the user selected, separated by a comma.
      *                 e.g. "king,washington"
-     * @param cb callback class (see VolleyStringCallback interface)
+     * @param cb callback class (see VolleyJsonCallback interface)
      */
     public static void getCounty(Context context, String location, final VolleyJsonCallback cb) {
         location = location.toLowerCase();
@@ -43,7 +43,6 @@ public class Requests {
                                 }
 
                             } else {
-                                Log.i(TAG, "onResponse: " + "singular");
                                 cb.getJsonData(counties.getJSONObject(0));
                             }
                         } catch (JSONException e) {
@@ -67,7 +66,7 @@ public class Requests {
      * @param location the county and state the user selected, separated by a comma.
      *                 e.g. "king,washington"
      * @param days how many days back to retrieve data. Get all available data with "all"
-     * @param cb callback class (see VolleyStringCallback interface)
+     * @param cb callback class (see VolleyJsonCallback interface)
      */
     public static void getCountyHistorical(Context context, String location, String days, final VolleyJsonCallback cb) {
         location = location.toLowerCase();
