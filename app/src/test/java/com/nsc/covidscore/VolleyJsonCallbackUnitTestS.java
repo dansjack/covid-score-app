@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -21,7 +22,7 @@ public class VolleyJsonCallbackUnitTestS {
        final VolleyJsonCallback callback = mock(VolleyJsonCallback.class);
         JSONObject jsonObject = new JSONObject();
         callback.getJsonData(jsonObject);
-        verify(callback).getJsonData(jsonObject);
+        verify(callback, times(1)).getJsonData(jsonObject);
     }
 
     @Test
@@ -29,6 +30,6 @@ public class VolleyJsonCallbackUnitTestS {
         final VolleyJsonCallback callback = mock(VolleyJsonCallback.class);
         JSONException jsonException = new JSONException("Test Exception");
         callback.getJsonException(jsonException);
-        verify(callback).getJsonException(jsonException);
+        verify(callback, times(1)).getJsonException(jsonException);
     }
 }
