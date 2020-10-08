@@ -11,12 +11,11 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Location.class, CovidSnapshot.class, CovidSnapshotWithLocation.class}, version = 1, exportSchema = false)
+@Database(entities = {Location.class, CovidSnapshot.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract LocationDao locationDao();
     public abstract CovidSnapshotDao covidSnapshotDao();
-    public abstract CovidSnapshotWithLocationDao covidSnapshotWithLocationDao();
 
     private static volatile AppDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
@@ -46,7 +45,6 @@ public abstract class AppDatabase extends RoomDatabase {
             databaseWriteExecutor.execute(() -> {
                 LocationDao locationDao = INSTANCE.locationDao();
                 CovidSnapshotDao covidSnapshotDao = INSTANCE.covidSnapshotDao();
-                CovidSnapshotWithLocationDao covidSnapshotWithLocationDao = INSTANCE.covidSnapshotWithLocationDao();
             });
         }
     };
