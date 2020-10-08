@@ -22,7 +22,9 @@ public class CovidSnapshotWithLocationRepository {
         covidSnapshotDao = db.covidSnapshotDao();
         currentSnapshot = covidSnapshotDao.findLatest();
 
-        currentLocation = locationDao.findByLocationId(currentSnapshot.getValue().getLocationId());
+        if (currentSnapshot != null && currentSnapshot.getValue() != null) {
+            currentLocation = locationDao.findByLocationId(currentSnapshot.getValue().getLocationId());
+        }
     }
 
     void insertLocation(Location location) {
