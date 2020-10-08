@@ -3,7 +3,6 @@ package com.nsc.covidscore;
 import com.nsc.covidscore.api.APIHelpers;
 import com.nsc.covidscore.api.VolleyJsonCallback;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -11,14 +10,22 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class APIHelpersUnitTest {
-    private static final String COUNTY_OBJECT =
-            "[{province: washington, county: king}, {province: texas, county: king}]";
+    private static final String COUNTY_OBJECT5 =
+            "[{province: texas, county: king}, {province: maryland, county: king}, " +
+                    "{province: alabama, county: king}, {province: nebraska, county: king}, " +
+                    "{province: washington, county: king}]";
+    private static final String COUNTY_OBJECT10 =
+            "[{province: texas, county: king}, {province: maryland, county: king}, " +
+                    "{province: alabama, county: king}, {province: nebraska, county: king}, " +
+                    "{province: arkansas, county: king}, {province: michigan, county: king}, " +
+                    "{province: illinois, county: king}, {province: oregon, county: king}, " +
+                    "{province: california, county: king}, {province: washington, county: king}]";
     private static final String COUNTY_RETURN = "{\"province\":\"washington\",\"county\":\"king\"}";
     private static final String COUNTY_HISTORICAL_OBJECT =
             "[{province: washington, county: king}, {province: washington, county: pierce}]";
     private static final String COUNTY_HISTORICAL_OBJECT_NOTFOUND =
             "[{province: washington, county: pierce}, {province: washington, county: whatcom}]";
-    private static final String COUNTRY_OBJECT = "{testKey: testValue}";
+    private static final String COUNTRY_OBJECT = "{province: washington, county: king}";
 
     private static final String TEST_COUNTY = "king";
     private static final String TEST_STATE = "washington";
@@ -57,9 +64,38 @@ public class APIHelpersUnitTest {
     }
 
     @Test
-    public void handleResponse_county(){
+    public void handleResponse_county1(){
+        // counties array of 5
         APIHelpers.handleResponse(
-                Constants.COUNTY, COUNTY_OBJECT, TEST_COUNTY, TEST_STATE, new VolleyJsonCallback() {
+                Constants.COUNTY, COUNTY_OBJECT5, TEST_COUNTY, TEST_STATE, new VolleyJsonCallback() {
+                    @Override
+                    public void getJsonData(JSONObject response) {
+                        assertEquals(COUNTY_RETURN, response.toString());
+                    }
+                    @Override
+                    public void getJsonException(Exception exception) {}
+                });
+    }
+
+    @Test
+    public void handleResponse_county2(){
+        // counties array equal to 1
+        APIHelpers.handleResponse(
+                Constants.COUNTY, COUNTRY_OBJECT, TEST_COUNTY, TEST_STATE, new VolleyJsonCallback() {
+                    @Override
+                    public void getJsonData(JSONObject response) {
+                        assertEquals(COUNTY_RETURN, response.toString());
+                    }
+                    @Override
+                    public void getJsonException(Exception exception) {}
+                });
+    }
+
+    @Test
+    public void handleResponse_county3(){
+        // counties array of 10
+        APIHelpers.handleResponse(
+                Constants.COUNTY, COUNTY_OBJECT10, TEST_COUNTY, TEST_STATE, new VolleyJsonCallback() {
                     @Override
                     public void getJsonData(JSONObject response) {
                         assertEquals(COUNTY_RETURN, response.toString());
