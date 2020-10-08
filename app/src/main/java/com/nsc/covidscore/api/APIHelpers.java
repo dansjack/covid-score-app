@@ -7,9 +7,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class APIHelpers {
-    public static void handleResponse(String type, String response, String county, String state, VolleyJsonCallback cb) {
+    public static void handleResponse(
+            String type, String response, String county, String state, VolleyJsonCallback cb) {
         try {
-
             if (type.equals(Constants.COUNTY)) {
                 JSONArray counties = new JSONArray(response);
                 if (counties.length() > 1) {

@@ -10,7 +10,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
-public class VolleyJsonCallbackUnitTests {
+public class VolleyJsonCallbackUnitTest {
     @Test
     public void getJsonData_invoked() throws JSONException {
        final VolleyJsonCallback callback = mock(VolleyJsonCallback.class);
