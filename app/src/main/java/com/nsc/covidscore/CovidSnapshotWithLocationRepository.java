@@ -10,7 +10,6 @@ public class CovidSnapshotWithLocationRepository {
 
     private LocationDao locationDao;
     private CovidSnapshotDao covidSnapshotDao;
-    private CovidSnapshotWithLocationDao covidSnapshotWithLocationDao;
     private LiveData<List<Location>> allLocations;
     private LiveData<Location> currentLocation;
     private LiveData<CovidSnapshot> currentSnapshot;
@@ -23,7 +22,6 @@ public class CovidSnapshotWithLocationRepository {
         covidSnapshotDao = db.covidSnapshotDao();
         currentSnapshot = covidSnapshotDao.findLatest();
 
-        covidSnapshotWithLocationDao = db.covidSnapshotWithLocationDao();
         currentLocation = locationDao.findByLocationId(currentSnapshot.getValue().getLocationId());
     }
 

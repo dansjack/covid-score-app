@@ -15,4 +15,5 @@ public class CovidSnapshotWithLocation {
             entityColumn = "location_id"
     )
     public List<CovidSnapshot> covidSnapshotList;
+    public void setCovidSnapshotList(List<CovidSnapshot> covidSnapshotList) { this.covidSnapshotList = covidSnapshotList; }
 }

@@ -13,23 +13,21 @@ class Location {
     @ColumnInfo(name = "location_id")
     private Integer locationId;
     public Integer getLocationId() { return locationId; }
+    public void setLocationId(Integer locationId) { this.locationId = locationId; }
 
     @NonNull
     @ColumnInfo(name = "county")
     private String county;
     public String getCounty() { return county; }
+    public void setCounty(String county) { this.county = county; }
 
     @NonNull
     @ColumnInfo(name = "state")
     private String state;
     public String getState() { return state; }
+    public void setState(String state) { this.state = state; }
 
     // CONSTRUCTOR
-
-    public Location() {
-        county = "placeholder_county";
-        state = "placeholder_state";
-    }
 
     public Location(Integer locationId, String county, String state) {
         this.locationId = locationId;
