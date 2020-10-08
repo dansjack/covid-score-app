@@ -10,7 +10,6 @@ import com.nsc.covidscore.api.RequestSingleton;
 import com.nsc.covidscore.api.Requests;
 import com.nsc.covidscore.api.VolleyJsonCallback;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
@@ -41,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         Requests.getCounty(this, "king,washington", new VolleyJsonCallback() {
             @Override
             public void getJsonData(JSONObject response) {
+                Log.d(TAG, "getJsonData: county " + response);
             }
 
             @Override
@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         Requests.getCountyHistorical(this, "whatcom,washington", "30", new VolleyJsonCallback() {
             @Override
             public void getJsonData(JSONObject response) {
+                Log.d(TAG, "getJsonData: countyHistorical " + response);
             }
 
             @Override
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         Requests.getUSHistorical(this, "1", new VolleyJsonCallback() {
             @Override
             public void getJsonData(JSONObject response) {
+                Log.d(TAG, "getJsonData: country " + response);
             }
 
             @Override
