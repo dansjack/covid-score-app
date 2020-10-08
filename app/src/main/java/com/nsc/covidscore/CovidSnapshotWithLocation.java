@@ -11,8 +11,8 @@ public class CovidSnapshotWithLocation {
     @Embedded
     Location location;
     @Relation(
-            parentColumn = "covid_snapshot_id",
-            entityColumn = "location_id"
+            parentColumn = "location_id",
+            entityColumn = "covid_snapshot_id"
     )
     public List<CovidSnapshot> covidSnapshotList;
     public void setCovidSnapshotList(List<CovidSnapshot> covidSnapshotList) { this.covidSnapshotList = covidSnapshotList; }
