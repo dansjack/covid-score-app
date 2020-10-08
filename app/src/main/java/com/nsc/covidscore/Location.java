@@ -10,9 +10,9 @@ class Location {
 
     @NonNull
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    private Integer id;
-    public Integer getId() { return id; }
+    @ColumnInfo(name = "location_id")
+    private Integer locationId;
+    public Integer getLocationId() { return locationId; }
 
     @NonNull
     @ColumnInfo(name = "county")
@@ -31,8 +31,8 @@ class Location {
         state = "placeholder_state";
     }
 
-    public Location(Integer id, String county, String state) {
-        this.id = id;
+    public Location(Integer locationId, String county, String state) {
+        this.locationId = locationId;
         this.county = county;
         this.state = state;
     }
