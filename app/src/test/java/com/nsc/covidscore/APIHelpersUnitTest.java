@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class APIHelpersUnitTest {
+public final class APIHelpersUnitTest {
     private static final String COUNTY_OBJECT =
             "[{province: texas, county: king}, {province: maryland, county: king}, " +
                     "{province: alabama, county: king}, {province: nebraska, county: king}, " +
@@ -21,6 +21,8 @@ public class APIHelpersUnitTest {
                     "{province: arkansas, county: king}, {province: michigan, county: king}, " +
                     "{province: illinois, county: king}, {province: oregon, county: king}, " +
                     "{province: california, county: king}, {province: washington, county: king}]";
+    private static final String COUNTY_OBJECT4 =
+            "[{province: hawaii, county: pierce}, {province: alaska, county: whatcom}]";
     private static final String COUNTY_RETURN = "{\"province\":\"washington\",\"county\":\"king\"}";
     private static final String COUNTY_HISTORICAL_OBJECT =
             "[{province: washington, county: king}, {province: washington, county: pierce}]";
@@ -103,6 +105,20 @@ public class APIHelpersUnitTest {
                     }
                     @Override
                     public void getJsonException(Exception exception) {}
+                });
+    }
+
+    @Test
+    public void handleResponse_county4(){
+        // counties array of not found
+        APIHelpers.handleResponse(
+                Constants.COUNTY, COUNTY_OBJECT4, TEST_COUNTY, TEST_STATE, new VolleyJsonCallback() {
+                    @Override
+                    public void getJsonData(JSONObject response) {}
+                    @Override
+                    public void getJsonException(Exception exception) {
+                        assertEquals(TEST_NOTFOUND_EXCEPTION, exception.toString());
+                    }
                 });
     }
 
