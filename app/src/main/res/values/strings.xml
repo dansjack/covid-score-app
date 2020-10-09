@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Covid Score</string>
+    <string name="app_welcome">Welcome</string>
+    <string name="location_question">Please select a location</string>
+    <string name="state">Select state</string>
+    <string name="county">Select county</string>
 </resources>

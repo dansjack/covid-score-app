@@ -7,13 +7,51 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/hello_world"
+        android:id="@+id/app_welcome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:text="@string/app_welcome"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/app_welcome_question"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/location_question"
+        app:layout_constraintTop_toBottomOf="@+id/app_welcome"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <TextView
+        android:id="@+id/state_spinner_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/state"
+        app:layout_constraintTop_toBottomOf="@+id/app_welcome_question"
+        app:layout_constraintEnd_toStartOf="@+id/state_spinner" />
+
+    <Spinner
+        android:id="@+id/state_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/app_welcome_question"
+        app:layout_constraintStart_toEndOf="@+id/state_spinner_text"/>
+
+    <TextView
+        android:id="@+id/county_spinner_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/county"
+        app:layout_constraintTop_toBottomOf="@+id/state_spinner_text"
+        app:layout_constraintEnd_toStartOf="@+id/county_spinner"/>
+
+    <Spinner
+        android:id="@+id/county_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/state_spinner_text"
+        app:layout_constraintStart_toEndOf="@+id/county_spinner_text"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
