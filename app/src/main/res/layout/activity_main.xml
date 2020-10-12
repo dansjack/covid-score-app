@@ -1,57 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="#0099cc"
+tools:context=".LocationSelectionFragment">
+
+<!-- The primary full-screen view. This can be replaced with whatever view
+     is needed to present your content, e.g. VideoView, SurfaceView,
+     TextureView, etc. -->
+<TextView
+    android:id="@+id/fullscreen_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:gravity="center"
+    android:keepScreenOn="true"
+    android:text="@string/app_welcome"
+    android:textColor="#33b5e5"
+    android:textSize="50sp"
+    android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/app_welcome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/app_welcome"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/app_welcome_question"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/location_question"
-        app:layout_constraintTop_toBottomOf="@+id/app_welcome"
-        app:layout_constraintLeft_toLeftOf="parent"/>
-
-    <TextView
-        android:id="@+id/state_spinner_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/state"
-        app:layout_constraintTop_toBottomOf="@+id/app_welcome_question"
-        app:layout_constraintEnd_toStartOf="@+id/state_spinner" />
-
-    <Spinner
-        android:id="@+id/state_spinner"
+<!-- This FrameLayout insets its children based on system windows using
+     android:fitsSystemWindows. -->
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+    <LinearLayout
+        android:id="@+id/fullscreen_content_controls"
+        style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/app_welcome_question"
-        app:layout_constraintStart_toEndOf="@+id/state_spinner_text"/>
-
-    <TextView
-        android:id="@+id/county_spinner_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/county"
-        app:layout_constraintTop_toBottomOf="@+id/state_spinner_text"
-        app:layout_constraintEnd_toStartOf="@+id/county_spinner"/>
-
-    <Spinner
-        android:id="@+id/county_spinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/state_spinner_text"
-        app:layout_constraintStart_toEndOf="@+id/county_spinner_text"/>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_gravity="bottom|center_horizontal"
+        android:background="@color/black_overlay"
+        android:orientation="horizontal"
+        tools:ignore="UselessParent">
+        <Button
+            android:id="@+id/location_button"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/location_button"
+            android:onClick="onLocationNavBtnClick"/>
+    </LinearLayout>
+</FrameLayout>
+</FrameLayout>
