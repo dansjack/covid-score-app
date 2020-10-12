@@ -15,6 +15,7 @@ public class CovidSnapshot {
     @ColumnInfo(name = "covid_snapshot_id")
     private Integer covidSnapshotId;
     public Integer getCovidSnapshotId() { return covidSnapshotId; }
+    public void setCovidSnapshotId(Integer covidSnapshotId) { this.covidSnapshotId = covidSnapshotId; }
 
     @NonNull
     @ColumnInfo(name = "location_id")
@@ -37,15 +38,10 @@ public class CovidSnapshot {
     public Integer getCountryActiveCount() { return countryActiveCount; }
     public void setCountryActiveCount(Integer countryActiveCount) { this.countryActiveCount = countryActiveCount; }
 
-    @ColumnInfo(name = "last_updated_api")
-    private Calendar lastUpdatedApi;
-    public Calendar getLastUpdatedApi() { return lastUpdatedApi; }
-    public void setLastUpdatedApi(Calendar lastUpdatedApi) { this.lastUpdatedApi = lastUpdatedApi; }
-
-    @ColumnInfo(name = "last_updated_room")
-    private Calendar lastUpdatedRoom;
-    public Calendar getLastUpdatedRoom() { return lastUpdatedRoom; }
-    public void setLastUpdatedRoom(Calendar lastUpdatedRoom) { this.lastUpdatedRoom = lastUpdatedRoom; }
+    @ColumnInfo(name = "last_updated")
+    private Calendar lastUpdated;
+    public Calendar getLastUpdated() { return lastUpdated; }
+    public void setLastUpdated(Calendar lastUpdated) { this.lastUpdated = lastUpdated; }
 
     // CONSTRUCTOR
 
@@ -56,14 +52,22 @@ public class CovidSnapshot {
                          Integer countyActiveCount,
                          Integer stateActiveCount,
                          Integer countryActiveCount,
-                         Calendar lastUpdatedApi,
-                         Calendar lastUpdatedRoom) {
+                         Calendar lastUpdated) {
         this.locationId = locationId;
         this.countyActiveCount = countyActiveCount;
         this.stateActiveCount = stateActiveCount;
         this.countryActiveCount = countryActiveCount;
-        this.lastUpdatedApi = lastUpdatedApi;
-        this.lastUpdatedRoom = lastUpdatedRoom;
+        this.lastUpdated = lastUpdated;
     }
 
+    @Override
+    public String toString() {
+        return "Snapshot ID: " + covidSnapshotId + " Location ID: " + locationId + " Active County: " + countyActiveCount
+                + " Active State: " + stateActiveCount + " Active Country: " + countryActiveCount
+                + " Last Updated: " + (lastUpdated != null ? lastUpdated.toString() : "null");
+    }
+
+    public boolean hasFieldsSet() {
+        return (locationId != null && countyActiveCount != null) && (stateActiveCount != null && countryActiveCount != null);
+    }
 }

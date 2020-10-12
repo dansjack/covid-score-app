@@ -8,6 +8,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+
 public class APIHelpers {
     public static void handleResponse(
             String type, String response, String county, String state, VolleyJsonCallback cb) {
@@ -19,7 +21,7 @@ public class APIHelpers {
                     for (int i = 0; i < counties.length(); i++) {
                         JSONObject jsonObject = counties.getJSONObject(i);
                         String stateName = jsonObject.optString(Constants.PROVINCE);
-                        if (state.equals(stateName.toLowerCase())) {
+                        if (state.equalsIgnoreCase(stateName.toLowerCase())) {
                             found = true;
                             cb.getJsonData(jsonObject);
                             break;
@@ -33,28 +35,19 @@ public class APIHelpers {
                 for (int i = 0; i < counties.length(); i++) {
                     JSONObject jsonObject = counties.getJSONObject(i);
                     String countyName = jsonObject.optString(Constants.COUNTY);
-                    if (countyName.equals(county)) {
+                    if (countyName.equalsIgnoreCase(county)) {
                         found = true;
                         cb.getJsonData(jsonObject);
                         break;
                     }
                 }
             } else if (type.equals(Constants.PROVINCE)) {
-                JSONArray stats = new JSONArray(response);
-                JSONObject jsonObject = stats.getJSONObject(0);
-                Log.d("province: ", stats.toString());
-                // TODO: fix this
-//                for (int i = 0; i < counties.length(); i++) {
-//                    JSONObject jsonObject = counties.getJSONObject(i);
-//                    String countyName = jsonObject.optString(Constants.COUNTY);
-//                    if (countyName.equals(county)) {
-//                        found = true;
-//                        cb.getJsonData(jsonObject);
-//                        break;
-//                    }
-//                }
-                found = true;
-                cb.getJsonData(jsonObject);
+                JSONObject jsonObject = new JSONObject(response);
+                String stateName = jsonObject.optString(Constants.STATE);
+                if (stateName.equalsIgnoreCase(state)) {
+                    found = true;
+                    cb.getJsonData(jsonObject);
+                }
             } else {
                 found = true;
                 cb.getJsonData(new JSONObject(response));
@@ -62,7 +55,7 @@ public class APIHelpers {
             if (!found) {
                 throw new JSONException(Constants.ERROR_STATE_COUNTY);
             }
-        } catch (JSONException e) {
+        } catch (JSONException | IOException e) {
             cb.getJsonException(e);
             e.printStackTrace();
         }

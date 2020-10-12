@@ -1,12 +1,15 @@
 package com.nsc.covidscore;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
 public class CovidSnapshotWithLocationRepository {
+
+    private static final String TAG = CovidSnapshotWithLocationRepository.class.getSimpleName();
 
     private LocationDao locationDao;
     private CovidSnapshotDao covidSnapshotDao;
@@ -36,6 +39,7 @@ public class CovidSnapshotWithLocationRepository {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             if (locationDao.findByCountyAndState(location.getCounty(), location.getState()).getValue() != null) {
                 locationDao.insert(location);
+                Log.e(TAG, "insertLocation: " + location.toApiFormat());
             }
         });
         Location lastAdded = locationDao.getMostRecent().getValue();
@@ -46,6 +50,7 @@ public class CovidSnapshotWithLocationRepository {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             covidSnapshotDao.insert(covidSnapshot);
         });
+        Log.e("Repo 53: ", covidSnapshot.toString());
     }
 
     LiveData<CovidSnapshot> getLatestCovidSnapshotByLocation(Location location) {
