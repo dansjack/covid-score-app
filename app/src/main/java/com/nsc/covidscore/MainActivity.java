@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,12 +34,15 @@ public class MainActivity extends AppCompatActivity {
     private RequestQueue queue;
     private RequestSingleton requestManager;
 
+    private TextView tempDisplayTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         requestManager = RequestSingleton.getInstance(this.getApplicationContext());
         queue = requestManager.getRequestQueue();
+        tempDisplayTextView = findViewById(R.id.hello_world);
 
         // Access to Room Database
         vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel.class);
@@ -54,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                         // run API call, if location is saved
                         // else, display some message about "Let's Get Started By Setting Location"
                     } else {
-                        Log.e("Main 57: ", currentSnapshot.toString());
+                        Log.e("currentSnapshot updated: ", currentSnapshot.toString());
                     }
                 }
             });
@@ -81,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
         // Update Values - Maybe change this to only go when first submitted in dialog or refreshed
         // temp test data
         Location tempLocation = new Location("king", "washington");
+        vm.insertLocation(tempLocation);
+        currentLocation = tempLocation;
         makeApiCalls(tempLocation);
 
 
@@ -126,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
                 Integer activeState = (Integer) response.get("active");
                 currentSnapshot.setStateActiveCount(activeState);
                 saveSnapshotToRoom();
-                Log.e(TAG, "getJsonData: state " + response);
+                Log.d(TAG, "getJsonData: state " + response);
             }
 
             @Override
@@ -150,7 +156,6 @@ public class MainActivity extends AppCompatActivity {
             public void getJsonData(JSONObject response) throws JSONException, IOException {
                 if (currentSnapshot == null) { currentSnapshot = new CovidSnapshot(); }
                 JSONObject timeline = response.getJSONObject("timeline");
-                Log.e("Main 148: ", timeline.toString());
                 HashMap<String, Integer> totalMap = new ObjectMapper().readValue((timeline.get("cases")).toString(), HashMap.class);
 
                 Integer totalCountry = 0;
@@ -181,9 +186,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveSnapshotToRoom() {
         if (currentSnapshot.hasFieldsSet()) {
+            // TODO: set textfields here!
+            if (currentLocation == null) {
+                tempDisplayTextView.setText("Most Recent Snapshot:\n" + currentSnapshot.toString());
+            } else {
+                tempDisplayTextView.setText("Most Recent Location: \n" + currentLocation.toApiFormat()
+                        + "\nMost Recent Snapshot: \n" + currentSnapshot.toString());
+            }
             Calendar calendar = Calendar.getInstance();
-            currentSnapshot.setLastUpdatedApi(calendar);
-            currentSnapshot.setLastUpdatedRoom(calendar);
+            currentSnapshot.setLastUpdated(calendar);
             vm.insertCovidSnapshot(currentSnapshot);
         } else {
             Log.e(TAG, "189: " + currentSnapshot.toString());

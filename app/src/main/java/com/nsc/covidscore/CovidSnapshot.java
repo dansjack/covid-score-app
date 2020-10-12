@@ -5,6 +5,7 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 @Entity(tableName = "covid_snapshot")
@@ -62,12 +63,13 @@ public class CovidSnapshot {
 
     @Override
     public String toString() {
+        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
         return "Snapshot ID: " + covidSnapshotId + " Location ID: " + locationId + " Active County: " + countyActiveCount
                 + " Active State: " + stateActiveCount + " Active Country: " + countryActiveCount
-                + " Last Updated: " + (lastUpdated != null ? lastUpdated.toString() : "null");
+                + " Last Updated: " + (lastUpdated != null ? date_format.format(lastUpdated.getTime()) : "null");
     }
 
     public boolean hasFieldsSet() {
-        return (locationId != null && countyActiveCount != null) && (stateActiveCount != null && countryActiveCount != null);
+        return ((locationId != null && countyActiveCount != null) && (stateActiveCount != null && countryActiveCount != null)) && lastUpdated != null;
     }
 }

@@ -30,27 +30,29 @@ public class CovidSnapshotWithLocationRepository {
         }
     }
 
-    Integer getMostRecentId() {
-        Location location = locationDao.getMostRecent().getValue();
-        return location != null ? location.getLocationId() : null;
-    }
-
     Integer insertLocation(Location location) {
+        final Location[] lastAdded = new Location[1];
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            if (locationDao.findByCountyAndState(location.getCounty(), location.getState()).getValue() != null) {
+            if (locationDao.findByCountyAndState(location.getCounty(), location.getState()).getValue() == null) {
                 locationDao.insert(location);
                 Log.e(TAG, "insertLocation: " + location.toApiFormat());
+                lastAdded[0] = locationDao.getMostRecent().getValue();
             }
         });
-        Location lastAdded = locationDao.getMostRecent().getValue();
-        return lastAdded != null ? lastAdded.getLocationId() : 0;
+        if (lastAdded[0] != null) {
+            Log.e(TAG, "lastAdded location: " + lastAdded[0].toApiFormat());
+            return lastAdded[0].getLocationId();
+        } else {
+            Log.e(TAG, "location table is empty");
+            return 0;
+        }
     }
 
     void insertCovidSnapshot(CovidSnapshot covidSnapshot) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             covidSnapshotDao.insert(covidSnapshot);
         });
-        Log.e("Repo 53: ", covidSnapshot.toString());
+        Log.e(TAG, "Inserted: " + covidSnapshot.toString());
     }
 
     LiveData<CovidSnapshot> getLatestCovidSnapshotByLocation(Location location) {
