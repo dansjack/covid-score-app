@@ -6,13 +6,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 
+import java.io.IOException;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 public class VolleyJsonCallbackUnitTest {
     @Test
-    public void getJsonData_invoked() throws JSONException {
+    public void getJsonData_invoked() throws JSONException, IOException {
        final VolleyJsonCallback callback = mock(VolleyJsonCallback.class);
         JSONObject jsonObject = new JSONObject();
         callback.getJsonData(jsonObject);
