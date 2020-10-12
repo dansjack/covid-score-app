@@ -34,6 +34,24 @@ public class Requests {
         RequestSingleton.getInstance(context.getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
+    public static void getState(Context context, String location, final VolleyJsonCallback cb) {
+        location = location.toLowerCase();
+        final String county = location.split(",")[0];
+        final String state = location.split(",")[1];
+        String url = "https://disease.sh/v3/covid-19/states/" + state;
+        final String TAG = Constants.PROVINCE;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> APIHelpers.handleResponse(
+                        Constants.PROVINCE, response, county, state, cb),
+                error -> {
+                });
+        stringRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        RequestSingleton.getInstance(context.getApplicationContext()).addToRequestQueue(stringRequest);
+    }
+
     /**
      * <p>Returns the last x days of COVID stats for a U.S. county within a callback</p>
      * <p>The data comes from John Hopkins University through the

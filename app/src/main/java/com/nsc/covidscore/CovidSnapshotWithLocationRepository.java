@@ -27,11 +27,24 @@ public class CovidSnapshotWithLocationRepository {
         }
     }
 
-    void insertLocation(Location location) {
+    Integer getMostRecentId() {
+        Location location = locationDao.getMostRecent().getValue();
+        return location != null ? location.getLocationId() : null;
+    }
+
+    Integer insertLocation(Location location) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             if (locationDao.findByCountyAndState(location.getCounty(), location.getState()).getValue() != null) {
                 locationDao.insert(location);
             }
+        });
+        Location lastAdded = locationDao.getMostRecent().getValue();
+        return lastAdded != null ? lastAdded.getLocationId() : 0;
+    }
+
+    void insertCovidSnapshot(CovidSnapshot covidSnapshot) {
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            covidSnapshotDao.insert(covidSnapshot);
         });
     }
 

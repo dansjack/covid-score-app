@@ -1,5 +1,7 @@
 package com.nsc.covidscore.api;
 
+import android.util.Log;
+
 import com.nsc.covidscore.Constants;
 
 import org.json.JSONArray;
@@ -37,6 +39,22 @@ public class APIHelpers {
                         break;
                     }
                 }
+            } else if (type.equals(Constants.PROVINCE)) {
+                JSONArray stats = new JSONArray(response);
+                JSONObject jsonObject = stats.getJSONObject(0);
+                Log.d("province: ", stats.toString());
+                // TODO: fix this
+//                for (int i = 0; i < counties.length(); i++) {
+//                    JSONObject jsonObject = counties.getJSONObject(i);
+//                    String countyName = jsonObject.optString(Constants.COUNTY);
+//                    if (countyName.equals(county)) {
+//                        found = true;
+//                        cb.getJsonData(jsonObject);
+//                        break;
+//                    }
+//                }
+                found = true;
+                cb.getJsonData(jsonObject);
             } else {
                 found = true;
                 cb.getJsonData(new JSONObject(response));

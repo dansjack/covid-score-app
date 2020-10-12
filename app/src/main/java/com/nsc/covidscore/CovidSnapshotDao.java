@@ -2,6 +2,8 @@ package com.nsc.covidscore;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import java.util.List;
@@ -20,5 +22,8 @@ public interface CovidSnapshotDao {
 
     @Query("SELECT * FROM covid_snapshot ORDER BY last_updated_room DESC LIMIT 1")
     LiveData<CovidSnapshot> findLatest();
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insert(CovidSnapshot covidSnapshot);
 
 }
