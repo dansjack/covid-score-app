@@ -30,11 +30,8 @@ public class RoomTest {
     @Rule
     public TestRule rule = new InstantTaskExecutorRule();
 
-//    @Mock
-//    private Observer<List<Location>> locationObserver;
-
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
 
         Context context = ApplicationProvider.getApplicationContext();
@@ -46,38 +43,28 @@ public class RoomTest {
         // Add Location to Room
         Location location = TestUtils.createLocation();
         locationDao.insert(location);
+
+        // Add CovidSnapshot to Room
+        CovidSnapshot covidSnapshot = TestUtils.createCovidSnapshot();
+        covidSnapshotDao.insert(covidSnapshot);
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         if (db != null) {
             db.close();
         }
     }
 
     @Test
-    public void insert() throws Exception {
-        // given
-        Location location = TestUtils.createLocation();
-        //locationDao.getAll().observeForever(locationObserver);
-        // when
-        locationDao.insert(location);
-        // then
-        //verify(locationObserver).onChanged(Collections.singletonList(location));
-
-    }
-
-    @Test
-    public void getAll() throws InterruptedException {
-//        Location location = TestUtils.createLocation();
-//        locationDao.insert(location);
+    public void locationDao_getAll() throws InterruptedException {
         List<Location> allLocations = LiveDataTestUtil.getValue(locationDao.getAll());
         assertEquals(allLocations.size(), 1);
         TestUtils.assertGetAllMatchesData(allLocations);
     }
 
     @Test
-    public void findByCountyAndState() throws InterruptedException {
+    public void locationDao_findByCountyAndState() throws InterruptedException {
         Location response_found = LiveDataTestUtil.getValue(locationDao.findByCountyAndState(TestUtils.testCounty, TestUtils.testState));
         Location response_notFound = LiveDataTestUtil.getValue(locationDao.findByCountyAndState("", ""));
         assertNotNull(response_found);
@@ -85,15 +72,39 @@ public class RoomTest {
     }
 
     @Test
-    public void findByLocationId() throws InterruptedException {
+    public void locationDao_findByLocationId() throws InterruptedException {
         Location locationById = LiveDataTestUtil.getValue(locationDao.findByLocationId(1));
         assertNotNull(locationById);
     }
 
     @Test
-    public void getMostRecent() throws InterruptedException {
+    public void locationDao_getMostRecent() throws InterruptedException {
         Location mostRecentLocation = LiveDataTestUtil.getValue(locationDao.getMostRecent());
         assertNotNull(mostRecentLocation);
+    }
+
+    @Test
+    public void covidSnapshotDao_getAll() throws InterruptedException {
+        List<CovidSnapshot> allCovidSnapshots = LiveDataTestUtil.getValue(covidSnapshotDao.getAll());
+        assertNotNull(allCovidSnapshots);
+    }
+
+    @Test
+    public void covidSnapshotDau_findById() throws InterruptedException {
+        CovidSnapshot covidSnapshotById = LiveDataTestUtil.getValue(covidSnapshotDao.findById(1));
+        assertNotNull(covidSnapshotById);
+    }
+
+    @Test
+    public void covidSnapshotDao_findLatestByLocationId() throws InterruptedException {
+        CovidSnapshot latestCovidSnapshotById = LiveDataTestUtil.getValue(covidSnapshotDao.findLatestByLocationId(1));
+        assertNotNull(latestCovidSnapshotById);
+    }
+
+    @Test
+    public void covidSnapshotDao_findLatest() throws InterruptedException {
+        CovidSnapshot latestCovidSnapshot = LiveDataTestUtil.getValue(covidSnapshotDao.findLatest());
+        assertNotNull(latestCovidSnapshot);
     }
 }
 

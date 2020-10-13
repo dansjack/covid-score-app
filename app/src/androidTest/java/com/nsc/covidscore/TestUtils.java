@@ -1,5 +1,6 @@
 package com.nsc.covidscore;
 
+import java.util.Calendar;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -20,5 +21,10 @@ public class TestUtils {
         assertTrue(allLocations.get(0).getLocationId().equals(1));
         assertTrue(allLocations.get(0).getCounty().equals(testCounty));
         assertTrue(allLocations.get(0).getState().equals(testState));
+    }
+
+    public static CovidSnapshot createCovidSnapshot() {
+        Calendar calendar = Calendar.getInstance();
+        return new CovidSnapshot(1, 200, 300, 400, calendar);
     }
 }
