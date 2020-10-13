@@ -21,4 +21,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.fragment_location_selection);
     }
 
+
+    // button on LocationSelectionFragment displays RiskDetailFragment onClick
+    public void onLocationSubmitClick(View view) {
+        setContentView(R.layout.fragment_risk_detail);
+    }
+
+
 }
