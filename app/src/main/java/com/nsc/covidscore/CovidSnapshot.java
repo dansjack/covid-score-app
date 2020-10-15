@@ -3,13 +3,17 @@ package com.nsc.covidscore;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Observable;
 
 @Entity(tableName = "covid_snapshot")
-public class CovidSnapshot {
+public class CovidSnapshot extends Observable {
 
     @NonNull
     @PrimaryKey(autoGenerate = true)
@@ -44,6 +48,15 @@ public class CovidSnapshot {
     public Calendar getLastUpdated() { return lastUpdated; }
     public void setLastUpdated(Calendar lastUpdated) { this.lastUpdated = lastUpdated; }
 
+    // For Observer
+
+    @Ignore
+    protected PropertyChangeSupport propertyChangeSupport;
+
+    public void setListener(PropertyChangeListener newListener) {
+        propertyChangeSupport.addPropertyChangeListener(newListener);
+    }
+
     // CONSTRUCTOR
 
     public CovidSnapshot() {
@@ -59,6 +72,7 @@ public class CovidSnapshot {
         this.stateActiveCount = stateActiveCount;
         this.countryActiveCount = countryActiveCount;
         this.lastUpdated = lastUpdated;
+        propertyChangeSupport = new PropertyChangeSupport(this);
     }
 
     @Override

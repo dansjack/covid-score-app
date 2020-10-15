@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onChanged(@Nullable final CovidSnapshot covidSnapshotFromDb) {
                     // update cached version of snapshot
+                    // TODO: if !currentSnapshot.equals(covidSnapshotFromDb)
                     currentSnapshot = covidSnapshotFromDb;
                     if (currentSnapshot == null) {
                         // run API call, if location is saved
@@ -64,6 +65,11 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
+        // Saves to DB when all the APIs have come in
+        currentSnapshot.setListener(evt -> {
+            saveSnapshotToRoom();
+        });
+
         // Set Listener for Location
         if (vm.getCurrentLocation() != null) {
             vm.getCurrentLocation().observe(this, new Observer<Location>() {
@@ -71,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onChanged(@Nullable final Location locationFromDb) {
                     // update cached version of location
                     currentLocation = locationFromDb;
+                    Log.d(TAG, "new location set to :" + locationFromDb.toApiFormat());
                     if (currentLocation == null) {
                         // pop up dialog
                     } else {
@@ -80,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        // update textviews, etc with currentSnapshot & currentLocation
+        // update textviews, etc with currentSnapshot & currentLocation, if present
 
         // Update Values - Maybe change this to only go when first submitted in dialog or refreshed
         // temp test data
@@ -88,8 +95,6 @@ public class MainActivity extends AppCompatActivity {
         vm.insertLocation(tempLocation);
         currentLocation = tempLocation;
         makeApiCalls(tempLocation);
-
-
 
         Log.d(TAG,"onCreate invoked");
     }
@@ -100,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
         if (queue != null) {
             requestManager.getRequestQueue().cancelAll(TAG);
         }
+        Log.d(TAG, "onStop invoked");
     }
 
     private void makeApiCalls(Location location) {
@@ -117,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                 // TODO: calculate better estimate of active cases
                 Integer activeCounty = confirmed - deaths;
                 currentSnapshot.setCountyActiveCount(activeCounty);
-                saveSnapshotToRoom();
+                //saveSnapshotToRoom();
                 Log.d(TAG, "getJsonData: county " + response);
             }
 
@@ -131,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                 if (currentSnapshot == null) { currentSnapshot = new CovidSnapshot(); }
                 Integer activeState = (Integer) response.get("active");
                 currentSnapshot.setStateActiveCount(activeState);
-                saveSnapshotToRoom();
+                //saveSnapshotToRoom();
                 Log.d(TAG, "getJsonData: state " + response);
             }
 
@@ -143,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         Requests.getCountyHistorical(this, location.toApiFormat(), "30", new VolleyJsonCallback() {
             @Override
             public void getJsonData(JSONObject response) {
-                saveSnapshotToRoom();
+                //saveSnapshotToRoom();
                 Log.d(TAG, "getJsonData: countyHistorical " + response);
             }
 
@@ -173,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
                     recoveredCountry = (Integer) value;
                 }
                 currentSnapshot.setCountryActiveCount(totalCountry - deathCountry - recoveredCountry);
-                saveSnapshotToRoom();
+                //saveSnapshotToRoom();
                 Log.d(TAG, "getJsonData: country " + response);
             }
 
@@ -184,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void saveSnapshotToRoom() {
+    public void saveSnapshotToRoom() {
         if (currentSnapshot.hasFieldsSet()) {
             // TODO: set textfields here!
             if (currentLocation == null) {
@@ -199,5 +205,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Log.e(TAG, "189: " + currentSnapshot.toString());
         }
+        Log.d(TAG, "saveSnapshotToRoom invoked");
     }
 }
