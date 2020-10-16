@@ -1,10 +1,18 @@
 package com.nsc.covidscore.api;
 
+import android.content.Context;
+import android.content.res.AssetManager;
+import android.util.Log;
+
 import com.nsc.covidscore.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 public class APIHelpers {
     public static void handleResponse(
@@ -37,6 +45,11 @@ public class APIHelpers {
                         break;
                     }
                 }
+            } else if (type.equals(Constants.COUNTY_POPULATION)){
+                found = true;
+                String countyPopulation = new JSONArray(response).getJSONArray(1).getString(1);
+                Log.i("HEY", "handleResponse: " + countyPopulation);
+                cb.getString(countyPopulation);
             } else {
                 found = true;
                 cb.getJsonData(new JSONObject(response));
@@ -48,5 +61,73 @@ public class APIHelpers {
             cb.getJsonException(e);
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Get JSON from a file in assets. Taken from
+     * <a href="https://stackoverflow.com/questions/19945411/how-can-i-parse-a-local-json-file-from-assets-folder-into-a-listview/19945484#19945484">Stack Overflow</a>
+     * @param fileName name of the file to parse json from
+     */
+    public static String getJsonFromFile(Context context, String fileName) {
+        String jsonString;
+        AssetManager assetManager = context.getAssets();
+        try {
+            InputStream inputStream = assetManager.open(fileName);
+            byte[] buffer = new byte[inputStream.available()];
+            int read = inputStream.read(buffer);
+            if (read == -1) {
+                inputStream.close();
+            }
+            jsonString = new String(buffer, StandardCharsets.UTF_8);
+            return jsonString;
+        } catch (IOException exception) {
+            exception.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Runs through a JSON file filled with the Name, Population, and FIPS codes for each county
+     * in the U.S.
+     * @param location the county and state the user selected, separated by a comma. e.g. "king,washington"
+     * @return a JSONArray of the Name, Population, State FIPS, and County FIPS
+     */
+    public static JSONArray getCountyFips(Context context, String location) {
+        String jsonString = getJsonFromFile(context, "county_fips.json");
+        if (jsonString == null) {
+            return null;
+        } else {
+            try {
+                location = formatLocation(location, "FIPS");
+                JSONArray fipsArray = new JSONArray(jsonString);
+                int fipsArrayLen = fipsArray.length();
+                int i = 0;
+
+                while (i < fipsArrayLen) {
+                    JSONArray fipsLocationArray = fipsArray.getJSONArray(i);
+                    String fipsArrayLocationName = fipsLocationArray.getString(0);
+                    if (location != null && location.equals(fipsArrayLocationName)) {
+                        return fipsLocationArray;
+                    }
+                    i++;
+                }
+            } catch (JSONException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    public static String formatLocation(String location, String type) {
+        location = location.toLowerCase();
+        String county = location.split(",")[0];
+        String state = location.split(",")[1];
+
+        if (type.equals("FIPS")) {
+            county = county.substring(0, 1).toUpperCase() + county.substring(1);
+            state = state.substring(0, 1).toUpperCase() + state.substring(1);
+            return county + " County, " + state;
+        }
+        return null;
     }
 }

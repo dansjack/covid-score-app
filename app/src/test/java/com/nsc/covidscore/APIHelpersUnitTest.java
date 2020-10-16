@@ -3,6 +3,7 @@ package com.nsc.covidscore;
 import com.nsc.covidscore.api.APIHelpers;
 import com.nsc.covidscore.api.VolleyJsonCallback;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -47,9 +48,15 @@ public final class APIHelpersUnitTest {
             public void getJsonData(JSONObject response) throws JSONException {
                 assertEquals(new JSONObject(COUNTRY_OBJECT).toString(), response.toString());
             }
+
             @Override
             public void getJsonException(Exception exception) {}
-        });
+
+            @Override
+            public void getString(String response) {
+
+            }
+                });
     }
 
     @Test
@@ -63,7 +70,12 @@ public final class APIHelpersUnitTest {
             public void getJsonException(Exception exception) {
                 assertEquals(TEST_JSONOBJECT_EXCEPTION, exception.toString());
             }
-        });
+
+            @Override
+            public void getString(String response) {
+
+            }
+                });
     }
 
     @Test
@@ -75,8 +87,14 @@ public final class APIHelpersUnitTest {
                     public void getJsonData(JSONObject response) {
                         assertEquals(COUNTY_RETURN, response.toString());
                     }
+
                     @Override
                     public void getJsonException(Exception exception) {}
+
+                    @Override
+                    public void getString(String response) {
+
+                    }
                 });
     }
 
@@ -91,6 +109,11 @@ public final class APIHelpersUnitTest {
                     }
                     @Override
                     public void getJsonException(Exception exception) {}
+
+                    @Override
+                    public void getString(String response) {
+
+                    }
                 });
     }
 
@@ -105,6 +128,11 @@ public final class APIHelpersUnitTest {
                     }
                     @Override
                     public void getJsonException(Exception exception) {}
+
+                    @Override
+                    public void getString(String response) {
+
+                    }
                 });
     }
 
@@ -119,6 +147,11 @@ public final class APIHelpersUnitTest {
                     public void getJsonException(Exception exception) {
                         assertEquals(TEST_NOTFOUND_EXCEPTION, exception.toString());
                     }
+
+                    @Override
+                    public void getString(String response) {
+
+                    }
                 });
     }
 
@@ -131,6 +164,11 @@ public final class APIHelpersUnitTest {
                     @Override
                     public void getJsonException(Exception exception) {
                         assertEquals(TEST_JSONARRAY_EXCEPTION, exception.toString());
+                    }
+
+                    @Override
+                    public void getString(String response) {
+
                     }
                 });
     }
@@ -145,6 +183,11 @@ public final class APIHelpersUnitTest {
                     }
                     @Override
                     public void getJsonException(Exception exception) {}
+
+                    @Override
+                    public void getString(String response) {
+
+                    }
                 });
     }
 
@@ -157,6 +200,11 @@ public final class APIHelpersUnitTest {
                     @Override
                     public void getJsonException(Exception exception) {
                         assertEquals(TEST_NOTFOUND_EXCEPTION, exception.toString());
+                    }
+
+                    @Override
+                    public void getString(String response) {
+
                     }
                 });
     }
