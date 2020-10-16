@@ -21,7 +21,7 @@ public interface CovidSnapshotDao {
     LiveData<CovidSnapshot> findLatestByLocationId(Integer locationId);
 
     @Query("SELECT * FROM covid_snapshot ORDER BY last_updated DESC LIMIT 1")
-    LiveData<CovidSnapshot> findLatest();
+    LiveData<CovidSnapshot> getLatest();
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(CovidSnapshot covidSnapshot);

@@ -84,10 +84,6 @@ public class CovidSnapshot extends Observable {
 
     public CovidSnapshot() {
         propertyChangeSupport = new PropertyChangeSupport(this);
-        this.locationId = 0;
-        this.countyActiveCount = 0;
-        this.stateActiveCount = 0;
-        this.countryActiveCount = 0;
         this.lastUpdated = Calendar.getInstance();
     }
 
@@ -113,14 +109,26 @@ public class CovidSnapshot extends Observable {
     }
 
     public boolean hasFieldsSet() {
-        return ((locationId != null && countyActiveCount != null) && (stateActiveCount != null && countryActiveCount != null)) && lastUpdated != null;
+        boolean countsNotNull = countyActiveCount != null && (stateActiveCount != null && countryActiveCount != null);
+        // TODO: check to see if this works - no time tonight - requires VM wipe
+        //boolean idNotZero = locationId != null && locationId != 0;
+        // TODO: change this if the pandemic ends :)
+        boolean countryNotZero = countryActiveCount != null && countryActiveCount != 0;
+        return (countsNotNull && true) && countryNotZero;
     }
 
     public boolean equals(CovidSnapshot other) {
+        if (this.covidSnapshotId == null) { return false; }
         boolean idsEqual = (this.covidSnapshotId.equals(other.covidSnapshotId)) && (this.locationId.equals(other.locationId));
         boolean countsEqual = ((this.countyActiveCount.equals(other.countyActiveCount)) && (this.stateActiveCount.equals(other.stateActiveCount))) && (this.countryActiveCount.equals(other.countryActiveCount));
         // I suspect that if we also check lastUpdated, we might get an infinite DB update loop...
         //return (idsEqual && countsEqual) && this.lastUpdated.equals(other.lastUpdated);
         return idsEqual && countsEqual;
+    }
+
+    public boolean hasSameData(CovidSnapshot other) {
+        boolean locationsMatch = this.locationId.equals(other.locationId);
+        boolean countsMatch = ((this.countyActiveCount.equals(other.countyActiveCount)) && (this.stateActiveCount.equals(other.stateActiveCount))) && (this.countryActiveCount.equals(other.countryActiveCount));
+        return locationsMatch && countsMatch;
     }
 }

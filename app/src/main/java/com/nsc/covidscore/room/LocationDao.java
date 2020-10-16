@@ -24,7 +24,7 @@ public interface LocationDao {
     LiveData<Location> findByLocationId(Integer locationId);
 
     @Query("SELECT * FROM location ORDER BY last_updated DESC LIMIT 1")
-    LiveData<Location> getMostRecent();
+    LiveData<Location> getLatest();
 
     @Transaction
     @Query("SELECT * FROM location")

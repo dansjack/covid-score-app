@@ -79,7 +79,7 @@ public class Location {
     public boolean hasFieldsSet() { return this.county != null && this.state != null; }
 
     public boolean equals(Location other) {
-        return !this.state.equals(other.state) && !this.county.equals(other.county);
+        return this.state.equals(other.state) && this.county.equals(other.county);
     }
 
 }

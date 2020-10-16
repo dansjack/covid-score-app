@@ -66,7 +66,7 @@ public class RoomTest {
     public void locationDao_getAll() throws InterruptedException {
         List<Location> allLocations = LiveDataTestUtil.getValue(locationDao.getAll());
         assertEquals(allLocations.size(), 1);
-        TestUtils.assertGetAllMatchesData(allLocations);
+        TestUtils.assertGetAllLocationsMatchesData(allLocations);
     }
 
     @Test
@@ -79,13 +79,13 @@ public class RoomTest {
 
     @Test
     public void locationDao_findByLocationId() throws InterruptedException {
-        Location locationById = LiveDataTestUtil.getValue(locationDao.findByLocationId(1));
+        Location locationById = LiveDataTestUtil.getValue(locationDao.findByLocationId(TestUtils.resourceId1));
         assertNotNull(locationById);
     }
 
     @Test
     public void locationDao_getMostRecent() throws InterruptedException {
-        Location mostRecentLocation = LiveDataTestUtil.getValue(locationDao.getMostRecent());
+        Location mostRecentLocation = LiveDataTestUtil.getValue(locationDao.getLatest());
         assertNotNull(mostRecentLocation);
     }
 
@@ -93,23 +93,24 @@ public class RoomTest {
     public void covidSnapshotDao_getAll() throws InterruptedException {
         List<CovidSnapshot> allCovidSnapshots = LiveDataTestUtil.getValue(covidSnapshotDao.getAll());
         assertNotNull(allCovidSnapshots);
+        assertEquals(allCovidSnapshots.size(), 1);
     }
 
     @Test
-    public void covidSnapshotDau_findById() throws InterruptedException {
+    public void covidSnapshotDao_findById() throws InterruptedException {
         CovidSnapshot covidSnapshotById = LiveDataTestUtil.getValue(covidSnapshotDao.findById(1));
         assertNotNull(covidSnapshotById);
     }
 
     @Test
     public void covidSnapshotDao_findLatestByLocationId() throws InterruptedException {
-        CovidSnapshot latestCovidSnapshotById = LiveDataTestUtil.getValue(covidSnapshotDao.findLatestByLocationId(1));
+        CovidSnapshot latestCovidSnapshotById = LiveDataTestUtil.getValue(covidSnapshotDao.findLatestByLocationId(TestUtils.resourceId1));
         assertNotNull(latestCovidSnapshotById);
     }
 
     @Test
     public void covidSnapshotDao_findLatest() throws InterruptedException {
-        CovidSnapshot latestCovidSnapshot = LiveDataTestUtil.getValue(covidSnapshotDao.findLatest());
+        CovidSnapshot latestCovidSnapshot = LiveDataTestUtil.getValue(covidSnapshotDao.getLatest());
         assertNotNull(latestCovidSnapshot);
     }
 }

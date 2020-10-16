@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
+import java.util.Calendar;
 import java.util.List;
 
 public class CovidSnapshotWithLocationRepository {
@@ -23,7 +24,7 @@ public class CovidSnapshotWithLocationRepository {
         allLocations = locationDao.getAll();
 
         covidSnapshotDao = db.covidSnapshotDao();
-        currentSnapshot = covidSnapshotDao.findLatest();
+        currentSnapshot = covidSnapshotDao.getLatest();
 
         if (currentSnapshot != null && currentSnapshot.getValue() != null) {
             currentLocation = locationDao.findByLocationId(currentSnapshot.getValue().getLocationId());
@@ -33,10 +34,10 @@ public class CovidSnapshotWithLocationRepository {
     Integer insertLocation(Location location) {
         final Location[] lastAdded = new Location[1];
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            if (locationDao.findByCountyAndState(location.getCounty(), location.getState()).getValue() == null) {
+            if ((currentLocation.getValue() == null || !currentLocation.getValue().equals(location)) && locationDao.findByCountyAndState(location.getCounty(), location.getState()).getValue() == null) {
                 locationDao.insert(location);
-                Log.e(TAG, "insertLocation: " + location.toApiFormat());
-                currentLocation = locationDao.getMostRecent();
+                Log.e(TAG, "Inserted Location: " + location.toApiFormat());
+                currentLocation = locationDao.getLatest();
                 lastAdded[0] = currentLocation.getValue();
             }
         });
@@ -51,13 +52,15 @@ public class CovidSnapshotWithLocationRepository {
 
     void insertCovidSnapshot(CovidSnapshot covidSnapshot) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            if (!currentSnapshot.equals(covidSnapshot)) {
+            if (currentSnapshot.getValue() == null || !currentSnapshot.getValue().hasSameData(covidSnapshot)) {
+                Calendar calendar = Calendar.getInstance();
+                covidSnapshot.setLastUpdated(calendar);
                 covidSnapshotDao.insert(covidSnapshot);
                 Log.e(TAG, "Inserted: " + covidSnapshot.toString());
             } else {
                 Log.e(TAG, "Did not insert: " + covidSnapshot.toString());
             }
-            currentSnapshot = covidSnapshotDao.findLatest();
+            currentSnapshot = covidSnapshotDao.getLatest();
         });
     }
 
@@ -65,9 +68,19 @@ public class CovidSnapshotWithLocationRepository {
         return covidSnapshotDao.findLatestByLocationId(location.getLocationId());
     }
 
-    LiveData<CovidSnapshot> getCurrentSnapshot() { return currentSnapshot; }
+    LiveData<CovidSnapshot> getLatestSnapshot() {
+        //not sure this is necessary, since I'm saving the local variable on every insertion...
+        LiveData<CovidSnapshot> latestSnapshot = covidSnapshotDao.getLatest();
+        this.currentSnapshot = latestSnapshot;
+        return currentSnapshot;
+    }
 
-    LiveData<Location> getCurrentLocation() { return currentLocation; }
+    LiveData<Location> getLatestLocation() {
+        //not sure this is necessary, since I'm saving the local variable on every insertion...
+        LiveData<Location> latestLocation = locationDao.getLatest();
+        this.currentLocation = latestLocation;
+        return currentLocation;
+    }
 
     LiveData<List<Location>> getAllLocations() { return allLocations; }
 }
