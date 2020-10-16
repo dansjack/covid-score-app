@@ -31,24 +31,18 @@ public class CovidSnapshotWithLocationRepository {
         }
     }
 
-    Integer insertLocation(Location location) {
-        final Location[] lastAdded = new Location[1];
+    void insertLocation(Location location) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             if ((currentLocation.getValue() == null || !currentLocation.getValue().equals(location)) && locationDao.findByCountyAndState(location.getCounty(), location.getState()).getValue() == null) {
-                locationDao.insert(location);
-                Log.e(TAG, "Inserted Location: " + location.toApiFormat());
+                int newId = (int) locationDao.insert(location);
                 currentLocation = locationDao.getLatest();
-                lastAdded[0] = currentLocation.getValue();
-                if (lastAdded[0] != null) {
-                    Log.e(TAG, "lastAdded location: " + lastAdded[0].toApiFormat());
-                    return lastAdded[0].getLocationId();
-                } else {
-                    Log.e(TAG, "location table is empty");
-                    return 0;
-                }
+                Location insertedLocation = currentLocation.getValue();
+                insertedLocation.setLocationId((Integer) newId);
+                Log.e(TAG, "Inserted Location: id: " + insertedLocation.getLocationId() + ", " + insertedLocation.toApiFormat());
+            } else {
+                Log.e(TAG, "Room already contains location: " + location.toApiFormat());
             }
         });
-
     }
 
     void insertCovidSnapshot(CovidSnapshot covidSnapshot) {

@@ -39,6 +39,6 @@ public interface LocationDao {
     LiveData<CovidSnapshotWithLocation> getCovidSnapshotsWithLocationByLocationId(Integer locationId);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insert(Location location);
+    long insert(Location location);
 
 }

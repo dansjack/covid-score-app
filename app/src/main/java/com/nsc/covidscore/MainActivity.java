@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                     // update cached version of snapshot
                     if (covidSnapshotFromDb != null && !currentSnapshot.equals(covidSnapshotFromDb)) {
                         currentSnapshot = covidSnapshotFromDb;
-                        // TODO: set textfields here!
+                        // TODO: set textfields here! - vv this is temporary vv
                         if (currentLocation == null) { // this shouldn't be hit because currentLocation shouldn't be null
                             tempDisplayTextView.setText("Most Recent Snapshot:\n" + currentSnapshot.toString());
                         } else {
