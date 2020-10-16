@@ -7,22 +7,37 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nsc.covidscore.api.RequestSingleton;
 import com.nsc.covidscore.api.Requests;
 import com.nsc.covidscore.api.VolleyJsonCallback;
+import com.nsc.covidscore.room.CovidSnapshot;
+import com.nsc.covidscore.room.CovidSnapshotWithLocationViewModel;
+import com.nsc.covidscore.room.EntityListener;
+import com.nsc.covidscore.room.Location;
 
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private Location currentLocation;
+    private boolean roomLocationObserved = false;
     private CovidSnapshot currentSnapshot;
+    private boolean roomCovidSnapshotObserved = false;
 
     private CovidSnapshotWithLocationViewModel vm;
     private RequestQueue queue;
     private RequestSingleton requestManager;
+
+    private TextView tempDisplayTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,38 +45,31 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         requestManager = RequestSingleton.getInstance(this.getApplicationContext());
         queue = requestManager.getRequestQueue();
-        makeApiCalls();
+        tempDisplayTextView = findViewById(R.id.hello_world);
+
+        // Access to Room Database
         vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel.class);
 
-        if (vm.getCurrentCovidSnapshot() != null) {
-            vm.getCurrentCovidSnapshot().observe(this, new Observer<CovidSnapshot>() {
-                @Override
-                public void onChanged(@Nullable final CovidSnapshot covidSnapshotFromDb) {
-                    // update cached version of snapshot
-                    currentSnapshot = covidSnapshotFromDb;
-                    if (currentSnapshot == null) {
-                        // run API call?
-                    }
-                }
-            });
+        // Saves to DB when all the APIs have come in
+        if (currentSnapshot == null) {
+            currentSnapshot = new CovidSnapshot();
         }
+        currentSnapshot.setListener(e -> {
+            saveSnapshotToRoom();
+            Log.e(TAG, "listener on currentSnapshot invoked!!");
+        });
 
-        if (vm.getCurrentLocation() != null) {
-            vm.getCurrentLocation().observe(this, new Observer<Location>() {
-                @Override
-                public void onChanged(@Nullable final Location locationFromDb) {
-                    // update cached version of location
-                    currentLocation = locationFromDb;
-                    if (currentLocation == null) {
-                        // pop up dialog
-                    }
-                }
-            });
-        }
-
-        // update textviews, etc with currentSnapshot & currentLocation
-
-
+        // Update Values - Maybe change this to only go when first submitted in dialog or refreshed
+        // temp test data
+        Location tempLocation = new Location("king", "washington");
+        currentLocation = tempLocation;
+        if (currentLocation.hasFieldsSet()) { saveLocationToRoom(); }
+        currentLocation.setListener(e -> {
+            saveLocationToRoom();
+            Log.e(TAG, "listener on currentLocation invoked!!");
+        });
+//        currentLocation = new Location();
+        makeApiCalls(tempLocation);
 
         Log.d(TAG,"onCreate invoked");
     }
@@ -72,12 +80,81 @@ public class MainActivity extends AppCompatActivity {
         if (queue != null) {
             requestManager.getRequestQueue().cancelAll(TAG);
         }
+        Log.d(TAG, "onStop invoked");
     }
 
-    private void makeApiCalls() {
-        Requests.getCounty(this, "king,washington", new VolleyJsonCallback() {
+    /**
+     * This sets an observer on the Room function that returns the most recent addition to the db
+     * When the new CovidSnapshot comes through, display to user
+     */
+    private void setRoomCovidSnapshotObserved() {
+        // Set Listener for Current Covid Snapshot - Add Else - Dialog
+        if (!roomCovidSnapshotObserved && vm.getLatestCovidSnapshot() != null) {
+            vm.getLatestCovidSnapshot().observe(this, new Observer<CovidSnapshot>() {
+                @Override
+                public void onChanged(@Nullable final CovidSnapshot covidSnapshotFromDb) {
+                    // update cached version of snapshot
+                    if (covidSnapshotFromDb != null && !currentSnapshot.equals(covidSnapshotFromDb)) {
+                        currentSnapshot = covidSnapshotFromDb;
+                        // TODO: set textfields here!
+                        if (currentLocation == null) {
+                            tempDisplayTextView.setText("Most Recent Snapshot:\n" + currentSnapshot.toString());
+                        } else {
+                            tempDisplayTextView.setText("Most Recent Location: id: \n" + currentLocation.getLocationId() + ", " + currentLocation.toApiFormat()
+                                    + "\nMost Recent Snapshot: \n" + covidSnapshotFromDb.toString());
+                        }
+                        Log.e(TAG, "CovidSnapshot Room listener invoked");
+                    }
+                    else if (covidSnapshotFromDb == null) {
+                        // run API call, if location is saved
+                        // else, display some message about "Let's Get Started By Setting Location"
+                    }
+                }
+            });
+            roomCovidSnapshotObserved = true;
+        }
+    }
+
+    /**
+     * This sets an observer on the Room function that returns the most recent addition to the db
+     * When the new Location comes through, ?
+     */
+    private void setRoomLocationObserved() {
+        // Set Listener for Location
+        if (!roomLocationObserved && vm.getLatestLocation() != null) {
+            vm.getLatestLocation().observe(this, new Observer<Location>() {
+                @Override
+                public void onChanged(@Nullable final Location locationFromDb) {
+                    // update cached version of location
+                    if ((locationFromDb != null) && (!locationFromDb.equals(currentLocation))) {
+                        currentLocation = locationFromDb;
+                        currentSnapshot.setLocationId(locationFromDb.getLocationId());
+                        Log.d(TAG, "new location set to :" + locationFromDb.toApiFormat());
+                    } else {
+                        // no location is saved
+                        // pop up dialog
+                    }
+                }
+            });
+        }
+        roomLocationObserved = true;
+    }
+
+    private void makeApiCalls(Location location) {
+        Requests.getCounty(this, location.toApiFormat(), new VolleyJsonCallback() {
             @Override
-            public void getJsonData(JSONObject response) {
+            public void getJsonData(JSONObject response) throws JSONException {
+                if (currentSnapshot == null) { currentSnapshot = new CovidSnapshot(); }
+                // Add Location to Database (if not already present)
+                Integer locationId = vm.insertLocation(location);
+                currentSnapshot.setLocationId(locationId);
+                JSONObject stats = (JSONObject) response.get("stats");
+                Integer confirmed = (Integer) stats.get("confirmed");
+                Integer deaths = (Integer) stats.get("deaths");
+                // TODO: calculate better estimate of active cases
+                Integer activeCounty = confirmed - deaths;
+                currentSnapshot.setCountyActiveCount(activeCounty);
+                if (currentSnapshot.hasFieldsSet()) { saveSnapshotToRoom(); }
                 Log.d(TAG, "getJsonData: county " + response);
             }
 
@@ -89,7 +166,22 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        Requests.getCountyHistorical(this, "whatcom,washington", "30", new VolleyJsonCallback() {
+        Requests.getState(this, location.toApiFormat(), new VolleyJsonCallback() {
+            @Override
+            public void getJsonData(JSONObject response) throws JSONException {
+                if (currentSnapshot == null) { currentSnapshot = new CovidSnapshot(); }
+                Integer activeState = (Integer) response.get("active");
+                currentSnapshot.setStateActiveCount(activeState);
+                if (currentSnapshot.hasFieldsSet()) { saveSnapshotToRoom(); }
+                Log.d(TAG, "getJsonData: state " + response);
+            }
+
+            @Override
+            public void getJsonException(Exception exception) {
+
+            }
+        });
+        Requests.getCountyHistorical(this, location.toApiFormat(), "30", new VolleyJsonCallback() {
             @Override
             public void getJsonData(JSONObject response) {
                 Log.d(TAG, "getJsonData: countyHistorical " + response);
@@ -105,7 +197,27 @@ public class MainActivity extends AppCompatActivity {
         });
         Requests.getUSHistorical(this, "1", new VolleyJsonCallback() {
             @Override
-            public void getJsonData(JSONObject response) {
+            public void getJsonData(JSONObject response) throws JSONException, IOException {
+                if (currentSnapshot == null) { currentSnapshot = new CovidSnapshot(); }
+                JSONObject timeline = response.getJSONObject("timeline");
+                HashMap<String, Integer> totalMap = new ObjectMapper().readValue((timeline.get("cases")).toString(), HashMap.class);
+
+                Integer totalCountry = 0;
+                for (Object value : totalMap.values()) {
+                    totalCountry = (Integer) value;
+                }
+                Integer deathCountry = 0;
+                HashMap<String, Integer> deathMap = new ObjectMapper().readValue((timeline.get("deaths")).toString(), HashMap.class);
+                for (Object value : deathMap.values()) {
+                    deathCountry = (Integer) value;
+                }
+                Integer recoveredCountry = 0;
+                HashMap<String, Integer> recoveredMap = new ObjectMapper().readValue((timeline.get("recovered")).toString(), HashMap.class);
+                for (Object value : recoveredMap.values()) {
+                    recoveredCountry = (Integer) value;
+                }
+                currentSnapshot.setCountryActiveCount(totalCountry - deathCountry - recoveredCountry);
+                if (currentSnapshot.hasFieldsSet()) { saveSnapshotToRoom(); }
                 Log.d(TAG, "getJsonData: country " + response);
             }
 
@@ -130,5 +242,31 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "getStringData: " + response);
             }
         });
+    }
+
+    public void saveSnapshotToRoom() {
+        if (currentSnapshot.hasFieldsSet()) {
+            Calendar calendar = Calendar.getInstance();
+            currentSnapshot.setLastUpdated(calendar);
+            vm.insertCovidSnapshot(currentSnapshot);
+            setRoomCovidSnapshotObserved();
+        } else {
+            Log.e(TAG, "Did not save: " + currentSnapshot.toString());
+        }
+//        setCovidSnapshotObserved();
+        Log.d(TAG, "saveSnapshotToRoom invoked");
+    }
+
+    public void saveLocationToRoom() {
+        if (currentLocation.hasFieldsSet()) {
+            Calendar calendar = Calendar.getInstance();
+            currentLocation.setLastUpdated(calendar);
+            vm.insertLocation(currentLocation);
+            setRoomLocationObserved();
+        } else {
+            Log.e(TAG, "did not save to Room:  " + currentLocation.toApiFormat());
+        }
+//        setLocationObserved();
+        Log.d(TAG, "saveLocationToRoom invoked");
     }
 }

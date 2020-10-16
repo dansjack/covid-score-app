@@ -25,7 +25,7 @@ public class APIHelpers {
                     for (int i = 0; i < counties.length(); i++) {
                         JSONObject jsonObject = counties.getJSONObject(i);
                         String stateName = jsonObject.optString(Constants.PROVINCE);
-                        if (state.equals(stateName.toLowerCase())) {
+                        if (state.equalsIgnoreCase(stateName.toLowerCase())) {
                             found = true;
                             cb.getJsonData(jsonObject);
                             break;
@@ -39,7 +39,7 @@ public class APIHelpers {
                 for (int i = 0; i < counties.length(); i++) {
                     JSONObject jsonObject = counties.getJSONObject(i);
                     String countyName = jsonObject.optString(Constants.COUNTY);
-                    if (countyName.equals(county)) {
+                    if (countyName.equalsIgnoreCase(county)) {
                         found = true;
                         cb.getJsonData(jsonObject);
                         break;
@@ -48,8 +48,14 @@ public class APIHelpers {
             } else if (type.equals(Constants.COUNTY_POPULATION)){
                 found = true;
                 String countyPopulation = new JSONArray(response).getJSONArray(1).getString(1);
-                Log.i("HEY", "handleResponse: " + countyPopulation);
-                cb.getString(countyPopulation);
+                cb.getString(countyPopulation); 
+            } else if (type.equals(Constants.PROVINCE)) {
+                JSONObject jsonObject = new JSONObject(response);
+                String stateName = jsonObject.optString(Constants.STATE);
+                if (stateName.equalsIgnoreCase(state)) {
+                    found = true;
+                    cb.getJsonData(jsonObject);
+                }
             } else {
                 found = true;
                 cb.getJsonData(new JSONObject(response));
@@ -57,7 +63,7 @@ public class APIHelpers {
             if (!found) {
                 throw new JSONException(Constants.ERROR_STATE_COUNTY);
             }
-        } catch (JSONException e) {
+        } catch (JSONException | IOException e) {
             cb.getJsonException(e);
             e.printStackTrace();
         }

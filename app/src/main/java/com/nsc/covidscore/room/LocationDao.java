@@ -1,4 +1,4 @@
-package com.nsc.covidscore;
+package com.nsc.covidscore.room;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -6,6 +6,8 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
+
+import com.nsc.covidscore.room.Location;
 
 import java.util.List;
 
@@ -20,6 +22,9 @@ public interface LocationDao {
 
     @Query("SELECT * FROM location WHERE location_id = :locationId LIMIT 1")
     LiveData<Location> findByLocationId(Integer locationId);
+
+    @Query("SELECT * FROM location ORDER BY last_updated DESC LIMIT 1")
+    LiveData<Location> getLatest();
 
     @Transaction
     @Query("SELECT * FROM location")

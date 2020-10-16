@@ -1,9 +1,13 @@
-package com.nsc.covidscore;
+package com.nsc.covidscore.room;
 
 import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+
+import com.nsc.covidscore.room.CovidSnapshot;
+import com.nsc.covidscore.room.CovidSnapshotWithLocationRepository;
+import com.nsc.covidscore.room.Location;
 
 import java.util.List;
 
@@ -16,13 +20,15 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
         repo = new CovidSnapshotWithLocationRepository(application);
     }
 
-    public void insertLocation(Location location) { repo.insertLocation(location); }
+    public Integer insertLocation(Location location) { return repo.insertLocation(location); }
+
+    public void insertCovidSnapshot(CovidSnapshot covidSnapshot) { repo.insertCovidSnapshot(covidSnapshot); }
 
     public LiveData<CovidSnapshot> getLatestCovidSnapshotByLocation(Location location) { return repo.getLatestCovidSnapshotByLocation(location); }
 
-    public LiveData<CovidSnapshot> getCurrentCovidSnapshot() { return repo.getCurrentSnapshot(); }
+    public LiveData<CovidSnapshot> getLatestCovidSnapshot() { return repo.getLatestSnapshot(); }
 
-    public LiveData<Location> getCurrentLocation() { return repo.getCurrentLocation(); }
+    public LiveData<Location> getLatestLocation() { return repo.getLatestLocation(); }
 
     public LiveData<List<Location>> getAllLocations() { return repo.getAllLocations(); }
 
