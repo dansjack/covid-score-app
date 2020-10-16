@@ -39,15 +39,16 @@ public class CovidSnapshotWithLocationRepository {
                 Log.e(TAG, "Inserted Location: " + location.toApiFormat());
                 currentLocation = locationDao.getLatest();
                 lastAdded[0] = currentLocation.getValue();
+                if (lastAdded[0] != null) {
+                    Log.e(TAG, "lastAdded location: " + lastAdded[0].toApiFormat());
+                    return lastAdded[0].getLocationId();
+                } else {
+                    Log.e(TAG, "location table is empty");
+                    return 0;
+                }
             }
         });
-        if (lastAdded[0] != null) {
-            Log.e(TAG, "lastAdded location: " + lastAdded[0].toApiFormat());
-            return lastAdded[0].getLocationId();
-        } else {
-            Log.e(TAG, "location table is empty");
-            return 0;
-        }
+
     }
 
     void insertCovidSnapshot(CovidSnapshot covidSnapshot) {
