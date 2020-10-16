@@ -1,9 +1,12 @@
-package com.nsc.covidscore;
+package com.nsc.covidscore.room;
 
 // this is a class to represent the relation between Location and CovidSnapshot
 
 import androidx.room.Embedded;
 import androidx.room.Relation;
+
+import com.nsc.covidscore.room.CovidSnapshot;
+import com.nsc.covidscore.room.Location;
 
 import java.util.List;
 

@@ -1,10 +1,12 @@
-package com.nsc.covidscore;
+package com.nsc.covidscore.room;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+
+import com.nsc.covidscore.Constants;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -20,46 +22,73 @@ public class CovidSnapshot extends Observable {
     @ColumnInfo(name = "covid_snapshot_id")
     private Integer covidSnapshotId;
     public Integer getCovidSnapshotId() { return covidSnapshotId; }
-    public void setCovidSnapshotId(Integer covidSnapshotId) { this.covidSnapshotId = covidSnapshotId; }
+    public void setCovidSnapshotId(Integer covidSnapshotId) {
+        propertyChangeSupport.firePropertyChange(Constants.COVID_SNAPSHOT_ID, this.covidSnapshotId, covidSnapshotId);
+        this.covidSnapshotId = covidSnapshotId;
+    }
 
     @NonNull
     @ColumnInfo(name = "location_id")
     private Integer locationId;
     public Integer getLocationId() { return locationId; }
-    public void setLocationId(Integer locationId) { this.locationId = locationId; }
+    public void setLocationId(Integer locationId) {
+        propertyChangeSupport.firePropertyChange(Constants.LOCATION_ID_FK, this.locationId, locationId);
+        this.locationId = locationId;
+    }
 
     @ColumnInfo(name = "county_active_count")
     private Integer countyActiveCount;
     public Integer getCountyActiveCount() { return countyActiveCount; }
-    public void setCountyActiveCount(Integer countyActiveCount) { this.countyActiveCount = countyActiveCount; }
+    public void setCountyActiveCount(Integer countyActiveCount) {
+        propertyChangeSupport.firePropertyChange(Constants.ACTIVE_COUNTY, this.countyActiveCount, countyActiveCount);
+        this.countyActiveCount = countyActiveCount;
+    }
 
     @ColumnInfo(name = "state_active_count")
     private Integer stateActiveCount;
     public Integer getStateActiveCount() { return stateActiveCount; }
-    public void setStateActiveCount(Integer stateActiveCount) { this.stateActiveCount = stateActiveCount; }
+    public void setStateActiveCount(Integer stateActiveCount) {
+        propertyChangeSupport.firePropertyChange(Constants.ACTIVE_STATE, this.stateActiveCount, stateActiveCount);
+        this.stateActiveCount = stateActiveCount;
+    }
 
     @ColumnInfo(name = "country_active_count")
     private Integer countryActiveCount;
     public Integer getCountryActiveCount() { return countryActiveCount; }
-    public void setCountryActiveCount(Integer countryActiveCount) { this.countryActiveCount = countryActiveCount; }
+    public void setCountryActiveCount(Integer countryActiveCount) {
+        propertyChangeSupport.firePropertyChange(Constants.ACTIVE_COUNTRY, this.countryActiveCount, countryActiveCount);
+        this.countryActiveCount = countryActiveCount;
+    }
 
     @ColumnInfo(name = "last_updated")
     private Calendar lastUpdated;
     public Calendar getLastUpdated() { return lastUpdated; }
-    public void setLastUpdated(Calendar lastUpdated) { this.lastUpdated = lastUpdated; }
+    public void setLastUpdated(Calendar lastUpdated) {
+//        propertyChangeSupport.firePropertyChange(Constants.LAST_UPDATED_SNAPSHOT, this.lastUpdated, lastUpdated);
+        this.lastUpdated = lastUpdated; }
 
     // For Observer
 
     @Ignore
     protected PropertyChangeSupport propertyChangeSupport;
 
-    public void setListener(PropertyChangeListener newListener) {
-        propertyChangeSupport.addPropertyChangeListener(newListener);
+    public void setListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    public void removeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
     // CONSTRUCTOR
 
     public CovidSnapshot() {
+        propertyChangeSupport = new PropertyChangeSupport(this);
+        this.locationId = 0;
+        this.countyActiveCount = 0;
+        this.stateActiveCount = 0;
+        this.countryActiveCount = 0;
+        this.lastUpdated = Calendar.getInstance();
     }
 
     public CovidSnapshot(Integer locationId,
@@ -85,5 +114,13 @@ public class CovidSnapshot extends Observable {
 
     public boolean hasFieldsSet() {
         return ((locationId != null && countyActiveCount != null) && (stateActiveCount != null && countryActiveCount != null)) && lastUpdated != null;
+    }
+
+    public boolean equals(CovidSnapshot other) {
+        boolean idsEqual = (this.covidSnapshotId.equals(other.covidSnapshotId)) && (this.locationId.equals(other.locationId));
+        boolean countsEqual = ((this.countyActiveCount.equals(other.countyActiveCount)) && (this.stateActiveCount.equals(other.stateActiveCount))) && (this.countryActiveCount.equals(other.countryActiveCount));
+        // I suspect that if we also check lastUpdated, we might get an infinite DB update loop...
+        //return (idsEqual && countsEqual) && this.lastUpdated.equals(other.lastUpdated);
+        return idsEqual && countsEqual;
     }
 }

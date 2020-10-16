@@ -1,4 +1,4 @@
-package com.nsc.covidscore;
+package com.nsc.covidscore.room;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;

@@ -7,6 +7,12 @@ import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.nsc.covidscore.room.AppDatabase;
+import com.nsc.covidscore.room.CovidSnapshot;
+import com.nsc.covidscore.room.CovidSnapshotDao;
+import com.nsc.covidscore.room.Location;
+import com.nsc.covidscore.room.LocationDao;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;

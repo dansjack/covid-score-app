@@ -1,4 +1,4 @@
-package com.nsc.covidscore;
+package com.nsc.covidscore.room;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -6,6 +6,8 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
+
+import com.nsc.covidscore.room.Location;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.nsc.covidscore;
+package com.nsc.covidscore.room;
 
 import android.app.Application;
 import android.util.Log;
@@ -36,7 +36,8 @@ public class CovidSnapshotWithLocationRepository {
             if (locationDao.findByCountyAndState(location.getCounty(), location.getState()).getValue() == null) {
                 locationDao.insert(location);
                 Log.e(TAG, "insertLocation: " + location.toApiFormat());
-                lastAdded[0] = locationDao.getMostRecent().getValue();
+                currentLocation = locationDao.getMostRecent();
+                lastAdded[0] = currentLocation.getValue();
             }
         });
         if (lastAdded[0] != null) {
@@ -50,9 +51,14 @@ public class CovidSnapshotWithLocationRepository {
 
     void insertCovidSnapshot(CovidSnapshot covidSnapshot) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            covidSnapshotDao.insert(covidSnapshot);
+            if (!currentSnapshot.equals(covidSnapshot)) {
+                covidSnapshotDao.insert(covidSnapshot);
+                Log.e(TAG, "Inserted: " + covidSnapshot.toString());
+            } else {
+                Log.e(TAG, "Did not insert: " + covidSnapshot.toString());
+            }
+            currentSnapshot = covidSnapshotDao.findLatest();
         });
-        Log.e(TAG, "Inserted: " + covidSnapshot.toString());
     }
 
     LiveData<CovidSnapshot> getLatestCovidSnapshotByLocation(Location location) {

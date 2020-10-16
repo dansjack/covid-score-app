@@ -1,9 +1,13 @@
-package com.nsc.covidscore;
+package com.nsc.covidscore.room;
 
 import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+
+import com.nsc.covidscore.room.CovidSnapshot;
+import com.nsc.covidscore.room.CovidSnapshotWithLocationRepository;
+import com.nsc.covidscore.room.Location;
 
 import java.util.List;
 

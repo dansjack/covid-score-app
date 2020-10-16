@@ -1,4 +1,4 @@
-package com.nsc.covidscore;
+package com.nsc.covidscore.room;
 
 import android.content.Context;
 
@@ -8,6 +8,9 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
+
+import com.nsc.covidscore.Converters;
+import com.nsc.covidscore.room.Location;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

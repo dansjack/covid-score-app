@@ -1,5 +1,8 @@
 package com.nsc.covidscore;
 
+import com.nsc.covidscore.room.CovidSnapshot;
+import com.nsc.covidscore.room.Location;
+
 import java.util.Calendar;
 import java.util.List;
 
