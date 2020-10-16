@@ -177,9 +177,10 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void getJsonException(Exception exception) {
+            public void getJsonException(Exception exception) {}
 
-            }
+            @Override
+            public void getString(String response) {}
         });
         Requests.getCountyHistorical(this, location.toApiFormat(), "30", new VolleyJsonCallback() {
             @Override

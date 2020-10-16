@@ -169,9 +169,7 @@ public final class APIHelpersUnitTest {
                     }
 
                     @Override
-                    public void getString(String response) {
-
-                    }
+                    public void getString(String response) {}
                 });
     }
 
@@ -185,6 +183,9 @@ public final class APIHelpersUnitTest {
                     }
                     @Override
                     public void getJsonException(Exception exception) {}
+
+                    @Override
+                    public void getString(String response) {   }
                 });
     }
 
@@ -198,6 +199,9 @@ public final class APIHelpersUnitTest {
                     public void getJsonException(Exception exception) {
                         assertEquals(TEST_NOTFOUND_EXCEPTION, exception.toString());
                     }
+
+                    @Override
+                    public void getString(String response) {}
                 });
     }
 
@@ -213,9 +217,7 @@ public final class APIHelpersUnitTest {
                     public void getJsonException(Exception exception) {}
 
                     @Override
-                    public void getString(String response) {
-
-                    }
+                    public void getString(String response) {}
                 });
     }
 
@@ -231,9 +233,7 @@ public final class APIHelpersUnitTest {
                     }
 
                     @Override
-                    public void getString(String response) {
-
-                    }
+                    public void getString(String response) {}
                 });
     }
 }
