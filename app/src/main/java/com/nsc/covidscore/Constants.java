@@ -6,8 +6,12 @@ public class Constants {
     public static final String COUNTY_HISTORICAL = "countyHistorical";
     public static final String COUNTY_POPULATION = "countyPopulation";
     public static final String COUNTRY = "country";
+    public static final String COUNTRY_HISTORICAL = "countryHistorical";
+    public static final String COUNTRY_POPULATION = "countryPopulation";
+    public static final String POPULATION = "population";
     public static final String PROVINCE = "province";
     public static final String STATE = "state";
+    public static final String STATE_POPULATION = "statePopulation";
 
     public static final String ERROR_STATE_COUNTY = "The State/County combination couldn't be found";
     public static final String COVID_SNAPSHOT_ID = "covidSnapshotId";

@@ -18,50 +18,53 @@ public class APIHelpers {
     public static void handleResponse(
             String type, String response, String county, String state, VolleyJsonCallback cb) {
         try {
-            boolean found = false;
-            if (type.equals(Constants.COUNTY)) {
-                JSONArray counties = new JSONArray(response);
-                if (counties.length() > 1) {
+            switch (type) {
+                case Constants.COUNTY: {
+                    JSONArray counties = new JSONArray(response);
+                    if (counties.length() > 1) {
+                        for (int i = 0; i < counties.length(); i++) {
+                            JSONObject jsonObject = counties.getJSONObject(i);
+                            String stateName = jsonObject.optString(Constants.PROVINCE);
+                            if (state.equalsIgnoreCase(stateName.toLowerCase())) {
+                                cb.getJsonData(jsonObject);
+                                break;
+                            }
+                        }
+                    } else {
+                        cb.getJsonData(counties.getJSONObject(0));
+                    }
+                    break;
+                }
+                case Constants.COUNTY_HISTORICAL: {
+                    JSONArray counties = new JSONArray(response);
                     for (int i = 0; i < counties.length(); i++) {
                         JSONObject jsonObject = counties.getJSONObject(i);
-                        String stateName = jsonObject.optString(Constants.PROVINCE);
-                        if (state.equalsIgnoreCase(stateName.toLowerCase())) {
-                            found = true;
+                        String countyName = jsonObject.optString(Constants.COUNTY);
+                        if (countyName.equalsIgnoreCase(county)) {
                             cb.getJsonData(jsonObject);
                             break;
                         }
                     }
-                } else {
-                    cb.getJsonData(counties.getJSONObject(0));
+                    break;
                 }
-            } else if (type.equals(Constants.COUNTY_HISTORICAL)) {
-                JSONArray counties = new JSONArray(response);
-                for (int i = 0; i < counties.length(); i++) {
-                    JSONObject jsonObject = counties.getJSONObject(i);
-                    String countyName = jsonObject.optString(Constants.COUNTY);
-                    if (countyName.equalsIgnoreCase(county)) {
-                        found = true;
+                case Constants.COUNTY_POPULATION:
+                case Constants.STATE_POPULATION:
+                case Constants.POPULATION:
+                    String countyPopulation = new JSONArray(response).getJSONArray(1).getString(1);
+                    cb.getString(countyPopulation);
+                    break;
+                case Constants.PROVINCE:
+                    JSONObject jsonObject = new JSONObject(response);
+                    String stateName = jsonObject.optString(Constants.STATE);
+                    if (stateName.equalsIgnoreCase(state)) {
                         cb.getJsonData(jsonObject);
-                        break;
                     }
-                }
-            } else if (type.equals(Constants.COUNTY_POPULATION)){
-                found = true;
-                String countyPopulation = new JSONArray(response).getJSONArray(1).getString(1);
-                cb.getString(countyPopulation); 
-            } else if (type.equals(Constants.PROVINCE)) {
-                JSONObject jsonObject = new JSONObject(response);
-                String stateName = jsonObject.optString(Constants.STATE);
-                if (stateName.equalsIgnoreCase(state)) {
-                    found = true;
-                    cb.getJsonData(jsonObject);
-                }
-            } else {
-                found = true;
-                cb.getJsonData(new JSONObject(response));
-            }
-            if (!found) {
-                throw new JSONException(Constants.ERROR_STATE_COUNTY);
+                    break;
+                case Constants.COUNTRY_HISTORICAL:
+                    cb.getJsonData(new JSONObject(response));
+                    break;
+                default:
+                    throw new JSONException(Constants.ERROR_STATE_COUNTY);
             }
         } catch (JSONException | IOException e) {
             cb.getJsonException(e);
@@ -98,13 +101,13 @@ public class APIHelpers {
      * @param location the county and state the user selected, separated by a comma. e.g. "king,washington"
      * @return a JSONArray of the Name, Population, State FIPS, and County FIPS
      */
-    public static JSONArray getCountyFips(Context context, String location) {
+    public static JSONArray getLocationFIPS(Context context, String location) {
         String jsonString = getJsonFromFile(context, "county_fips.json");
         if (jsonString == null) {
             return null;
         } else {
             try {
-                location = formatLocation(location, "FIPS");
+                location = formatLocationFIPS(location, "FIPS");
                 JSONArray fipsArray = new JSONArray(jsonString);
                 int fipsArrayLen = fipsArray.length();
                 int i = 0;
@@ -124,7 +127,7 @@ public class APIHelpers {
         return null;
     }
 
-    public static String formatLocation(String location, String type) {
+    public static String formatLocationFIPS(String location, String type) {
         location = location.toLowerCase();
         String county = location.split(",")[0];
         String state = location.split(",")[1];

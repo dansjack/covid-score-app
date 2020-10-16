@@ -229,18 +229,42 @@ public class MainActivity extends AppCompatActivity {
             public void getString(String response) {}
         });
 
-        Requests.getCountyPopulation(this, "pierce,washington", new VolleyJsonCallback() {
+        Requests.getCountyPopulation(this, "king,washington", new VolleyJsonCallback() {
             @Override
-            public void getJsonData(JSONObject response) {
-                Log.d(TAG, "getJsonData: " + response);
-            }
+            public void getJsonData(JSONObject response) {}
 
             @Override
             public void getJsonException(Exception exception) {}
 
             @Override
             public void getString(String response) {
-                Log.d(TAG, "getStringData: " + response);
+                Log.d(TAG, "getStringData: County " + response);
+            }
+        });
+
+        Requests.getStatePopulation(this, "king,washington", new VolleyJsonCallback() {
+            @Override
+            public void getJsonData(JSONObject response) {}
+
+            @Override
+            public void getJsonException(Exception exception) {}
+
+            @Override
+            public void getString(String response) {
+                Log.d(TAG, "getStringData: State  " + response);
+            }
+        });
+
+        Requests.getCountryPopulation(this, new VolleyJsonCallback() {
+            @Override
+            public void getJsonData(JSONObject response) {}
+
+            @Override
+            public void getJsonException(Exception exception) {}
+
+            @Override
+            public void getString(String response) {
+                Log.d(TAG, "getStringData: Country " + response);
             }
         });
     }

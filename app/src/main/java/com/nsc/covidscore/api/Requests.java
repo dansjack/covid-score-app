@@ -94,11 +94,11 @@ public class Requests {
      */
     public static void getUSHistorical(Context context, String days, final VolleyJsonCallback cb) {
         String url = "https://corona.lmao.ninja/v2/historical/usa" + "?lastdays=" + days;
-        final String TAG = Constants.COUNTY_HISTORICAL;
+        final String TAG = Constants.COUNTRY_HISTORICAL;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> APIHelpers.handleResponse(
-                        Constants.COUNTRY, response, "", "", cb),
+                        Constants.COUNTRY_HISTORICAL, response, "", "", cb),
                 error -> {
                 });
         stringRequest.setTag(TAG);
@@ -115,13 +115,11 @@ public class Requests {
      */
     public static void getCountyPopulation(Context context, String location, final VolleyJsonCallback cb) {
         final String TAG = Constants.COUNTY_POPULATION;
-        JSONArray fipsLocationArray = APIHelpers.getCountyFips(context, location);
-        String state;
-        String county;
+        JSONArray fipsLocationArray = APIHelpers.getLocationFIPS(context, location);
         try {
             if (fipsLocationArray != null) {
-                state = fipsLocationArray.getString(1);
-                county = fipsLocationArray.getString(2);
+                String state = fipsLocationArray.getString(1);
+                String county = fipsLocationArray.getString(2);
                 StringBuilder url = new StringBuilder(
                         "https://api.census.gov/data/2019/pep/population?get=NAME,POP&for=county:")
                         .append(county).append("&in=state:").append(state).append("&key=")
@@ -129,7 +127,7 @@ public class Requests {
 
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
                         response -> APIHelpers.handleResponse(
-                                Constants.COUNTY_POPULATION, response, "", "", cb),
+                                Constants.POPULATION, response, "", "", cb),
                         error -> Log.d(TAG, "onErrorResponse: " + error));
                 stringRequest.setTag(TAG);
 
@@ -141,6 +139,62 @@ public class Requests {
         } catch (JSONException ex) {
             ex.printStackTrace();
         }
+    }
 
+    /**
+     * <p>Returns the estimated population of the given state for 2019</p>
+     * <p>The data comes from the <a href="https://www.census.gov/data/developers/data-sets/popest-popproj/popest.html">U.S. Census Bureau</a></p>
+     * @param location the county and state the user selected, separated by a comma. e.g. "king,washington"
+     * @param cb callback class (see VolleyJsonCallback interface)
+     */
+    public static void getStatePopulation(Context context, String location, final VolleyJsonCallback cb) {
+        final String TAG = Constants.STATE_POPULATION;
+        JSONArray fipsLocationArray = APIHelpers.getLocationFIPS(context, location);
+        try {
+            if (fipsLocationArray != null) {
+                String state = fipsLocationArray.getString(1);
+                Log.i(TAG, "getStatePopulation: " + state);
+                StringBuilder url = new StringBuilder(
+                        "https://api.census.gov/data/2019/pep/population?get=NAME,POP&for=state:")
+                        .append(state).append("&key=").append(Constants.CENSUS_API_KEY);
+
+                Log.i(TAG, "getStatePopulation: " + url);
+
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
+                        response -> APIHelpers.handleResponse(
+                                Constants.POPULATION, response, "", "", cb),
+                        error -> Log.d(TAG, "onErrorResponse: " + error));
+                stringRequest.setTag(TAG);
+
+                // Add the request to the RequestQueue.
+                RequestSingleton.getInstance(context.getApplicationContext()).addToRequestQueue(stringRequest);
+            } else {
+                throw new Resources.NotFoundException(Constants.ERROR_STATE_COUNTY);
+            }
+        } catch (JSONException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * <p>Returns the estimated population of the U.S. for 2019</p>
+     * <p>The data comes from the <a href="https://www.census.gov/data/developers/data-sets/popest-popproj/popest.html">U.S. Census Bureau</a></p>
+     * @param cb callback class (see VolleyJsonCallback interface)
+     */
+    public static void getCountryPopulation(Context context, final VolleyJsonCallback cb) {
+        final String TAG = Constants.COUNTRY_POPULATION;
+        StringBuilder url = new StringBuilder(
+                "https://api.census.gov/data/2019/pep/population?get=NAME,POP&for=us:*")
+                .append("&key=").append(Constants.CENSUS_API_KEY);
+
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
+                response -> APIHelpers.handleResponse(
+                        Constants.POPULATION, response, "", "", cb),
+                error -> Log.d(TAG, "onErrorResponse: " + error));
+        stringRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        RequestSingleton.getInstance(context.getApplicationContext()).addToRequestQueue(stringRequest);
     }
 }
