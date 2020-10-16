@@ -82,7 +82,11 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void getJsonException(Exception exception) {
+            public void getJsonException(Exception exception) {}
+
+            @Override
+            public void getString(String response) {
+
             }
         });
         Requests.getCountyHistorical(this, "whatcom,washington", "30", new VolleyJsonCallback() {
@@ -92,7 +96,11 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void getJsonException(Exception exception) {
+            public void getJsonException(Exception exception) {}
+
+            @Override
+            public void getString(String response) {
+
             }
         });
         Requests.getUSHistorical(this, "1", new VolleyJsonCallback() {
@@ -102,8 +110,24 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void getJsonException(Exception exception) {
+            public void getJsonException(Exception exception) {}
 
+            @Override
+            public void getString(String response) {}
+        });
+
+        Requests.getCountyPopulation(this, "pierce,washington", new VolleyJsonCallback() {
+            @Override
+            public void getJsonData(JSONObject response) {
+                Log.d(TAG, "getJsonData: " + response);
+            }
+
+            @Override
+            public void getJsonException(Exception exception) {}
+
+            @Override
+            public void getString(String response) {
+                Log.d(TAG, "getStringData: " + response);
             }
         });
     }
