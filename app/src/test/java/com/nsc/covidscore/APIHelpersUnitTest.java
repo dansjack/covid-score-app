@@ -3,14 +3,13 @@ package com.nsc.covidscore;
 import com.nsc.covidscore.api.APIHelpers;
 import com.nsc.covidscore.api.VolleyJsonCallback;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public final class APIHelpersUnitTest {
+public class APIHelpersUnitTest {
     private static final String COUNTY_OBJECT =
             "[{province: texas, county: king}, {province: maryland, county: king}, " +
                     "{province: alabama, county: king}, {province: nebraska, county: king}, " +

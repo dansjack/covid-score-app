@@ -100,7 +100,7 @@ public class APIHelpers {
      * @param location the county and state the user selected, separated by a comma. e.g. "king,washington"
      * @return a JSONArray of the Name, Population, State FIPS, and County FIPS
      */
-    public static JSONArray getLocationFIPS(Context context, String location) {
+    public static String[] getLocationFIPS(Context context, String location) {
         String jsonString = getJsonFromFile(context, "county_fips.json");
         if (jsonString != null) {
             try {
@@ -113,7 +113,13 @@ public class APIHelpers {
                     JSONArray fipsLocationArray = fipsArray.getJSONArray(i);
                     String fipsArrayLocationName = fipsLocationArray.getString(0);
                     if (location.equals(fipsArrayLocationName)) {
-                        return fipsLocationArray;
+                        int j = 0;
+                        String[] resultArray = new String[fipsLocationArray.length()];
+                        while (j < fipsLocationArray.length()) {
+                            resultArray[j] = fipsLocationArray.getString(j);
+                            j++;
+                        }
+                        return resultArray;
                     }
                     i++;
                 }
