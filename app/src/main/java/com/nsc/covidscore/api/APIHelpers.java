@@ -102,9 +102,7 @@ public class APIHelpers {
      */
     public static JSONArray getLocationFIPS(Context context, String location) {
         String jsonString = getJsonFromFile(context, "county_fips.json");
-        if (jsonString == null) {
-            return null;
-        } else {
+        if (jsonString != null) {
             try {
                 location = formatLocationFIPS(location);
                 JSONArray fipsArray = new JSONArray(jsonString);
