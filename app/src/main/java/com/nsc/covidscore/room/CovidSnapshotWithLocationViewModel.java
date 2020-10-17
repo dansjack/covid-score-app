@@ -20,15 +20,24 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
         repo = new CovidSnapshotWithLocationRepository(application);
     }
 
-    public Integer insertLocation(Location location) { return repo.insertLocation(location); }
+    public void insertLocation(Location location) { repo.insertLocation(location); }
 
-    public void insertCovidSnapshot(CovidSnapshot covidSnapshot) { repo.insertCovidSnapshot(covidSnapshot); }
+    public void insertCovidSnapshot(CovidSnapshot covidSnapshot) {
+        // TODO: fix the timing issue in Main so we can add this back
+//        if (covidSnapshot.getLocationId() != null) {
+            repo.insertCovidSnapshot(covidSnapshot);
+//        }
+    }
 
     public LiveData<CovidSnapshot> getLatestCovidSnapshotByLocation(Location location) { return repo.getLatestCovidSnapshotByLocation(location); }
 
     public LiveData<CovidSnapshot> getLatestCovidSnapshot() { return repo.getLatestSnapshot(); }
 
+    public CovidSnapshot getSavedCovidSnapshot() { return repo.getSavedCovidSnapshot().getValue(); }
+
     public LiveData<Location> getLatestLocation() { return repo.getLatestLocation(); }
+
+    public Location getSavedLocation() { return repo.getSavedLocation().getValue(); }
 
     public LiveData<List<Location>> getAllLocations() { return repo.getAllLocations(); }
 

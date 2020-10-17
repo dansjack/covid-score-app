@@ -4,7 +4,6 @@ import com.nsc.covidscore.Constants;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Calendar;
 
 public class EntityListener implements PropertyChangeListener {
 
@@ -17,13 +16,11 @@ public class EntityListener implements PropertyChangeListener {
     private Integer totalState;
     private Integer activeCountry;
     private Integer totalCountry;
-    private Calendar lastUpdatedSnapshot;
 
     // Location State
     private Integer locationIdPK;
     private String county;
     private String state;
-    private Calendar lastUpdatedLocation;
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
@@ -53,9 +50,6 @@ public class EntityListener implements PropertyChangeListener {
             case Constants.TOTAL_COUNTRY:
                 this.setTotalCountry((Integer) evt.getNewValue());
                 break;
-//            case Constants.LAST_UPDATED_SNAPSHOT:
-//                this.setLastUpdatedSnapshot((Calendar) evt.getNewValue());
-//                break;
             case Constants.LOCATION_ID_PK:
                 this.setLocationIdPK((Integer) evt.getNewValue());
                 break;
@@ -65,9 +59,6 @@ public class EntityListener implements PropertyChangeListener {
             case Constants.STATE:
                 this.setState((String) evt.getNewValue());
                 break;
-//            case Constants.LAST_UPDATED_LOCATION:
-//                this.setLastUpdatedLocation((Calendar) evt.getNewValue());
-//                break;
         }
     }
 
@@ -87,14 +78,10 @@ public class EntityListener implements PropertyChangeListener {
 
     private void setTotalCountry(Integer totalCountry) { this.totalCountry = totalCountry; }
 
-    private void setLastUpdatedSnapshot(Calendar lastUpdatedSnapshot) { this.lastUpdatedSnapshot = lastUpdatedSnapshot; }
-
     private void setLocationIdPK(Integer locationIdPK) { this.locationIdPK = locationIdPK; }
 
     private void setCounty(String county) { this.county = county; }
 
     private void setState(String state) { this.state = state; }
-
-    private void setLastUpdatedLocation(Calendar lastUpdatedLocation) { this.lastUpdatedLocation = lastUpdatedLocation; }
 
 }

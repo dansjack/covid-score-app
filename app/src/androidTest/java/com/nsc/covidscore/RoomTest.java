@@ -84,7 +84,7 @@ public class RoomTest {
     }
 
     @Test
-    public void locationDao_getMostRecent() throws InterruptedException {
+    public void locationDao_getLatest() throws InterruptedException {
         Location mostRecentLocation = LiveDataTestUtil.getValue(locationDao.getLatest());
         assertNotNull(mostRecentLocation);
     }
