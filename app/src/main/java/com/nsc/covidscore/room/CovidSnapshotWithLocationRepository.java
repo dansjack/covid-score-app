@@ -28,21 +28,29 @@ public class CovidSnapshotWithLocationRepository {
 
         if (currentSnapshot != null && currentSnapshot.getValue() != null) {
             currentLocation = locationDao.findByLocationId(currentSnapshot.getValue().getLocationId());
+        } else {
+            currentLocation = locationDao.getLatest();
         }
     }
 
     void insertLocation(Location location) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            if ((currentLocation.getValue() == null || !currentLocation.getValue().equals(location)) && locationDao.findByCountyAndState(location.getCounty(), location.getState()).getValue() == null) {
+            if ((currentLocation.getValue() == null || !currentLocation.getValue().equals(location))
+                    && (locationDao.findByCountyAndState(location.getCounty(), location.getState()).getValue() == null)
+                    && (allLocations.getValue() == null || !Location.alreadyInRoom(location, allLocations.getValue()))) {
                 int newId = (int) locationDao.insert(location);
-                currentLocation = locationDao.getLatest();
-                Location insertedLocation = currentLocation.getValue();
-                insertedLocation.setLocationId((Integer) newId);
-                Log.e(TAG, "Inserted Location: id: " + insertedLocation.getLocationId() + ", " + insertedLocation.toApiFormat());
+
+                if (newId != 0) {
+                    Log.e(TAG, "Inserted Location: id: " + newId + ", " + location.toApiFormat());
+                } else {
+                    Log.e(TAG, "Failed to insert location: " + location.toApiFormat());
+                }
             } else {
                 Log.e(TAG, "Room already contains location: " + location.toApiFormat());
             }
         });
+        currentLocation = locationDao.getLatest();
+        allLocations = locationDao.getAll();
     }
 
     void insertCovidSnapshot(CovidSnapshot covidSnapshot) {
@@ -55,8 +63,8 @@ public class CovidSnapshotWithLocationRepository {
             } else {
                 Log.e(TAG, "Did not insert: " + covidSnapshot.toString());
             }
-            currentSnapshot = covidSnapshotDao.getLatest();
         });
+        currentSnapshot = covidSnapshotDao.getLatest();
     }
 
     LiveData<CovidSnapshot> getLatestCovidSnapshotByLocation(Location location) {
@@ -64,16 +72,18 @@ public class CovidSnapshotWithLocationRepository {
     }
 
     LiveData<CovidSnapshot> getLatestSnapshot() {
-        //not sure this is necessary, since I'm saving the local variable on every insertion...
-        LiveData<CovidSnapshot> latestSnapshot = covidSnapshotDao.getLatest();
-        this.currentSnapshot = latestSnapshot;
+        return covidSnapshotDao.getLatest();
+    }
+
+    LiveData<CovidSnapshot> getSavedCovidSnapshot() {
         return currentSnapshot;
     }
 
     LiveData<Location> getLatestLocation() {
-        //not sure this is necessary, since I'm saving the local variable on every insertion...
-        LiveData<Location> latestLocation = locationDao.getLatest();
-        this.currentLocation = latestLocation;
+        return locationDao.getLatest();
+    }
+
+    LiveData<Location> getSavedLocation() {
         return currentLocation;
     }
 

@@ -38,7 +38,7 @@ public interface LocationDao {
     @Query("SELECT * FROM location WHERE location_id = :locationId LIMIT 1")
     LiveData<CovidSnapshotWithLocation> getCovidSnapshotsWithLocationByLocationId(Integer locationId);
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insert(Location location);
 
 }

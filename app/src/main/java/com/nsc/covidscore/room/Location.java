@@ -11,6 +11,7 @@ import com.nsc.covidscore.Constants;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Calendar;
+import java.util.List;
 
 @Entity(tableName = "location")
 public class Location {
@@ -79,7 +80,20 @@ public class Location {
     public boolean hasFieldsSet() { return this.county != null && this.state != null; }
 
     public boolean equals(Location other) {
+        return this.hasSameData(other) && this.locationId.equals(other.locationId);
+    }
+
+    public boolean hasSameData(Location other) {
         return this.state.equals(other.state) && this.county.equals(other.county);
+    }
+
+    public static boolean alreadyInRoom(Location location, List<Location> allLocations) {
+        for (Location savedLocation : allLocations) {
+            if (savedLocation.hasSameData(location)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

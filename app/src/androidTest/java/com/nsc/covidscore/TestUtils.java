@@ -18,7 +18,7 @@ public class TestUtils {
     // constructors
     public static Location createLocation() {
         Location location = new Location(testCounty, testState);
-        location.setLocationId(resourceId1);
+        //location.setLocationId(resourceId1);
         return location;
     }
 

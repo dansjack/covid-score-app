@@ -16,7 +16,6 @@ import com.nsc.covidscore.api.Requests;
 import com.nsc.covidscore.api.VolleyJsonCallback;
 import com.nsc.covidscore.room.CovidSnapshot;
 import com.nsc.covidscore.room.CovidSnapshotWithLocationViewModel;
-import com.nsc.covidscore.room.EntityListener;
 import com.nsc.covidscore.room.Location;
 
 import org.json.JSONException;
@@ -53,8 +52,8 @@ public class MainActivity extends AppCompatActivity {
         vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel.class);
 
         // Set Room Data, if saved
-        currentSnapshot = vm.getLatestCovidSnapshot().getValue();
-        currentLocation = vm.getLatestLocation().getValue();
+        currentSnapshot = vm.getSavedCovidSnapshot();
+        currentLocation = vm.getSavedLocation();
 
         // Attempts to save CovidSnapshot to DB whenever the local variable is changed
         // - if the fields aren't fully set, it will not insert
@@ -62,8 +61,13 @@ public class MainActivity extends AppCompatActivity {
             currentSnapshot = new CovidSnapshot();
         }
         currentSnapshot.setListener(e -> {
-            saveSnapshotToRoom();
-            Log.e(TAG, "listener on currentSnapshot invoked!!");
+            if (currentSnapshot.hasFieldsSet()) {
+                try {
+                    saveSnapshotToRoom();
+                } catch (InterruptedException err) {
+                    Log.d(TAG, err.getMessage());
+                }
+            }            Log.d(TAG, "listener on currentSnapshot invoked!!");
         });
 
         // temp test data - remove
@@ -76,10 +80,20 @@ public class MainActivity extends AppCompatActivity {
 
         // Attempts to save Location to DB whenever the local variable is changed
         // - if the fields aren't fully set, it will not insert
-        if (currentLocation.hasFieldsSet()) { saveLocationToRoom(); }
+        if (currentLocation.hasFieldsSet()) {
+            try {
+                saveLocationToRoom();
+            } catch (InterruptedException e) {
+                Log.d(TAG, e.getMessage());
+            }
+        }
         currentLocation.setListener(e -> {
-            saveLocationToRoom();
-            Log.e(TAG, "listener on currentLocation invoked!!");
+            try {
+                saveLocationToRoom();
+            } catch (InterruptedException err) {
+                Log.d(TAG, err.getMessage());
+            }
+            Log.d(TAG, "listener on currentLocation invoked!!");
         });
 
         makeApiCalls(tempLocation);
@@ -102,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void setRoomCovidSnapshotObserved() {
         // Set Listener for Current Covid Snapshot - Add Else - Dialog
-        if (!roomCovidSnapshotObserved && vm.getLatestCovidSnapshot() != null) {
+        if (!roomCovidSnapshotObserved && vm.getLatestCovidSnapshot().getValue() != null) {
             vm.getLatestCovidSnapshot().observe(this, new Observer<CovidSnapshot>() {
                 @Override
                 public void onChanged(@Nullable final CovidSnapshot covidSnapshotFromDb) {
@@ -144,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
                         currentSnapshot.setLocationId(locationFromDb.getLocationId());
                         Log.d(TAG, "new location set to :" + locationFromDb.toApiFormat());
                     } else {
+                        Log.e(TAG, "Error with location: " + locationFromDb.toApiFormat());
                         // no location is saved
                         // pop up dialog
                     }
@@ -159,16 +174,20 @@ public class MainActivity extends AppCompatActivity {
             public void getJsonData(JSONObject response) throws JSONException {
                 if (currentSnapshot == null) { currentSnapshot = new CovidSnapshot(); }
                 // Add Location to Database (if not already present)
-                Integer locationId = vm.insertLocation(location);
-                currentSnapshot.setLocationId(locationId);
+                vm.insertLocation(location);
                 JSONObject stats = (JSONObject) response.get("stats");
                 Integer confirmed = (Integer) stats.get("confirmed");
                 Integer deaths = (Integer) stats.get("deaths");
                 // TODO: calculate better estimate of active cases
                 Integer activeCounty = confirmed - deaths;
                 currentSnapshot.setCountyActiveCount(activeCounty);
-                if (currentSnapshot.hasFieldsSet()) { saveSnapshotToRoom(); }
-                Log.d(TAG, "getJsonData: county " + response);
+                if (currentSnapshot.hasFieldsSet()) {
+                    try {
+                        saveSnapshotToRoom();
+                    } catch (InterruptedException e) {
+                        Log.d(TAG, e.getMessage());
+                    }
+                }                Log.d(TAG, "getJsonData: county " + response);
             }
 
             @Override
@@ -179,9 +198,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void getJsonData(JSONObject response) throws JSONException {
                 if (currentSnapshot == null) { currentSnapshot = new CovidSnapshot(); }
+                // Add Location to Database (if not already present)
+                vm.insertLocation(location);
                 Integer activeState = (Integer) response.get("active");
                 currentSnapshot.setStateActiveCount(activeState);
-                if (currentSnapshot.hasFieldsSet()) { saveSnapshotToRoom(); }
+                if (currentSnapshot.hasFieldsSet()) {
+                    try {
+                        saveSnapshotToRoom();
+                    } catch (InterruptedException e) {
+                        Log.d(TAG, e.getMessage());
+                    }
+                }
                 Log.d(TAG, "getJsonData: state " + response);
             }
 
@@ -204,6 +231,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void getJsonData(JSONObject response) throws JSONException, IOException {
                 if (currentSnapshot == null) { currentSnapshot = new CovidSnapshot(); }
+                // Add Location to Database (if not already present)
+                vm.insertLocation(location);
                 JSONObject timeline = response.getJSONObject("timeline");
                 HashMap<String, Integer> totalMap = new ObjectMapper().readValue((timeline.get("cases")).toString(), HashMap.class);
 
@@ -222,8 +251,13 @@ public class MainActivity extends AppCompatActivity {
                     recoveredCountry = (Integer) value;
                 }
                 currentSnapshot.setCountryActiveCount(totalCountry - deathCountry - recoveredCountry);
-                if (currentSnapshot.hasFieldsSet()) { saveSnapshotToRoom(); }
-                Log.d(TAG, "getJsonData: country " + response);
+                if (currentSnapshot.hasFieldsSet()) {
+                    try {
+                        saveSnapshotToRoom();
+                    } catch (InterruptedException e) {
+                        Log.d(TAG, e.getMessage());
+                    }
+                }                Log.d(TAG, "getJsonData: country " + response);
             }
 
             @Override
@@ -233,10 +267,15 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void saveSnapshotToRoom() {
+    public void saveSnapshotToRoom() throws InterruptedException {
         if (currentSnapshot.hasFieldsSet()) {
             // make sure to set LocationIdFK on Snapshot to current LocationIdPK
-            if ((currentSnapshot.getLocationId() == null || currentSnapshot.getLocationId() == 0) && currentLocation.getLocationId() != null) {
+            if (currentSnapshot.getLocationId() == null || currentSnapshot.getLocationId() == 0) {
+                if (currentLocation.getLocationId() == null) {
+                    saveLocationToRoom();
+                    // timing issue here?
+                    currentLocation = vm.getLatestLocation().getValue();
+                }
                 currentSnapshot.setLocationId(currentLocation.getLocationId());
             }
             Calendar calendar = Calendar.getInstance();
@@ -249,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "saveSnapshotToRoom invoked");
     }
 
-    public void saveLocationToRoom() {
+    public void saveLocationToRoom() throws InterruptedException {
         if (currentLocation.hasFieldsSet()) {
             Calendar calendar = Calendar.getInstance();
             currentLocation.setLastUpdated(calendar);
