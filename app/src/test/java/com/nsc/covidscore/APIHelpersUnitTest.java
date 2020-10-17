@@ -70,7 +70,7 @@ public final class APIHelpersUnitTest {
 
             @Override
             public void getJsonException(Exception exception) {
-                assertEquals(TEST_JSONOBJECT_EXCEPTION, exception.toString());
+                assertEquals(TEST_NOTFOUND_EXCEPTION, exception.toString());
             }
 
             @Override
