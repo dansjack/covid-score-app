@@ -41,6 +41,9 @@ public final class APIHelpersUnitTest {
             "A JSONArray text must start with '[' at 1 [character 2 line 1]").toString();
     private static final String TEST_NOTFOUND_EXCEPTION =
             new JSONException(Constants.ERROR_STATE_COUNTY).toString();
+    private static final String TEST_POPULATION = "7614893";
+    private static final String POPULATION_ARRAY = "[[\"NAME\",\"POP\",\"state\"],\n" +
+            "    [\"Washington\",\"7614893\",\"53\"]]";
 
     @Test
     public void handleResponse_country(){
@@ -55,10 +58,8 @@ public final class APIHelpersUnitTest {
             public void getJsonException(Exception exception) {}
 
             @Override
-            public void getString(String response) {
-
-            }
-                });
+            public void getString(String response) {}
+        });
     }
 
     @Test
@@ -74,10 +75,8 @@ public final class APIHelpersUnitTest {
             }
 
             @Override
-            public void getString(String response) {
-
-            }
-                });
+            public void getString(String response) {}
+        });
     }
 
     @Test
@@ -94,9 +93,7 @@ public final class APIHelpersUnitTest {
                     public void getJsonException(Exception exception) {}
 
                     @Override
-                    public void getString(String response) {
-
-                    }
+                    public void getString(String response) {}
                 });
     }
 
@@ -113,9 +110,7 @@ public final class APIHelpersUnitTest {
                     public void getJsonException(Exception exception) {}
 
                     @Override
-                    public void getString(String response) {
-
-                    }
+                    public void getString(String response) {}
                 });
     }
 
@@ -132,9 +127,7 @@ public final class APIHelpersUnitTest {
                     public void getJsonException(Exception exception) {}
 
                     @Override
-                    public void getString(String response) {
-
-                    }
+                    public void getString(String response) {}
                 });
     }
 
@@ -151,9 +144,7 @@ public final class APIHelpersUnitTest {
                     }
 
                     @Override
-                    public void getString(String response) {
-
-                    }
+                    public void getString(String response) {}
                 });
     }
 
@@ -234,6 +225,22 @@ public final class APIHelpersUnitTest {
 
                     @Override
                     public void getString(String response) {}
+                });
+    }
+
+    @Test
+    public void handleResponse_population(){
+        APIHelpers.handleResponse(
+                Constants.COUNTY_POPULATION, POPULATION_ARRAY, "", "", new VolleyJsonCallback() {
+                    @Override
+                    public void getJsonData(JSONObject response) {}
+                    @Override
+                    public void getJsonException(Exception exception) {}
+
+                    @Override
+                    public void getString(String response) {
+                        assertEquals(TEST_POPULATION, response);
+                    }
                 });
     }
 }
