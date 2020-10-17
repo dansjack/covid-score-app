@@ -229,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
             public void getString(String response) {}
         });
 
-        Requests.getCountyPopulation(this, "king,washington", new VolleyJsonCallback() {
+        Requests.getCountyPopulation(this, location.toApiFormat(), new VolleyJsonCallback() {
             @Override
             public void getJsonData(JSONObject response) {}
 
@@ -242,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Requests.getStatePopulation(this, "king,washington", new VolleyJsonCallback() {
+        Requests.getStatePopulation(this, location.toApiFormat(), new VolleyJsonCallback() {
             @Override
             public void getJsonData(JSONObject response) {}
 

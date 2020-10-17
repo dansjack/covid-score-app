@@ -2,7 +2,6 @@ package com.nsc.covidscore.api;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.util.Log;
 
 import com.nsc.covidscore.Constants;
 
@@ -107,7 +106,7 @@ public class APIHelpers {
             return null;
         } else {
             try {
-                location = formatLocationFIPS(location, "FIPS");
+                location = formatLocationFIPS(location);
                 JSONArray fipsArray = new JSONArray(jsonString);
                 int fipsArrayLen = fipsArray.length();
                 int i = 0;
@@ -115,7 +114,7 @@ public class APIHelpers {
                 while (i < fipsArrayLen) {
                     JSONArray fipsLocationArray = fipsArray.getJSONArray(i);
                     String fipsArrayLocationName = fipsLocationArray.getString(0);
-                    if (location != null && location.equals(fipsArrayLocationName)) {
+                    if (location.equals(fipsArrayLocationName)) {
                         return fipsLocationArray;
                     }
                     i++;
@@ -127,16 +126,11 @@ public class APIHelpers {
         return null;
     }
 
-    public static String formatLocationFIPS(String location, String type) {
+    public static String formatLocationFIPS(String location) {
         location = location.toLowerCase();
         String county = location.split(",")[0];
         String state = location.split(",")[1];
-
-        if (type.equals("FIPS")) {
-            county = county.substring(0, 1).toUpperCase() + county.substring(1);
-            state = state.substring(0, 1).toUpperCase() + state.substring(1);
-            return county + " County, " + state;
-        }
-        return null;
+        return county.substring(0, 1).toUpperCase() + county.substring(1) + " County, " +
+                state.substring(0, 1).toUpperCase() + state.substring(1);
     }
 }

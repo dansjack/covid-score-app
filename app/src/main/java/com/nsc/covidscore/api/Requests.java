@@ -21,7 +21,6 @@ public class Requests {
      * @param cb callback class (see VolleyJsonCallback interface)
      */
     public static void getCounty(Context context, String location, final VolleyJsonCallback cb) {
-        location = location.toLowerCase();
         final String county = location.split(",")[0];
         final String state = location.split(",")[1];
         String url = "https://corona.lmao.ninja/v2/jhucsse/counties/" + county;
@@ -39,7 +38,6 @@ public class Requests {
     }
 
     public static void getState(Context context, String location, final VolleyJsonCallback cb) {
-        location = location.toLowerCase();
         final String county = location.split(",")[0];
         final String state = location.split(",")[1];
         String url = "https://disease.sh/v3/covid-19/states/" + state;
@@ -71,7 +69,7 @@ public class Requests {
         final String county = location.split(",")[0];
         final String state = location.split(",")[1];
         String url = "https://corona.lmao.ninja/v2/historical/usacounties/" +
-                location.split(",")[1] + "?lastdays=" + days;
+                state + "?lastdays=" + days;
         final String TAG = Constants.COUNTY_HISTORICAL;
 
 
@@ -118,11 +116,10 @@ public class Requests {
         JSONArray fipsLocationArray = APIHelpers.getLocationFIPS(context, location);
         try {
             if (fipsLocationArray != null) {
-                String state = fipsLocationArray.getString(1);
-                String county = fipsLocationArray.getString(2);
                 StringBuilder url = new StringBuilder(
                         "https://api.census.gov/data/2019/pep/population?get=NAME,POP&for=county:")
-                        .append(county).append("&in=state:").append(state).append("&key=")
+                        .append(fipsLocationArray.getString(2)).append("&in=state:")
+                        .append(fipsLocationArray.getString(1)).append("&key=")
                         .append(Constants.CENSUS_API_KEY);
 
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
@@ -152,13 +149,10 @@ public class Requests {
         JSONArray fipsLocationArray = APIHelpers.getLocationFIPS(context, location);
         try {
             if (fipsLocationArray != null) {
-                String state = fipsLocationArray.getString(1);
-                Log.i(TAG, "getStatePopulation: " + state);
                 StringBuilder url = new StringBuilder(
                         "https://api.census.gov/data/2019/pep/population?get=NAME,POP&for=state:")
-                        .append(state).append("&key=").append(Constants.CENSUS_API_KEY);
-
-                Log.i(TAG, "getStatePopulation: " + url);
+                        .append(fipsLocationArray.getString(1)).append("&key=")
+                        .append(Constants.CENSUS_API_KEY);
 
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
                         response -> APIHelpers.handleResponse(
