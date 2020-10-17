@@ -38,6 +38,7 @@ public class CovidSnapshotWithLocationRepository {
             if ((currentLocation.getValue() == null || !currentLocation.getValue().equals(location))
                     && (locationDao.findByCountyAndState(location.getCounty(), location.getState()).getValue() == null)
                     && (allLocations.getValue() == null || !Location.alreadyInRoom(location, allLocations.getValue()))) {
+                // TODO: fix duplicate additions
                 int newId = (int) locationDao.insert(location);
 
                 if (newId != 0) {
@@ -55,6 +56,7 @@ public class CovidSnapshotWithLocationRepository {
 
     void insertCovidSnapshot(CovidSnapshot covidSnapshot) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
+            Location savedLocation = currentLocation.getValue();
             if (currentSnapshot.getValue() == null || !currentSnapshot.getValue().hasSameData(covidSnapshot)) {
                 Calendar calendar = Calendar.getInstance();
                 covidSnapshot.setLastUpdated(calendar);

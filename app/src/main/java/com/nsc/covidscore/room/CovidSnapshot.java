@@ -127,9 +127,9 @@ public class CovidSnapshot extends Observable {
     public String toString() {
         SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
         return "Snapshot ID: " + covidSnapshotId + " Location ID: " + locationId + " Active County: " + countyActiveCount
-                + "Total County: " + countyTotalPopulation + " Active State: " + stateActiveCount
-                + "Total State: " + stateTotalPopulation + " Active Country: " + countryActiveCount
-                + "Total Country: " + countryTotalPopulation
+                + " Total County: " + countyTotalPopulation + " Active State: " + stateActiveCount
+                + " Total State: " + stateTotalPopulation + " Active Country: " + countryActiveCount
+                + " Total Country: " + countryTotalPopulation
                 + " Last Updated: " + (lastUpdated != null ? date_format.format(lastUpdated.getTime()) : "null");
     }
 
@@ -148,6 +148,7 @@ public class CovidSnapshot extends Observable {
     }
 
     public boolean hasSameData(CovidSnapshot other) {
+        if (this.locationId == null) { return false; }
         boolean locationsMatch = this.locationId.equals(other.locationId);
         boolean countsMatch = ((this.countyActiveCount.equals(other.countyActiveCount)) && (this.stateActiveCount.equals(other.stateActiveCount))) && (this.countryActiveCount.equals(other.countryActiveCount));
 //        boolean populationsMatch = ((this.countyTotalPopulation.equals(other.countyTotalPopulation)) && this.stateTotalPopulation.equals(other.stateTotalPopulation)) && this.countryTotalPopulation.equals(other.countryTotalPopulation);
