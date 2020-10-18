@@ -34,7 +34,5 @@ public class MainActivityTest {
     public void loadsViews() {
         onView(withId(R.id.hello_world))
                 .check(matches(isDisplayed()));
-        onView(withId(R.id.hello_world))
-                .check(matches(withText("Hello World!")));
     }
 }
