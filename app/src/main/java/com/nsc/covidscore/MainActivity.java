@@ -18,11 +18,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         mFragmentAdapter = new FragmentAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.frag_placeholder);
         setupViewPager(mViewPager);
-
 
         Log.d(TAG, "onCreate invoked");
     }
@@ -39,18 +37,6 @@ public class MainActivity extends AppCompatActivity {
     public void setViewPager(int fragmentNumber){
         mViewPager.setCurrentItem(fragmentNumber);
     }
-
-//    public void onLocationNavBtnClick(View view) {
-//        // Begin the transaction
-//        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//        // Replace the contents of the container with the new fragment
-//        // or         ft.replace(R.id.fragment_placeholder, new LocationSelectionFragment());
-//        ft.add(R.id.fragment_placeholder, new LocationSelectionFragment());
-//        // Complete the changes added above
-//        ft.commit();
-//        setContentView(R.layout.fragment_location_selection);
-//    }
-
 
     @Override
     protected void onRestart() {

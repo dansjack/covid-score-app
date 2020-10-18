@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -50,11 +49,7 @@ public class LocationFindOptionsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (savedInstanceState == null){
-//            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-//            ft.replace(R.id.frag_placeholder, new LocationFindOptionsFragment());
-//            ft.commit();
-//        }
+
         if (getArguments() != null) {
 //            mParam1 = getArguments().getString(ARG_PARAM1);
         }
@@ -64,7 +59,6 @@ public class LocationFindOptionsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_location_find_options, container, false);
         Log.d(TAG, "onCreateView invoked");
 
@@ -84,8 +78,6 @@ public class LocationFindOptionsFragment extends Fragment {
         btnNavLocationSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "Going to Manual location selection", Toast.LENGTH_SHORT).show();
-
                 ((MainActivity) getActivity()).setViewPager(1);
             }
         });
@@ -93,10 +85,10 @@ public class LocationFindOptionsFragment extends Fragment {
         btnNavLocationGps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "Going to GPS location selection", Toast.LENGTH_SHORT).show();
                 ((MainActivity) getActivity()).setViewPager(2);
             }
         });
+
         Log.d(TAG, "onViewCreated: invoked");
     }
 }

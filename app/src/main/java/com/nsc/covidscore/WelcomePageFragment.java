@@ -19,8 +19,6 @@ public class WelcomePageFragment extends Fragment {
     // TODO:Add fragment_location_find_options
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 //    private static final String ARG_PARAM1 = "param1";
-
-    // TODO: Rename and change types of parameters
 //    private String mParam1;
 
     public WelcomePageFragment() {
@@ -32,15 +30,13 @@ public class WelcomePageFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment WelcomeMessageFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static WelcomePageFragment newInstance(String param1, String param2) {
+    // TODO: add parameter(s) or delete
+    public static WelcomePageFragment newInstance(String param1) {
         WelcomePageFragment fragment = new WelcomePageFragment();
         Bundle args = new Bundle();
 //        args.putString(ARG_PARAM1, param1);
-
         fragment.setArguments(args);
         Log.d(TAG, "newInstance: invoked");
         return fragment;
