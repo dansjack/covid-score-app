@@ -288,11 +288,7 @@ public class MainActivity extends AppCompatActivity {
                 vm.insertLocation(location);
                 currentSnapshot.setCountyTotalPopulation(Integer.parseInt(response));
                 if (currentSnapshot.hasFieldsSet()) {
-                    try {
-                        saveSnapshotToRoom();
-                    } catch (InterruptedException e) {
-                        Log.d(TAG, e.getMessage());
-                    }
+                    saveSnapshotToRoom();
                 }
                 Log.d(TAG, "getStringData: County " + response);
             }
@@ -310,11 +306,7 @@ public class MainActivity extends AppCompatActivity {
                 vm.insertLocation(location);
                 currentSnapshot.setStateTotalPopulation(Integer.parseInt(response));
                 if (currentSnapshot.hasFieldsSet()) {
-                    try {
-                        saveSnapshotToRoom();
-                    } catch (InterruptedException e) {
-                        Log.d(TAG, e.getMessage());
-                    }
+                    saveSnapshotToRoom();
                 }
                 Log.d(TAG, "getStringData: State  " + response);
             }
@@ -333,11 +325,7 @@ public class MainActivity extends AppCompatActivity {
                 vm.insertLocation(location);
                 currentSnapshot.setCountryTotalPopulation(Integer.parseInt(response));
                 if (currentSnapshot.hasFieldsSet()) {
-                    try {
-                        saveSnapshotToRoom();
-                    } catch (InterruptedException e) {
-                        Log.d(TAG, e.getMessage());
-                    }
+                    saveSnapshotToRoom();
                 }
                 Log.d(TAG, "getStringData: Country " + response);
             }
