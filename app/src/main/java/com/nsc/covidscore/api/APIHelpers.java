@@ -111,7 +111,7 @@ public class APIHelpers {
 
                 while (i < fipsArrayLen) {
                     JSONArray fipsLocationArray = fipsArray.getJSONArray(i);
-                    String fipsArrayLocationName = fipsLocationArray.getString(0);
+                    String fipsArrayLocationName = fipsLocationArray.getString(0).toLowerCase();
                     if (location.equals(fipsArrayLocationName)) {
                         int j = 0;
                         String[] resultArray = new String[fipsLocationArray.length()];
@@ -134,7 +134,10 @@ public class APIHelpers {
         location = location.toLowerCase();
         String county = location.split(",")[0];
         String state = location.split(",")[1];
-        return county.substring(0, 1).toUpperCase() + county.substring(1) + " County, " +
-                state.substring(0, 1).toUpperCase() + state.substring(1);
+        String countyString = Constants.LOCATION_FIPS_COUNTY_STRING;
+        if (county.equals(Constants.DISTRICT_OF_COLUMBIA)) {
+            countyString = ", ";
+        }
+        return county + countyString + state;
     }
 }

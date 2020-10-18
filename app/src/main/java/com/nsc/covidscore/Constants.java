@@ -8,6 +8,8 @@ public class Constants {
     public static final String COUNTRY = "country";
     public static final String COUNTRY_HISTORICAL = "countryHistorical";
     public static final String COUNTRY_POPULATION = "countryPopulation";
+    public static final String DISTRICT_OF_COLUMBIA = "district of columbia";
+    public static final String LOCATION_FIPS_COUNTY_STRING = " county, ";
     public static final String POPULATION = "population";
     public static final String PROVINCE = "province";
     public static final String STATE = "state";
