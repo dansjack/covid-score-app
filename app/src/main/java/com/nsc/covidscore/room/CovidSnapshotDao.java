@@ -23,7 +23,7 @@ public interface CovidSnapshotDao {
     @Query("SELECT * FROM covid_snapshot ORDER BY last_updated DESC LIMIT 1")
     LiveData<CovidSnapshot> getLatest();
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(CovidSnapshot covidSnapshot);
 
 }

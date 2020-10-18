@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 import com.nsc.covidscore.Constants;
@@ -13,7 +14,8 @@ import java.beans.PropertyChangeSupport;
 import java.util.Calendar;
 import java.util.List;
 
-@Entity(tableName = "location")
+@Entity(tableName = "location",
+    indices = {@Index(value = {"county", "state"}, unique = true)})
 public class Location {
 
     @NonNull
