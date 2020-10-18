@@ -135,10 +135,10 @@ public class CovidSnapshot extends Observable {
 
     public boolean hasFieldsSet() {
         boolean countsNotNull = countyActiveCount != null && (stateActiveCount != null && countryActiveCount != null);
-//        boolean populationsNotNull = countyTotalPopulation != null && (stateTotalPopulation != null && countryTotalPopulation != null);
+        boolean populationsNotNull = countyTotalPopulation != null && (stateTotalPopulation != null && countryTotalPopulation != null);
         // TODO: change this if the pandemic ends :)
         boolean countryNotZero = countryActiveCount != null && countryActiveCount != 0;
-        return (countsNotNull && true) && countryNotZero;
+        return (countsNotNull && populationsNotNull) && countryNotZero;
     }
 
     public boolean equals(CovidSnapshot other) {
