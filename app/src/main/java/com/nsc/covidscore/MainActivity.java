@@ -185,7 +185,8 @@ public class MainActivity extends AppCompatActivity {
                     } catch (InterruptedException e) {
                         Log.d(TAG, e.getMessage());
                     }
-                }                Log.d(TAG, "getJsonData: county " + response);
+                }
+                Log.d(TAG, "getJsonData: county " + response);
             }
 
             @Override
@@ -230,9 +231,7 @@ public class MainActivity extends AppCompatActivity {
             public void getJsonException(Exception exception) {}
 
             @Override
-            public void getString(String response) {
-
-            }
+            public void getString(String response) {}
         });
         Requests.getUSHistorical(this, "1", new VolleyJsonCallback() {
             @Override
@@ -273,7 +272,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void getString(String response) {}
         });
-
         Requests.getCountyPopulation(this, location.toApiFormat(), new VolleyJsonCallback() {
             @Override
             public void getJsonData(JSONObject response) {}
@@ -283,10 +281,19 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void getString(String response) {
+                if (currentSnapshot == null) { currentSnapshot = new CovidSnapshot(); }
+                vm.insertLocation(location);
+                currentSnapshot.setCountyTotalPopulation(Integer.parseInt(response));
+                if (currentSnapshot.hasFieldsSet()) {
+                    try {
+                        saveSnapshotToRoom();
+                    } catch (InterruptedException e) {
+                        Log.d(TAG, e.getMessage());
+                    }
+                }
                 Log.d(TAG, "getStringData: County " + response);
             }
         });
-
         Requests.getStatePopulation(this, location.toApiFormat(), new VolleyJsonCallback() {
             @Override
             public void getJsonData(JSONObject response) {}
@@ -296,6 +303,16 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void getString(String response) {
+                if (currentSnapshot == null) { currentSnapshot = new CovidSnapshot(); }
+                vm.insertLocation(location);
+                currentSnapshot.setStateTotalPopulation(Integer.parseInt(response));
+                if (currentSnapshot.hasFieldsSet()) {
+                    try {
+                        saveSnapshotToRoom();
+                    } catch (InterruptedException e) {
+                        Log.d(TAG, e.getMessage());
+                    }
+                }
                 Log.d(TAG, "getStringData: State  " + response);
             }
         });
@@ -309,6 +326,16 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void getString(String response) {
+                if (currentSnapshot == null) { currentSnapshot = new CovidSnapshot(); }
+                vm.insertLocation(location);
+                currentSnapshot.setCountryTotalPopulation(Integer.parseInt(response));
+                if (currentSnapshot.hasFieldsSet()) {
+                    try {
+                        saveSnapshotToRoom();
+                    } catch (InterruptedException e) {
+                        Log.d(TAG, e.getMessage());
+                    }
+                }
                 Log.d(TAG, "getStringData: Country " + response);
             }
         });
