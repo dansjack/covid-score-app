@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LocationSelectionFragment">
+    tools:context=".LocationSelectionPageFragment">
 
     <TextView
         android:id="@+id/location_entry_tv"
@@ -72,8 +72,7 @@
         android:text="@string/submit_btn"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/county_spinner"
-        android:onClick="onLocationSubmitClick"/>
+        app:layout_constraintTop_toBottomOf="@+id/county_spinner"/>
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier"
