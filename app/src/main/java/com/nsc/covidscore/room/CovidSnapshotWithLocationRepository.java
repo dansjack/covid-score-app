@@ -41,7 +41,7 @@ public class CovidSnapshotWithLocationRepository {
                 // TODO: fix duplicate additions
                 int newId = (int) locationDao.insert(location);
 
-                if (newId != 0) {
+                if (newId != 0 && newId != -1) {
                     Log.e(TAG, "Inserted Location: id: " + newId + ", " + location.toApiFormat());
                 } else {
                     Log.e(TAG, "Failed to insert location: " + location.toApiFormat());
@@ -57,7 +57,7 @@ public class CovidSnapshotWithLocationRepository {
     void insertCovidSnapshot(CovidSnapshot covidSnapshot) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             Location savedLocation = currentLocation.getValue();
-            if (currentSnapshot.getValue() == null || !currentSnapshot.getValue().hasSameData(covidSnapshot)) {
+            if ((currentSnapshot.getValue() == null || !currentSnapshot.getValue().hasSameData(covidSnapshot)) && covidSnapshot.getLocationId() != null) {
                 Calendar calendar = Calendar.getInstance();
                 covidSnapshot.setLastUpdated(calendar);
                 covidSnapshotDao.insert(covidSnapshot);
