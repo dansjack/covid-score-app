@@ -151,8 +151,8 @@ public class CovidSnapshot extends Observable {
         if (this.locationId == null) { return false; }
         boolean locationsMatch = this.locationId.equals(other.locationId);
         boolean countsMatch = ((this.countyActiveCount.equals(other.countyActiveCount)) && (this.stateActiveCount.equals(other.stateActiveCount))) && (this.countryActiveCount.equals(other.countryActiveCount));
-//        boolean populationsMatch = ((this.countyTotalPopulation.equals(other.countyTotalPopulation)) && this.stateTotalPopulation.equals(other.stateTotalPopulation)) && this.countryTotalPopulation.equals(other.countryTotalPopulation);
+        boolean populationsMatch = ((this.countyTotalPopulation.equals(other.countyTotalPopulation)) && this.stateTotalPopulation.equals(other.stateTotalPopulation)) && this.countryTotalPopulation.equals(other.countryTotalPopulation);
 
-        return locationsMatch && countsMatch;
+        return locationsMatch && populationsMatch && countsMatch;
     }
 }
