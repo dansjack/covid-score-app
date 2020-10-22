@@ -16,10 +16,6 @@ import androidx.fragment.app.Fragment;
 public class WelcomePageFragment extends Fragment {
 
     private static final String TAG = WelcomePageFragment.class.getSimpleName();
-    // TODO:Add fragment_location_find_options
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-//    private static final String ARG_PARAM1 = "param1";
-//    private String mParam1;
 
     public WelcomePageFragment() {
         // Required empty public constructor
@@ -29,14 +25,13 @@ public class WelcomePageFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
+//     * @param stateSelected Parameter 1.
+//     * @param countySelected Parameter 2.
      * @return A new instance of fragment WelcomeMessageFragment.
      */
-    // TODO: add parameter(s) or delete
-    public static WelcomePageFragment newInstance(String param1) {
+    public static WelcomePageFragment newInstance() {
         WelcomePageFragment fragment = new WelcomePageFragment();
         Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
         fragment.setArguments(args);
         Log.d(TAG, "newInstance: invoked");
         return fragment;
@@ -46,9 +41,6 @@ public class WelcomePageFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-//            mParam1 = getArguments().getString(ARG_PARAM1);
-        }
     }
 
     @Override

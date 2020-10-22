@@ -3,7 +3,9 @@ package com.nsc.covidscore;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 public class MainActivity extends AppCompatActivity {
@@ -11,7 +13,11 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private FragmentAdapter mFragmentAdapter;
+    private Fragment mFragment;
     private ViewPager mViewPager;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager){
         FragmentAdapter adapter = new FragmentAdapter(getSupportFragmentManager());
         adapter.addFragment(new WelcomePageFragment(), "WelcomePageFragment");
-        adapter.addFragment(new LocationSelectionPageFragment(), "LocationSelectionPageFragment");
-        adapter.addFragment(new GpsPageFragment(), "GpsPageFragment");
+//        adapter.addFragment(new LocationSelectionPageFragment(), "LocationSelectionPageFragment");
+//        adapter.addFragment(new GpsPageFragment(), "GpsPageFragment");
         adapter.addFragment(new RiskDetailPageFragment(), "RiskDetailPageFragment");
         viewPager.setAdapter(adapter);
     }
@@ -37,6 +43,12 @@ public class MainActivity extends AppCompatActivity {
     public void setViewPager(int fragmentNumber){
         mViewPager.setCurrentItem(fragmentNumber);
     }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
 
     @Override
     protected void onRestart() {

@@ -9,22 +9,32 @@
         android:id="@+id/fullscreen_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
+        android:gravity="center_horizontal"
         android:keepScreenOn="true"
         android:text="@string/app_welcome"
         android:textSize="50sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_gravity="top"/>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
-        <fragment
-            android:name="com.nsc.covidscore.LocationFindOptionsFragment"
-            android:id="@+id/location_btn_fragment_placeholder"
+        <androidx.fragment.app.FragmentContainerView
+            android:name="com.nsc.covidscore.LocationManualSelectionFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </fragment>
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:id="@+id/location_selection_fragment_placeholder">
+        </androidx.fragment.app.FragmentContainerView>
+
+<!--        <androidx.fragment.app.FragmentContainerView-->
+<!--            android:name="com.nsc.covidscore.LocationFindOptionsFragment"-->
+<!--            android:id="@+id/location_btn_fragment_placeholder"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_gravity="bottom">-->
+<!--        </androidx.fragment.app.FragmentContainerView>-->
     </FrameLayout>
 
 </FrameLayout>

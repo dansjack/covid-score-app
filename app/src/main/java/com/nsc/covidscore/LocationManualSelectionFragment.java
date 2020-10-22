@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -18,14 +19,21 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
+import java.util.Objects;
+
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class LocationSelectionPageFragment extends Fragment implements AdapterView.OnItemSelectedListener {
-    private static final String TAG = LocationSelectionPageFragment.class.getSimpleName();
+public class LocationManualSelectionFragment extends Fragment implements AdapterView.OnItemSelectedListener {
+    private static final String TAG = LocationManualSelectionFragment.class.getSimpleName();
 
-    private Button btnNavRiskDetail;
+    FragmentActivity listener;
+    Button btnNavRiskDetail;
+
+    public LocationManualSelectionFragment() {
+        // Required empty public constructor
+    }
 
 //    /**
 //     * Whether or not the system UI should be auto-hidden after
@@ -110,14 +118,11 @@ public class LocationSelectionPageFragment extends Fragment implements AdapterVi
 //        }
 //    };
 
-
-    FragmentActivity listener;
-
-    // This event fires 1st, before creation of fragment or any views
-    // The onAttach method is called when the Fragment instance is associated with an Activity.
+    // onAttach method fires 1st, before creation of fragment or any views
+    // It is called when the Fragment instance is associated with an Activity.
     // This does not mean the Activity is fully initialized.
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof Activity){
             this.listener = (FragmentActivity) context;
@@ -141,9 +146,33 @@ public class LocationSelectionPageFragment extends Fragment implements AdapterVi
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_location_selection, container, false);
+
+        //////////////////////////SPINNERS////////////////////////////////////////////////////////////////////////////////
+        // State spinner
+        Spinner state_spinner = (Spinner) v.findViewById(R.id.state_spinner);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> state_adapter = ArrayAdapter.createFromResource(listener,
+                R.array.states_array, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        state_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        state_spinner.setAdapter(state_adapter);
+        state_spinner.setOnItemSelectedListener(this);
+
+
+        // County spinner
+        Spinner county_spinner = (Spinner) v.findViewById(R.id.county_spinner);
+        ArrayAdapter<CharSequence> county_adapter = ArrayAdapter.createFromResource(listener,
+                R.array.counties_array, android.R.layout.simple_spinner_item);
+        county_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        county_spinner.setAdapter(county_adapter);
+        county_spinner.setOnItemSelectedListener(this);
+
         Log.d(TAG, "onCreateView invoked");
         return v;
     }
+
+
 
 
 //     This event is triggered soon after onCreateView().
@@ -155,41 +184,8 @@ public class LocationSelectionPageFragment extends Fragment implements AdapterVi
 
         btnNavRiskDetail = (Button) v.findViewById(R.id.submit_btn);
 
-        btnNavRiskDetail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "Going to RiskDetail", Toast.LENGTH_SHORT).show();
-
-                ((MainActivity) getActivity()).setViewPager(3);
-            }
-        });
-        //////////////////////////SPINNERS////////////////////////////////////////////////////////////////////////////////
-        // state spinner
-        Spinner state_spinner = (Spinner) v.findViewById(R.id.state_spinner);
-//        state_spinner.findViewById(R.id.state_spinner);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-
-        ArrayAdapter<CharSequence> state_adapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.states_array, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        state_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        state_spinner.setAdapter(state_adapter);
-
-        // county spinner
-        Spinner county_spinner = (Spinner) v.findViewById(R.id.county_spinner);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> county_adapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.counties_array, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        county_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        county_spinner.setAdapter(county_adapter);
-
-        //////////////////////////SPINNERS////////////////////////////////////////////////////////////////////////////////
-
-
-
+        btnNavRiskDetail.setOnClickListener(v1 -> (
+                (MainActivity) Objects.requireNonNull(getActivity())).setViewPager(1));
 
 
 //        mVisible = true;
@@ -209,21 +205,6 @@ public class LocationSelectionPageFragment extends Fragment implements AdapterVi
 //        // operations to prevent the jarring behavior of controls going away
 //        // while interacting with the UI.
 //        view.findViewById(R.id.location_button).setOnTouchListener(mDelayHideTouchListener);
-//    }
-//
-//
-//
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        if (getActivity() != null && getActivity().getWindow() != null) {
-//            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-//        }
-//
-//        // Trigger the initial hide() shortly after the activity has been
-//        // created, to briefly hint to the user that UI controls
-//        // are available.
-//        delayedHide(100);
 //    }
 //
 //    @Override
@@ -303,12 +284,29 @@ public class LocationSelectionPageFragment extends Fragment implements AdapterVi
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        //TODO code to update county spinner after state spinner selection
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        Log.d(TAG, "onActivityCreated invoked");
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {    }
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        Log.d(TAG, String.valueOf(outState));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getActivity() != null && getActivity().getWindow() != null) {
+            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        }
+//        // Trigger the initial hide() shortly after the activity has been
+//        // created, to briefly hint to the user that UI controls
+//        // are available.
+//        delayedHide(100);
+    }
 
     // This method is called when the fragment is no longer connected to the Activity
     // Any references saved in onAttach should be nulled out here to prevent memory leaks.
@@ -316,6 +314,29 @@ public class LocationSelectionPageFragment extends Fragment implements AdapterVi
     public void onDetach() {
         super.onDetach();
         this.listener = null;
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        if(parent.getId()==R.id.state_spinner)
+        {
+            String stateSelected = (String) parent.getItemAtPosition(position);
+            //TODO: remove
+            Toast.makeText
+                    (listener.getApplicationContext(), "Selected : " + stateSelected, Toast.LENGTH_SHORT).show();
+
+        }
+        else if (parent.getId() == R.id.county_spinner)
+        {
+            String countySelected = (String) parent.getItemAtPosition(position);
+            //TODO: remove
+            Toast.makeText
+                    (listener.getApplicationContext(), "Selected : " + countySelected, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
     }
 
 }

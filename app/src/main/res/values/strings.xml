@@ -24,9 +24,12 @@
         <item>San Juan</item>
     </string-array>
 
+    <string name="current_location">Current Location:</string>
     <string name="active_county">Active Cases in County:</string>
     <string name="active_state">Active Cases in State:</string>
     <string name="active_country">Active Cases in US:</string>
+    <string name="default_county">King</string>
+    <string name="default_state">Washington</string>
 
 
 </resources>

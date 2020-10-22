@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LocationSelectionPageFragment">
+    tools:context=".LocationManualSelectionFragment">
 
     <TextView
         android:id="@+id/location_entry_tv"

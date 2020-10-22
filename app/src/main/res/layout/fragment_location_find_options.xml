@@ -29,7 +29,7 @@
             android:id="@+id/gps_button"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_gravity="center"
             android:layout_marginBottom="60dp"
             android:layout_weight="1"
@@ -39,50 +39,3 @@
 
     </LinearLayout>
 </FrameLayout>
-
-<!--<?xml version="1.0" encoding="utf-8"?>-->
-<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--xmlns:tools="http://schemas.android.com/tools"-->
-<!--android:layout_width="match_parent"-->
-<!--android:layout_height="match_parent"-->
-<!--tools:context=".LocationFindOptionsFragment">-->
-
-<!--<LinearLayout-->
-<!--    android:id="@+id/fullscreen_content_controls"-->
-<!--    style="?android:attr/buttonBarStyle"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="wrap_content"-->
-<!--    android:layout_gravity="bottom|center_horizontal"-->
-<!--    android:background="@color/black_overlay"-->
-<!--    android:orientation="horizontal"-->
-<!--    tools:ignore="UselessParent">-->
-
-
-<!--    <?xml version="1.0" encoding="utf-8"?>-->
-<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--xmlns:tools="http://schemas.android.com/tools"-->
-<!--tools:context=".LocationFindOptionsFragment"-->
-<!--android:id="@+id/fullscreen_content_controls"-->
-<!--style="?android:attr/buttonBarStyle"-->
-<!--android:layout_height="wrap_content"-->
-    <!--android:layout_width="match_parent"-->
-<!--android:layout_gravity="bottom|center_horizontal"-->
-<!--android:background="@color/black_overlay"-->
-<!--android:orientation="horizontal">-->
-
-
-<!--<Button-->
-<!--android:id="@+id/location_btn"-->
-<!--style="?android:attr/buttonBarButtonStyle"-->
-<!--android:layout_width="0dp"-->
-<!--android:layout_height="wrap_content"-->
-<!--android:layout_weight="1"-->
-<!--android:text="@string/location_btn" />-->
-
-<!--<Button-->
-<!--android:id="@+id/gps_button"-->
-<!--style="?android:attr/buttonBarButtonStyle"-->
-<!--android:layout_width="0dp"-->
-<!--android:layout_height="wrap_content"-->
-<!--android:layout_weight="1"-->
-<!--android:text="@string/gps_btn" />-->
