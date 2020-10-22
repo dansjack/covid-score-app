@@ -1,18 +1,35 @@
 package com.nsc.covidscore;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
+
+import com.android.volley.RequestQueue;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nsc.covidscore.api.RequestSingleton;
+import com.nsc.covidscore.api.Requests;
+import com.nsc.covidscore.api.VolleyJsonCallback;
+import com.nsc.covidscore.room.CovidSnapshot;
+import com.nsc.covidscore.room.CovidSnapshotWithLocationViewModel;
+import com.nsc.covidscore.room.Location;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -36,9 +53,6 @@ public class MainActivity extends AppCompatActivity {
     private Fragment mFragment;
     private ViewPager mViewPager;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +62,56 @@ public class MainActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.frag_placeholder);
         setupViewPager(mViewPager);
 
-        Log.d(TAG, "onCreate invoked");
+        requestManager = RequestSingleton.getInstance(this.getApplicationContext());
+        queue = requestManager.getRequestQueue();
+
+        // Access to Room Database
+        vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel .class);
+
+        // Set Room Data to local variables, if saved
+        currentSnapshot = vm.getSavedCovidSnapshot();
+        currentLocation = vm.getSavedLocation();
+
+        // These variables will hold latest copies of Room rows
+        liveCovidSnapshot = vm.getLatestCovidSnapshot();
+        liveLocation = vm.getLatestLocation();
+
+        // These functions will set observers on those, in case they change
+        setRoomCovidSnapshotObserved();
+        setRoomLocationObserved();
+
+        // Attempts to save CovidSnapshot to DB whenever the local variable is changed
+        // - if the fields aren't fully set, it will not insert
+        if (currentSnapshot == null) {
+            currentSnapshot = new CovidSnapshot();
+        }
+        currentSnapshot.setListener(e -> {
+            if (currentSnapshot.hasFieldsSet()) {
+                saveSnapshotToRoom();
+            }
+        });
+
+        // temp test data - remove
+        Location tempLocation = new Location("king", "washington");
+        currentLocation = tempLocation;
+
+        if (currentLocation == null) {
+            // there is no previously saved location
+            // TODO: pop up dialog here?
+        }
+
+        // Attempts to save Location to DB whenever the local variable is changed
+        // - if the fields aren't fully set, it will not insert
+        if (currentLocation.hasFieldsSet()) {
+            saveLocationToRoom();
+        }
+        currentLocation.setListener(e -> {
+            saveLocationToRoom();
+        });
+
+        makeApiCalls(tempLocation);
+
+        Log.d(TAG,"onCreate invoked");
     }
 
     private void setupViewPager(ViewPager viewPager){
@@ -95,69 +158,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        Log.i(TAG, "onStop()");
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.i(TAG, "onDestroy()");
-    }
-
-}
-        requestManager = RequestSingleton.getInstance(this.getApplicationContext());
-        queue = requestManager.getRequestQueue();
-        tempDisplayTextView = findViewById(R.id.hello_world);
-
-        // Access to Room Database
-        vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel.class);
-
-        // Set Room Data to local variables, if saved
-        currentSnapshot = vm.getSavedCovidSnapshot();
-        currentLocation = vm.getSavedLocation();
-
-        // These variables will hold latest copies of Room rows
-        liveCovidSnapshot = vm.getLatestCovidSnapshot();
-        liveLocation = vm.getLatestLocation();
-
-        // These functions will set observers on those, in case they change
-        setRoomCovidSnapshotObserved();
-        setRoomLocationObserved();
-
-        // Attempts to save CovidSnapshot to DB whenever the local variable is changed
-        // - if the fields aren't fully set, it will not insert
-        if (currentSnapshot == null) {
-            currentSnapshot = new CovidSnapshot();
-        }
-        currentSnapshot.setListener(e -> {
-            if (currentSnapshot.hasFieldsSet()) {
-                saveSnapshotToRoom();
-            }
-        });
-
-        // temp test data - remove
-        Location tempLocation = new Location("king", "washington");
-        currentLocation = tempLocation;
-
-        if (currentLocation == null) {
-            // there is no previously saved location
-            // TODO: pop up dialog here?
-        }
-
-        // Attempts to save Location to DB whenever the local variable is changed
-        // - if the fields aren't fully set, it will not insert
-        if (currentLocation.hasFieldsSet()) {
-            saveLocationToRoom();
-        }
-        currentLocation.setListener(e -> {
-            saveLocationToRoom();
-        });
-
-        makeApiCalls(tempLocation);
-
-        Log.d(TAG,"onCreate invoked");
     }
 
     @Override
