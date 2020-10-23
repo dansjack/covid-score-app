@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public final class APIHelpersUnitTest {
+public class APIHelpersUnitTest {
     private static final String COUNTY_OBJECT =
             "[{province: texas, county: king}, {province: maryland, county: king}, " +
                     "{province: alabama, county: king}, {province: nebraska, county: king}, " +
@@ -40,6 +40,10 @@ public final class APIHelpersUnitTest {
             "A JSONArray text must start with '[' at 1 [character 2 line 1]").toString();
     private static final String TEST_NOTFOUND_EXCEPTION =
             new JSONException(Constants.ERROR_STATE_COUNTY).toString();
+    private static final String TEST_POPULATION = "7614893";
+    private static final String POPULATION_ARRAY = "[[\"NAME\",\"POP\",\"state\"],\n" +
+            "    [\"Washington\",\"7614893\",\"53\"]]";
+    private static final String COUNTRY_HISTORICAL_OBJECT = "{\"country\":\"USA\",\"province\":[\"mainland\"],\"timeline\":{\"cases\":{\"10/15/20\":7979709},\"deaths\":{\"10/15/20\":217692},\"recovered\":{\"10/15/20\":3177397}}}";
 
     @Test
     public void handleResponse_country(){
@@ -49,8 +53,12 @@ public final class APIHelpersUnitTest {
             public void getJsonData(JSONObject response) throws JSONException {
                 assertEquals(new JSONObject(COUNTRY_OBJECT).toString(), response.toString());
             }
+
             @Override
             public void getJsonException(Exception exception) {}
+
+            @Override
+            public void getString(String response) {}
         });
     }
 
@@ -63,8 +71,11 @@ public final class APIHelpersUnitTest {
 
             @Override
             public void getJsonException(Exception exception) {
-                assertEquals(TEST_JSONOBJECT_EXCEPTION, exception.toString());
+                assertEquals(TEST_NOTFOUND_EXCEPTION, exception.toString());
             }
+
+            @Override
+            public void getString(String response) {}
         });
     }
 
@@ -77,8 +88,12 @@ public final class APIHelpersUnitTest {
                     public void getJsonData(JSONObject response) {
                         assertEquals(COUNTY_RETURN, response.toString());
                     }
+
                     @Override
                     public void getJsonException(Exception exception) {}
+
+                    @Override
+                    public void getString(String response) {}
                 });
     }
 
@@ -93,6 +108,9 @@ public final class APIHelpersUnitTest {
                     }
                     @Override
                     public void getJsonException(Exception exception) {}
+
+                    @Override
+                    public void getString(String response) {}
                 });
     }
 
@@ -107,6 +125,9 @@ public final class APIHelpersUnitTest {
                     }
                     @Override
                     public void getJsonException(Exception exception) {}
+
+                    @Override
+                    public void getString(String response) {}
                 });
     }
 
@@ -121,6 +142,9 @@ public final class APIHelpersUnitTest {
                     public void getJsonException(Exception exception) {
                         assertEquals(TEST_NOTFOUND_EXCEPTION, exception.toString());
                     }
+
+                    @Override
+                    public void getString(String response) {}
                 });
     }
 
@@ -134,6 +158,9 @@ public final class APIHelpersUnitTest {
                     public void getJsonException(Exception exception) {
                         assertEquals(TEST_JSONARRAY_EXCEPTION, exception.toString());
                     }
+
+                    @Override
+                    public void getString(String response) {}
                 });
     }
 
@@ -147,6 +174,9 @@ public final class APIHelpersUnitTest {
                     }
                     @Override
                     public void getJsonException(Exception exception) {}
+
+                    @Override
+                    public void getString(String response) {   }
                 });
     }
 
@@ -160,6 +190,9 @@ public final class APIHelpersUnitTest {
                     public void getJsonException(Exception exception) {
                         assertEquals(TEST_NOTFOUND_EXCEPTION, exception.toString());
                     }
+
+                    @Override
+                    public void getString(String response) {}
                 });
     }
 
@@ -173,6 +206,9 @@ public final class APIHelpersUnitTest {
                     }
                     @Override
                     public void getJsonException(Exception exception) {}
+
+                    @Override
+                    public void getString(String response) {}
                 });
     }
 
@@ -185,6 +221,41 @@ public final class APIHelpersUnitTest {
                     @Override
                     public void getJsonException(Exception exception) {
                         assertEquals(TEST_NOTFOUND_EXCEPTION, exception.toString());
+                    }
+
+                    @Override
+                    public void getString(String response) {}
+                });
+    }
+
+    @Test
+    public void handleResponse_countryHistorical(){
+        APIHelpers.handleResponse(
+                Constants.COUNTRY_HISTORICAL, COUNTRY_HISTORICAL_OBJECT, "", "", new VolleyJsonCallback() {
+                    @Override
+                    public void getJsonData(JSONObject response) throws JSONException {
+                        assertEquals(new JSONObject(COUNTRY_HISTORICAL_OBJECT).toString(), response.toString());
+                    }
+                    @Override
+                    public void getJsonException(Exception exception) {}
+
+                    @Override
+                    public void getString(String response) {}
+                });
+    }
+
+    @Test
+    public void handleResponse_population(){
+        APIHelpers.handleResponse(
+                Constants.COUNTY_POPULATION, POPULATION_ARRAY, "", "", new VolleyJsonCallback() {
+                    @Override
+                    public void getJsonData(JSONObject response) {}
+                    @Override
+                    public void getJsonException(Exception exception) {}
+
+                    @Override
+                    public void getString(String response) {
+                        assertEquals(TEST_POPULATION, response);
                     }
                 });
     }

@@ -197,7 +197,11 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void getJsonException(Exception exception) {
+            public void getJsonException(Exception exception) {}
+
+            @Override
+            public void getString(String response) {
+
             }
         });
         Requests.getState(this, location.toApiFormat(), new VolleyJsonCallback() {
@@ -216,9 +220,10 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void getJsonException(Exception exception) {
+            public void getJsonException(Exception exception) {}
 
-            }
+            @Override
+            public void getString(String response) {}
         });
         Requests.getCountyHistorical(this, location.toApiFormat(), "30", new VolleyJsonCallback() {
             @Override
@@ -227,8 +232,10 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void getJsonException(Exception exception) {
-            }
+            public void getJsonException(Exception exception) {}
+
+            @Override
+            public void getString(String response) {}
         });
         Requests.getUSHistorical(this, "1", new VolleyJsonCallback() {
             @Override
@@ -263,8 +270,64 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void getJsonException(Exception exception) {
+            public void getJsonException(Exception exception) {}
 
+            @Override
+            public void getString(String response) {}
+        });
+        Requests.getCountyPopulation(this, location.toApiFormat(), new VolleyJsonCallback() {
+            @Override
+            public void getJsonData(JSONObject response) {}
+
+            @Override
+            public void getJsonException(Exception exception) {}
+
+            @Override
+            public void getString(String response) {
+                if (currentSnapshot == null) { currentSnapshot = new CovidSnapshot(); }
+                vm.insertLocation(location);
+                currentSnapshot.setCountyTotalPopulation(Integer.parseInt(response));
+                if (currentSnapshot.hasFieldsSet()) {
+                    saveSnapshotToRoom();
+                }
+                Log.d(TAG, "getStringData: County " + response);
+            }
+        });
+        Requests.getStatePopulation(this, location.toApiFormat(), new VolleyJsonCallback() {
+            @Override
+            public void getJsonData(JSONObject response) {}
+
+            @Override
+            public void getJsonException(Exception exception) {}
+
+            @Override
+            public void getString(String response) {
+                if (currentSnapshot == null) { currentSnapshot = new CovidSnapshot(); }
+                vm.insertLocation(location);
+                currentSnapshot.setStateTotalPopulation(Integer.parseInt(response));
+                if (currentSnapshot.hasFieldsSet()) {
+                    saveSnapshotToRoom();
+                }
+                Log.d(TAG, "getStringData: State  " + response);
+            }
+        });
+
+        Requests.getCountryPopulation(this, new VolleyJsonCallback() {
+            @Override
+            public void getJsonData(JSONObject response) {}
+
+            @Override
+            public void getJsonException(Exception exception) {}
+
+            @Override
+            public void getString(String response) {
+                if (currentSnapshot == null) { currentSnapshot = new CovidSnapshot(); }
+                vm.insertLocation(location);
+                currentSnapshot.setCountryTotalPopulation(Integer.parseInt(response));
+                if (currentSnapshot.hasFieldsSet()) {
+                    saveSnapshotToRoom();
+                }
+                Log.d(TAG, "getStringData: Country " + response);
             }
         });
     }
