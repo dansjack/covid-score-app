@@ -28,13 +28,14 @@ import java.util.Objects;
 public class LocationManualSelectionFragment extends Fragment implements AdapterView.OnItemSelectedListener {
     private static final String TAG = LocationManualSelectionFragment.class.getSimpleName();
 
-    FragmentActivity listener;
-    Button btnNavRiskDetail;
+    private FragmentActivity listener;
+    private Button btnNavRiskDetail;
 
     public LocationManualSelectionFragment() {
         // Required empty public constructor
     }
 
+//TODO: this is all boilerplate code for doing a more graceful transition bet fragments; delete if we don't want
 //    /**
 //     * Whether or not the system UI should be auto-hidden after
 //     * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.

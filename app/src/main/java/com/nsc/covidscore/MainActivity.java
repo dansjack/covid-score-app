@@ -1,8 +1,9 @@
 package com.nsc.covidscore;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,16 +48,19 @@ public class MainActivity extends AppCompatActivity {
     private RequestQueue queue;
     private RequestSingleton requestManager;
 
-    private TextView tempDisplayTextView;
+//    private TextView tempDisplayTextView;
 
     private FragmentAdapter mFragmentAdapter;
     private Fragment mFragment;
     private ViewPager mViewPager;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = this;
+
 
         mFragmentAdapter = new FragmentAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.frag_placeholder);
@@ -189,10 +193,15 @@ public class MainActivity extends AppCompatActivity {
                         // TODO: set textfields here! - vv this is temporary vv
                         if (currentLocation == null) { // this shouldn't be hit because currentLocation shouldn't be null
                             currentLocation = liveLocation.getValue();
-                            tempDisplayTextView.setText("Most Recent Snapshot:\n" + currentSnapshot.toString());
+//                            tempDisplayTextView.setText("Most Recent Snapshot:\n" + currentSnapshot.toString());
+                            Toast.makeText
+                                    (context, "Most Recent Snapshot:\n" + currentSnapshot.toString(), Toast.LENGTH_SHORT).show();
                         } else {
-                            tempDisplayTextView.setText("Most Recent Location: id: \n" + currentLocation.getLocationId() + ", " + currentLocation.toApiFormat()
-                                    + "\nMost Recent Snapshot: \n" + currentSnapshot.toString());
+//                            tempDisplayTextView.setText("Most Recent Location: id: \n" + currentLocation.getLocationId() + ", " + currentLocation.toApiFormat()
+//                                    + "\nMost Recent Snapshot: \n" + currentSnapshot.toString());
+                            Toast.makeText
+                                    (context, "Most Recent Location: id: \n" + currentLocation.getLocationId() + ", " + currentLocation.toApiFormat()
+                                    + "\nMost Recent Snapshot: \n" + currentSnapshot.toString(), Toast.LENGTH_SHORT).show();
                         }
                         Log.e(TAG, "CovidSnapshot Room listener invoked");
                     }
