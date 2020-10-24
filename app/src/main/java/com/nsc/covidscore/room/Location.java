@@ -46,6 +46,22 @@ public class Location {
         this.state = state.toLowerCase();
     }
 
+    @NonNull
+    @ColumnInfo(name = "county_FIPS")
+    private String countyFips;
+    public String getCountyFips() { return countyFips; }
+    public void setCountyFips(String countyFips) {
+        this.countyFips = countyFips;
+    }
+
+    @NonNull
+    @ColumnInfo(name = "state_FIPS")
+    private String stateFips;
+    public String getStateFips() { return stateFips; }
+    public void setStateFips(String stateFips) {
+        this.stateFips = stateFips;
+    }
+
     @ColumnInfo(name = "last_updated")
     private Calendar lastUpdated;
     public Calendar getLastUpdated() { return lastUpdated; }
@@ -69,12 +85,21 @@ public class Location {
 
     // CONSTRUCTOR
 
+    public Location(String county, String state, String countyFips, String stateFips) {
+        propertyChangeSupport = new PropertyChangeSupport(this);
+        this.county = county.toLowerCase();
+        this.state = state.toLowerCase();
+        this.countyFips = countyFips;
+        this.stateFips = stateFips;
+        Calendar calendar = Calendar.getInstance();
+        this.lastUpdated = calendar;
+    }
+
+    @Ignore
     public Location(String county, String state) {
         propertyChangeSupport = new PropertyChangeSupport(this);
         this.county = county.toLowerCase();
         this.state = state.toLowerCase();
-        Calendar calendar = Calendar.getInstance();
-        this.lastUpdated = calendar;
     }
 
     public String toApiFormat() { return county + "," + state; }
@@ -98,4 +123,14 @@ public class Location {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return "Location{" +
+                "locationId=" + locationId +
+                ", county='" + county + '\'' +
+                ", state='" + state + '\'' +
+                ", countyFips='" + countyFips + '\'' +
+                ", stateFips='" + stateFips + '\'' +
+                '}';
+    }
 }
