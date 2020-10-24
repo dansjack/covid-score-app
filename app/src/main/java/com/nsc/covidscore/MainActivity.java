@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         queue = requestManager.getRequestQueue();
 
         // Access to Room Database
-        vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel .class);
+        vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel.class);
 
         // Set Room Data to local variables, if saved
         currentSnapshot = vm.getSavedCovidSnapshot();
