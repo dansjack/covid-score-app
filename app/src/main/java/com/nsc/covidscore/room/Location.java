@@ -66,7 +66,7 @@ public class Location {
     private Calendar lastUpdated;
     public Calendar getLastUpdated() { return lastUpdated; }
     public void setLastUpdated(Calendar lastUpdated) {
-//        propertyChangeSupport.firePropertyChange(Constants.LAST_UPDATED_LOCATION, this.lastUpdated, lastUpdated);
+        propertyChangeSupport.firePropertyChange(Constants.LAST_UPDATED_LOCATION, this.lastUpdated, lastUpdated);
         this.lastUpdated = lastUpdated;
     }
 
@@ -104,7 +104,7 @@ public class Location {
 
     public String toApiFormat() { return county + "," + state; }
 
-    public boolean hasFieldsSet() { return this.county != null && this.state != null; }
+    public boolean hasFieldsSet() { return this.county != null && this.state != null && this.stateFips != null; }
 
     public boolean equals(Location other) {
         return this.hasSameData(other) && this.locationId.equals(other.locationId);
