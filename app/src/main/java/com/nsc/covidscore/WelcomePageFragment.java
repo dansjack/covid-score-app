@@ -24,9 +24,6 @@ public class WelcomePageFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
-//     * @param stateSelected Parameter 1.
-//     * @param countySelected Parameter 2.
      * @return A new instance of fragment WelcomeMessageFragment.
      */
     public static WelcomePageFragment newInstance() {

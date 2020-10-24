@@ -122,7 +122,6 @@ public class MainActivity extends AppCompatActivity {
         FragmentAdapter adapter = new FragmentAdapter(getSupportFragmentManager());
         adapter.addFragment(new WelcomePageFragment(), "WelcomePageFragment");
 //        adapter.addFragment(new LocationSelectionPageFragment(), "LocationSelectionPageFragment");
-//        adapter.addFragment(new GpsPageFragment(), "GpsPageFragment");
         adapter.addFragment(new RiskDetailPageFragment(), "RiskDetailPageFragment");
         viewPager.setAdapter(adapter);
     }
