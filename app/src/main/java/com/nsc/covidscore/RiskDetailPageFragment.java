@@ -10,8 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-
-
+/**
+ * A full-screen fragment.
+ */
 public class RiskDetailPageFragment extends Fragment {
     private static final String TAG = RiskDetailPageFragment.class.getSimpleName();
 
@@ -20,7 +21,7 @@ public class RiskDetailPageFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: invoked");
     }
@@ -39,6 +40,11 @@ public class RiskDetailPageFragment extends Fragment {
     }
 
     @Override
+    public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(v, savedInstanceState);
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
     }
@@ -47,5 +53,10 @@ public class RiskDetailPageFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         Log.d(TAG, String.valueOf(outState));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 }
