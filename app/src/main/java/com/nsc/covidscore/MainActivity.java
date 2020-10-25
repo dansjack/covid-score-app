@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
             if (allLocations != null && allLocations.size() > 1) {
                 Log.e(TAG, "first added Location: " + allLocations.get(0).toString());
                 Log.e(TAG, "second added Location: " + allLocations.get(1).toString());
+                vm.getAllLocations().removeObservers(this);
             }
         });
 
@@ -125,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
                         currentSnapshot = covidSnapshotFromDb == null ? covidSnapshotFromDb : currentSnapshot;
                         // TODO: set textfields here! - vv this is temporary vv
                         if (currentLocation == null || !currentLocation.hasFieldsSet()) {
-                            currentLocation = liveLatestLocation.getValue();
                             tempSnapshotTextView.setText("Most Recent Snapshot:\n" + currentSnapshot.toString());
                         }
                         if (currentLocation != null) {
@@ -137,10 +137,10 @@ public class MainActivity extends AppCompatActivity {
                     else if (covidSnapshotFromDb == null) {
                         Log.e(TAG, "Observer returned null CovidSnapshot");
                         // run API call, if location is saved
-                        if (currentLocation != null) {
+                        if (currentLocation != null && currentLocation.hasFieldsSet()) {
                             makeApiCalls(currentLocation);
                         } else {
-                            currentLocation = liveLatestLocation.getValue();
+                            // get current location - fragment
                         }
                     }
                 }
@@ -157,19 +157,18 @@ public class MainActivity extends AppCompatActivity {
             liveLatestLocation.observe(this, new Observer<Location>() {
                 @Override
                 public void onChanged(@Nullable final Location locationFromDb) {
-                    // update cached version of location
-                    currentLocation = liveLatestLocation.getValue() != null ? liveLatestLocation.getValue() : currentLocation;
                     if (locationFromDb != null) {
                         currentLocation = locationFromDb;
                         savedLocations.add(currentLocation);
-                        if (!currentSnapshot.getLocationId().equals(currentLocation.getLocationId())) {
+                        if (!currentLocation.getLocationId().equals(currentSnapshot.getLocationId())) {
+                            currentSnapshot.setLocationId(currentLocation.getLocationId());
                             makeApiCalls(currentLocation);
                         }
                         Log.e(TAG, "Most recently updated Location : " + currentLocation.toApiFormat());
                         tempLocationTextView.setText("Most recent Location : id: " + currentLocation.getLocationId() + ", " + currentLocation.toApiFormat());
                     } else {
                         Log.d(TAG, "Location observer returned null");
-                        if (currentSnapshot != null && currentLocation.getLocationId() != null) {
+                        if (currentSnapshot != null && currentSnapshot.getLocationId() != null) {
                             currentLocation = vm.getLocationById(currentSnapshot.getLocationId()).getValue();
                         } else {
                             // no location is saved
@@ -329,12 +328,11 @@ public class MainActivity extends AppCompatActivity {
         if (currentSnapshot != null && currentSnapshot.hasFieldsSet()) {
             // make sure to set LocationIdFK on Snapshot to current LocationIdPK
             if (currentSnapshot.getLocationId() == null || currentSnapshot.getLocationId() == 0) {
-                if (currentLocation.getLocationId() == null) {
-                    currentLocation = liveLatestLocation.getValue();
+                if (currentLocation.getLocationId() != null) {
+                    currentSnapshot.setLocationId(currentLocation != null ? currentLocation.getLocationId() : -1);
                 }
-                currentSnapshot.setLocationId(currentLocation != null ? currentLocation.getLocationId() : -1);
             }
-            if (!currentSnapshot.hasSameData(mostRecent)) {
+            if (mostRecent == null || !currentSnapshot.hasSameData(mostRecent)) {
                 Calendar calendar = Calendar.getInstance();
                 currentSnapshot.setLastUpdated(calendar);
                 vm.insertCovidSnapshot(currentSnapshot);
