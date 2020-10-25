@@ -77,17 +77,11 @@ public class CovidSnapshotWithLocationRepository {
         return covidSnapshotDao.getLatest();
     }
 
-    LiveData<CovidSnapshot> getSavedCovidSnapshot() {
-        return currentSnapshot;
-    }
-
     LiveData<Location> getLatestLocation() {
         return locationDao.getLatest();
     }
 
     LiveData<Location> getLocationById(Integer id) {
-        Calendar now = Calendar.getInstance();
-        locationDao.updateLocation(id, now);
         return locationDao.findByLocationId(id);
     }
 
