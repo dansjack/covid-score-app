@@ -6,9 +6,11 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
+import androidx.room.Update;
 
 import com.nsc.covidscore.room.Location;
 
+import java.util.Calendar;
 import java.util.List;
 
 @Dao
@@ -40,4 +42,10 @@ public interface LocationDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     long insert(Location location);
+
+    @Query("UPDATE location SET last_updated = :lastUpdated WHERE location_id = :id")
+    void updateLocation(Integer id, Calendar lastUpdated);
+
+    @Query("UPDATE location SET last_updated = :lastUpdated WHERE county = :county AND state = :state")
+    void updateLocation(String county, String state, Calendar lastUpdated);
 }

@@ -33,26 +33,26 @@ public class CovidSnapshotWithLocationRepository {
         }
     }
 
-    void insertLocation(Location location) {
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            if ((currentLocation.getValue() == null || !currentLocation.getValue().equals(location))
-                    && (locationDao.findByCountyAndState(location.getCounty(), location.getState()).getValue() == null)
-                    && (allLocations.getValue() == null || !Location.alreadyInRoom(location, allLocations.getValue()))) {
-                // TODO: fix duplicate additions
-                int newId = (int) locationDao.insert(location);
-
-                if (newId != 0 && newId != -1) {
-                    Log.e(TAG, "Inserted Location: id: " + newId + ", " + location.toApiFormat());
-                } else {
-                    Log.e(TAG, "Failed to insert location: " + location.toApiFormat());
-                }
-            } else {
-                Log.e(TAG, "Room already contains location: " + location.toApiFormat());
-            }
-        });
-        currentLocation = locationDao.getLatest();
-        allLocations = locationDao.getAll();
-    }
+//    void insertLocation(Location location) {
+//        AppDatabase.databaseWriteExecutor.execute(() -> {
+//            if ((currentLocation.getValue() == null || !currentLocation.getValue().equals(location))
+//                    && (locationDao.findByCountyAndState(location.getCounty(), location.getState()).getValue() == null)
+//                    && (allLocations.getValue() == null || !Location.alreadyInRoom(location, allLocations.getValue()))) {
+//                // TODO: fix duplicate additions
+//                int newId = (int) locationDao.insert(location);
+//
+//                if (newId != 0 && newId != -1) {
+//                    Log.e(TAG, "Inserted Location: id: " + newId + ", " + location.toApiFormat());
+//                } else {
+//                    Log.e(TAG, "Failed to insert location: " + location.toApiFormat());
+//                }
+//            } else {
+//                Log.e(TAG, "Room already contains location: " + location.toApiFormat());
+//            }
+//        });
+//        currentLocation = locationDao.getLatest();
+//        allLocations = locationDao.getAll();
+//    }
 
     void insertCovidSnapshot(CovidSnapshot covidSnapshot) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
@@ -83,6 +83,18 @@ public class CovidSnapshotWithLocationRepository {
 
     LiveData<Location> getLatestLocation() {
         return locationDao.getLatest();
+    }
+
+    LiveData<Location> getLocationById(Integer id) {
+        Calendar now = Calendar.getInstance();
+        locationDao.updateLocation(id, now);
+        return locationDao.findByLocationId(id);
+    }
+
+    LiveData<Location> getLocationByCountyAndState(String county, String state) {
+        Calendar now = Calendar.getInstance();
+        locationDao.updateLocation(county, state, now);
+        return locationDao.findByCountyAndState(county, state);
     }
 
     LiveData<Location> getSavedLocation() {

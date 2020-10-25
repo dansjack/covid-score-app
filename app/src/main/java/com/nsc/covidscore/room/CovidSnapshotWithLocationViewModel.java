@@ -20,8 +20,6 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
         repo = new CovidSnapshotWithLocationRepository(application);
     }
 
-    public void insertLocation(Location location) { repo.insertLocation(location); }
-
     public void insertCovidSnapshot(CovidSnapshot covidSnapshot) {
         // TODO: fix the timing issue in Main so we can add this back
 //        if (covidSnapshot.getLocationId() != null) {
@@ -37,7 +35,9 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
 
     public LiveData<Location> getLatestLocation() { return repo.getLatestLocation(); }
 
-    public Location getSavedLocation() { return repo.getSavedLocation().getValue(); }
+    public LiveData<Location> getLocationById(Integer id) { return repo.getLocationById(id); }
+
+    public LiveData<Location> getLocationByCountyAndState(String county, String state) { return repo.getLocationByCountyAndState(county, state); }
 
     public LiveData<List<Location>> getAllLocations() { return repo.getAllLocations(); }
 

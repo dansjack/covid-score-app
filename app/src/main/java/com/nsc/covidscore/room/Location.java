@@ -104,7 +104,11 @@ public class Location {
 
     public String toApiFormat() { return county + "," + state; }
 
-    public boolean hasFieldsSet() { return this.county != null && this.state != null && this.stateFips != null; }
+    public boolean hasFieldsSet() {
+        boolean notNull = (this.county != null && this.state != null) && (this.countyFips != null && this.stateFips != null);
+        boolean notEmpty = (!this.county.isEmpty() && !this.state.isEmpty()) && (!this.countyFips.isEmpty() && !this.stateFips.isEmpty());
+        return notNull && notEmpty;
+    }
 
     public boolean equals(Location other) {
         return this.hasSameData(other) && this.locationId.equals(other.locationId);
