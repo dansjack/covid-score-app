@@ -10,6 +10,7 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.nsc.covidscore.Constants;
 import com.nsc.covidscore.Converters;
 
 import org.json.JSONArray;
@@ -59,7 +60,6 @@ public abstract class AppDatabase extends RoomDatabase {
                 LocationDao locationDao = INSTANCE.locationDao();
                 CovidSnapshotDao covidSnapshotDao = INSTANCE.covidSnapshotDao();
                 fillLocationTable(locationDao);
-
             });
         }
     };
@@ -82,7 +82,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 // split county and state names
                 String[] nameArray = currentArray.getString(0).split(",");
                 String countyName = nameArray[0].trim();
-                countyName = countyName.replaceAll("(\\sCounty|\\sParish|\\sBorough|\\sMunicipio|\\scity)", "");
+                countyName = countyName.replaceAll(Constants.LOCATION_FIPS_REGEX_FILTER, "");
                 String stateName = nameArray[1].trim();
                 String stateFips = currentArray.getString(1);
                 String countyFips = currentArray.getString(2);
