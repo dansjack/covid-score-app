@@ -102,6 +102,14 @@ public class Location {
         this.state = state.toLowerCase();
     }
 
+    public void setState(Location other) {
+        this.locationId = other.locationId;
+        this.setCounty(other.county);
+        this.setState(other.state);
+        this.countyFips = other.countyFips;
+        this.stateFips = other.stateFips;
+    }
+
     public String toApiFormat() { return county + "," + state; }
 
     public boolean hasFieldsSet() {

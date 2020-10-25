@@ -61,6 +61,10 @@ public class CovidSnapshotWithLocationRepository {
                 Calendar calendar = Calendar.getInstance();
                 covidSnapshot.setLastUpdated(calendar);
                 covidSnapshotDao.insert(covidSnapshot);
+                // update this snapshot's location last_updated field
+                Calendar now = Calendar.getInstance();
+                locationDao.updateLocation(covidSnapshot.getLocationId(), now);
+                Log.e(TAG, "Updated location id: " + covidSnapshot.getLocationId());
                 Log.e(TAG, "Inserted: " + covidSnapshot.toString());
             } else {
                 Log.e(TAG, "Did not insert: " + covidSnapshot.toString());
@@ -77,8 +81,12 @@ public class CovidSnapshotWithLocationRepository {
         return covidSnapshotDao.getLatest();
     }
 
-    LiveData<Location> getLatestLocation() {
+    LiveData<Location> getLastQueriedLocation() {
         return locationDao.getLatest();
+    }
+
+    LiveData<Location> getLastSavedLocation() {
+        return locationDao.getLastSavedLocation();
     }
 
     LiveData<Location> getLocationById(Integer id) {
@@ -86,8 +94,6 @@ public class CovidSnapshotWithLocationRepository {
     }
 
     LiveData<Location> getLocationByCountyAndState(String county, String state) {
-        Calendar now = Calendar.getInstance();
-        locationDao.updateLocation(county, state, now);
         return locationDao.findByCountyAndState(county, state);
     }
 

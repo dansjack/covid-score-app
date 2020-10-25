@@ -28,9 +28,12 @@ public interface LocationDao {
     @Query("SELECT * FROM location ORDER BY last_updated DESC LIMIT 1")
     LiveData<Location> getLatest();
 
+//    @Query("SELECT location.location_id, county, state, county_FIPS, state_FIPS  FROM location " +
+//            "INNER JOIN covid_snapshot ON location.location_id = covid_snapshot.location_id "
+//            + "ORDER BY covid_snapshot.last_updated DESC LIMIT 1")
     @Transaction
-    @Query("SELECT * FROM location")
-    LiveData<List<CovidSnapshotWithLocation>> getCovidSnapshotsWithLocations();
+    @Query("SELECT * FROM location WHERE location.location_id IN (SELECT covid_snapshot.location_id FROM covid_snapshot ORDER BY last_updated DESC LIMIT 1)")
+    LiveData<Location> getLastSavedLocation();
 
     @Transaction
     @Query("SELECT * FROM location WHERE county LIKE :county AND state LIKE :state LIMIT 1")
