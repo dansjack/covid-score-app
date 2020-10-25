@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         Log.e(TAG, "Most recently saved Location : " + currentLocation.toApiFormat());
                     } else {
-                        Log.d(TAG, "Location observer returned null");
+                        //Log.d(TAG, "Location observer returned null");
                         if ((currentSnapshot != null && currentSnapshot.getLocationId() != null)
                                 && !currentSnapshot.getLocationId().equals(currentLocation.getLocationId())) {
                             lastLocation.setState(currentLocation);
