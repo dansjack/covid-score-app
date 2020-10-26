@@ -82,7 +82,6 @@ public abstract class AppDatabase extends RoomDatabase {
                 // split county and state names
                 String[] nameArray = currentArray.getString(0).split(",");
                 String countyName = nameArray[0].trim();
-                countyName = countyName.replaceAll(Constants.LOCATION_FIPS_REGEX_FILTER, "");
                 String stateName = nameArray[1].trim();
                 String stateFips = currentArray.getString(1);
                 String countyFips = currentArray.getString(2);

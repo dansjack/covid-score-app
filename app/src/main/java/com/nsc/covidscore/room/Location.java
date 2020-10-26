@@ -110,7 +110,9 @@ public class Location {
         this.stateFips = other.stateFips;
     }
 
-    public String toApiFormat() { return county + "," + state; }
+    public String toApiFormat() {
+        return county + "," + state;
+    }
 
     public boolean hasFieldsSet() {
         boolean notNull = (this.county != null && this.state != null) && (this.countyFips != null && this.stateFips != null);
