@@ -1,7 +1,5 @@
 package com.nsc.covidscore.api;
 
-import android.util.Log;
-
 import com.nsc.covidscore.Constants;
 
 import org.json.JSONArray;
@@ -17,7 +15,7 @@ public class APIHelpers {
             boolean found = false;
             if (type.equals(Constants.COUNTY)) {
                 JSONArray counties = new JSONArray(response);
-                if (counties.length() > 1) {
+                if (counties.length() > 0) {
                     for (int i = 0; i < counties.length(); i++) {
                         JSONObject jsonObject = counties.getJSONObject(i);
                         String stateName = jsonObject.optString(Constants.PROVINCE);

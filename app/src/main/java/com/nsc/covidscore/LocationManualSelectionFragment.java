@@ -42,6 +42,9 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     private static final String TAG = LocationManualSelectionFragment.class.getSimpleName();
     private MutableLiveData<String> mutableSelectedState = new MutableLiveData<>();
     private MutableLiveData<String> mutableSelectedCounty = new MutableLiveData<>();
+    private Location selectedLocation = new Location();
+    private  MutableLiveData<CovidSnapshot> mutableCovidSnapshot = new MutableLiveData<>(new CovidSnapshot());
+    private CovidSnapshot currentSnapshot = new CovidSnapshot();
 
     private FragmentActivity listener;
     private HashMap<String, List<Location>> mapOfLocations = new HashMap<>();
@@ -118,6 +121,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                 for (int i = 0; i < countyLocations.size(); i++) {
                     if (countyLocations.get(i).getCounty().equals(selectedCounty)) {
                         Log.i(TAG, "onCreateView: FOUND COUNTY " + selectedCounty);
+                        selectedLocation = countyLocations.get(i);
                     }
                 }
 //                makeApiCalls();
@@ -136,8 +140,13 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
         super.onViewCreated(v, savedInstanceState);
 
         Button btnNavRiskDetail = v.findViewById(R.id.submit_btn);
-        btnNavRiskDetail.setOnClickListener(v1 -> (
-                (MainActivity) Objects.requireNonNull(getActivity())).setViewPager(1));
+        btnNavRiskDetail.setOnClickListener(v1 -> {
+            makeApiCalls(selectedLocation);
+//            RiskDetailPageFragment riskFrag = new RiskDetailPageFragment();
+//            Bundle args = new Bundle();
+//            args.
+//            riskFrag.setArguments(args);
+        });
     }
 
     @Override
@@ -197,7 +206,10 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     }
 
     private void makeApiCalls(Location location) {
-        Requests.getCounty(getContext(), location.toApiFormat(), new VolleyJsonCallback() {
+        Log.i(TAG, "makeApiCalls: location " + location);
+        Log.i(TAG, "makeApiCalls: locationApi " + location.toApiFormat());
+        CovidSnapshot covidSnapshot = new CovidSnapshot();
+        Requests.getCounty(getActivity(), location.toApiFormat(), new VolleyJsonCallback() {
             @Override
             public void getJsonData(JSONObject response) throws JSONException {
 //                if (currentSnapshot == null) { currentSnapshot = new CovidSnapshot(); }
@@ -210,10 +222,10 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                 Integer deaths = (Integer) stats.get("deaths");
                 // TODO: calculate better estimate of active cases
                 Integer activeCounty = confirmed - deaths;
-//                currentSnapshot.setCountyActiveCount(activeCounty);
-//                if (currentSnapshot.hasFieldsSet()) {
-////                        saveSnapshotToRoom();
-//                }
+                covidSnapshot.setCountyActiveCount(activeCounty);
+                if (covidSnapshot.hasFieldsSet()) {
+                    mutableCovidSnapshot.setValue(covidSnapshot);
+                }
                 Log.d(TAG, "getJsonData: county " + activeCounty);
             }
 
@@ -228,11 +240,12 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
 //                // Add Location to Database (if not already present)
 //                if (!currentLocation.hasSameData(location)) {
 //                    vm.insertLocation(location);
-//                }                Integer activeState = (Integer) response.get("active");
-//                currentSnapshot.setStateActiveCount(activeState);
-//                if (currentSnapshot.hasFieldsSet()) {
-////                    saveSnapshotToRoom();
-//                }
+//            }
+                Integer activeState = (Integer) response.get("active");
+                covidSnapshot.setStateActiveCount(activeState);
+                if (covidSnapshot.hasFieldsSet()) {
+                    mutableCovidSnapshot.setValue(covidSnapshot);
+                }
                 Log.d(TAG, "getJsonData: state " + response);
             }
 
@@ -278,10 +291,10 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                 }
 
                 Integer countryActiveCount = totalCountry - deathCountry - recoveredCountry;
-//                currentSnapshot.setCountryActiveCount(totalCountry - deathCountry - recoveredCountry);
-//                if (currentSnapshot.hasFieldsSet()) {
-////                    saveSnapshotToRoom();
-//                }
+                covidSnapshot.setCountryActiveCount(countryActiveCount);
+                if (covidSnapshot.hasFieldsSet()) {
+                    mutableCovidSnapshot.setValue(covidSnapshot);
+                }
                 Log.d(TAG, "getJsonData: country " + response);
             }
 

@@ -6,11 +6,18 @@ public class Location {
     private String stateFips;
     private String countyFips;
 
-    public Location(String state, String county, String stateFips, String countyFips) {
-        this.state = state;
+    public Location(String county, String state, String stateFips, String countyFips) {
         this.county = county;
+        this.state = state;
         this.stateFips = stateFips;
         this.countyFips = countyFips;
+    }
+
+    public Location() {
+        this.state = null;
+        this.county = null;
+        this.stateFips = null;
+        this.countyFips = null;
     }
 
     public String getState() {
@@ -21,7 +28,7 @@ public class Location {
         return county;
     }
 
-    public String toApiFormat() { return county + "," + state; }
+    public String toApiFormat() { return (county + "," + state).toLowerCase(); }
 
 
     public String getStateFips() {

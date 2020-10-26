@@ -21,6 +21,7 @@ public class Requests {
         final String county = location.split(",")[0];
         final String state = location.split(",")[1];
         String url = "https://corona.lmao.ninja/v2/jhucsse/counties/" + county;
+        Log.i("FFF ", "getCounty: URL" + url);
         final String TAG = Constants.COUNTY;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,

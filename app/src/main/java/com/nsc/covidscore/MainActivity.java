@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.RequestQueue;
@@ -39,7 +40,9 @@ public class MainActivity extends AppCompatActivity {
     private List<Location> savedLocations = new ArrayList<>();
     // so that we only set one observer on Room Location
     private boolean roomLocationObserved = false;
-//    private LiveData<CovidSnapshot> liveCovidSnapshot;
+    private MutableLiveData<String> mutableSelectedCountyMain = new MutableLiveData<>();
+
+    //    private LiveData<CovidSnapshot> liveCovidSnapshot;
 //    private CovidSnapshot currentSnapshot;
     // so that we only set one observer on Room CovidSnapshot
     private boolean roomCovidSnapshotObserved = false;
@@ -58,17 +61,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_location_selection);
+        setContentView(R.layout.activity_main);
         context = this;
 
         fillLocationsMap();
 
         mFragmentAdapter = new FragmentAdapter(getSupportFragmentManager());
-        mViewPager = (ViewPager) findViewById(R.id.frag_placeholder);
+        mViewPager = findViewById(R.id.frag_placeholder);
         setupViewPager(mViewPager);
 
         requestManager = RequestSingleton.getInstance(this.getApplicationContext());
         queue = requestManager.getRequestQueue();
+
+        mutableSelectedCountyMain.observe(this, selectedCounty -> {
+            if (selectedCounty != null) {
+                Log.i(TAG, "onCreate: NOT NULL");
+            }
+        });
 
         // Access to Room Database
 //        vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel.class);
@@ -122,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager){
         FragmentAdapter adapter = new FragmentAdapter(getSupportFragmentManager());
-//        adapter.addFragment(new WelcomePageFragment(), "WelcomePageFragment");
+        // adapter.addFragment(new WelcomePageFragment(), "WelcomePageFragment");
         LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
         Bundle bundle = new Bundle();
         Log.i(TAG, "MAP: " + mapOfLocations.toString());
@@ -303,7 +312,7 @@ public class MainActivity extends AppCompatActivity {
                 String stateName = nameArray[1].trim();
                 String stateFips = currentArray.getString(1);
                 String countyFips = currentArray.getString(2);
-                Location countyInState = new Location(stateName, countyName, stateFips, countyFips);
+                Location countyInState = new Location(countyName, stateName, stateFips, countyFips);
 
                 if (mapOfLocations.get(stateName) == null) {
                     Log.i(TAG, "fillLocationsMap: " + stateName);
