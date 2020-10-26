@@ -11,12 +11,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
@@ -28,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,6 +49,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     private Location selectedLocation = new Location();
     private  MutableLiveData<CovidSnapshot> mutableCovidSnapshot = new MutableLiveData<>(new CovidSnapshot());
 
+    private TextView locationTextView;
+    private TextView snapshotTextView;
     private FragmentActivity listener;
     private HashMap<String, List<Location>> mapOfLocations = new HashMap<>();
     private List<Location> countyLocations = new ArrayList<>();
@@ -82,6 +87,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                              @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_location_selection, container, false);
         Bundle bundle = getArguments();
+
         if (bundle != null) {
             // noinspection unchecked
             mapOfLocations = (HashMap<String, List<Location>>) bundle.getSerializable("allLocationsMap");
@@ -146,12 +152,18 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     @Override
     public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
+        locationTextView = v.findViewById(R.id.locationTextView);
+        snapshotTextView = v.findViewById(R.id.snapshotTextView);
 
         Button btnNavRiskDetail = v.findViewById(R.id.submit_btn);
         btnNavRiskDetail.setOnClickListener(v1 -> {
-            Log.i(TAG, "BUTTON: CLICKED");
-            Log.i(TAG, "BUTTON: LOCATION " + selectedLocation.toString());
-            Log.i(TAG, "BUTTON: SNAPSHOT " + mutableCovidSnapshot.getValue().toString());
+            if (mutableCovidSnapshot.getValue().hasFieldsSet()) {
+                locationTextView.setText(selectedLocation.getCounty() + ", " + selectedLocation.getState());
+                snapshotTextView.setText(mutableCovidSnapshot.getValue().toString());
+            } else {
+                locationTextView.setText("Data still loading, click submit again");
+                snapshotTextView.setText("");
+            }
         });
     }
 

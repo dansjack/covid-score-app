@@ -60,10 +60,10 @@ public class CovidSnapshot {
 
     @Override
     public String toString() {
-        return "Location ID: " + locationId + " Active County: " + countyActiveCount
-                + " Total County: " + countyTotalPopulation + " Active State: " + stateActiveCount
-                + " Total State: " + stateTotalPopulation + " Active Country: " + countryActiveCount
-                + " Total Country: " + countryTotalPopulation;
+        return "\nActive County: " + countyActiveCount
+                + "\nTotal County: " + countyTotalPopulation + "\nActive State: " + stateActiveCount
+                + "\nTotal State: " + stateTotalPopulation + "\nActive Country: " + countryActiveCount
+                + "\nTotal Country: " + countryTotalPopulation;
     }
 
         public boolean hasFieldsSet() {
