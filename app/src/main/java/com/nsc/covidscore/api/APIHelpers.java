@@ -2,6 +2,7 @@ package com.nsc.covidscore.api;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.util.Log;
 
 import com.nsc.covidscore.Constants;
 
@@ -104,7 +105,9 @@ public class APIHelpers {
         String jsonString = getJsonFromFile(context, "county_fips.json");
         if (jsonString != null) {
             try {
+                Log.i("getLocationFIPS", ": location before " + location);
                 location = formatLocationFIPS(location);
+                Log.i("getLocationFIPS", ": location after " + location);
                 JSONArray fipsArray = new JSONArray(jsonString);
                 int fipsArrayLen = fipsArray.length();
                 int i = 0;
@@ -134,10 +137,6 @@ public class APIHelpers {
         location = location.toLowerCase();
         String county = location.split(",")[0];
         String state = location.split(",")[1];
-        String countyString = Constants.LOCATION_FIPS_COUNTY_STRING;
-        if (county.equals(Constants.DISTRICT_OF_COLUMBIA)) {
-            countyString = ", ";
-        }
-        return county + countyString + state;
+        return county + ", " + state;
     }
 }

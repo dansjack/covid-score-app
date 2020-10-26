@@ -143,6 +143,7 @@ public class Requests {
      */
     public static void getStatePopulation(Context context, String location, final VolleyJsonCallback cb) {
         final String TAG = Constants.STATE_POPULATION;
+        Log.i(TAG, "getStatePopulation: FAILED LOCATION " + location);
         String[] fipsLocationArray = APIHelpers.getLocationFIPS(context, location);
         if (fipsLocationArray != null) {
             StringBuilder url = new StringBuilder(
