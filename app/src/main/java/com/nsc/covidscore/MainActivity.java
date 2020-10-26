@@ -233,93 +233,195 @@ public class MainActivity extends AppCompatActivity {
      * This sets an observer on the Room function that returns the most recent addition to the db
      * When the new Location comes through, ?
      */
-//    private void setRoomLocationObserved() {
-//        // Set Listener for Location
-//        if (!roomLocationObserved && liveLocation != null) {
-//            liveLocation.observe(this, new Observer<Location>() {
-//                @Override
-//                public void onChanged(@Nullable final Location locationFromDb) {
-//                    // update cached version of location
-//                    currentLocation = liveLocation.getValue() != null ? liveLocation.getValue() : currentLocation;
-//                    if ((locationFromDb != null && !Location.alreadyInRoom(locationFromDb, savedLocations))
-//                        || (currentLocation != null && currentLocation.hasFieldsSet())) {
-//                        currentLocation = locationFromDb != null ? locationFromDb : currentLocation;
-//                        savedLocations.add(currentLocation);
-//                        currentSnapshot.setLocationId(currentLocation.getLocationId());
-//                        Log.e(TAG, "Locally saved location set to :" + currentLocation.toApiFormat());
-//                    } else {
-//                        Log.d(TAG, "Location not saved locally: " + locationFromDb.toApiFormat());
-//                        // no location is saved
-//                        // pop up dialog
-//                    }
-//                }
-//            });
-//        }
-//        roomLocationObserved = true;
-//    }
+    private void setRoomLocationObserved() {
+        // Set Listener for Location
+        if (!roomLocationObserved && liveLocation != null) {
+            liveLocation.observe(this, new Observer<Location>() {
+                @Override
+                public void onChanged(@Nullable final Location locationFromDb) {
+                    // update cached version of location
+                    currentLocation = liveLocation.getValue() != null ? liveLocation.getValue() : currentLocation;
+                    if ((locationFromDb != null && !Location.alreadyInRoom(locationFromDb, savedLocations))
+                        || (currentLocation != null && currentLocation.hasFieldsSet())) {
+                        currentLocation = locationFromDb != null ? locationFromDb : currentLocation;
+                        savedLocations.add(currentLocation);
+                        currentSnapshot.setLocationId(currentLocation.getLocationId());
+                        Log.e(TAG, "Locally saved location set to :" + currentLocation.toApiFormat());
+                    } else {
+                        Log.d(TAG, "Location not saved locally: " + locationFromDb.toApiFormat());
+                        // no location is saved
+                        // pop up dialog
+                    }
+                }
+            });
+        }
+        roomLocationObserved = true;
+    }
 
-
-
-//    public void saveSnapshotToRoom() {
-//        if (currentSnapshot != null && currentSnapshot.hasFieldsSet()) {
-//            // make sure to set LocationIdFK on Snapshot to current LocationIdPK
-//            if (currentSnapshot.getLocationId() == null || currentSnapshot.getLocationId() == 0) {
-//                if (currentLocation.getLocationId() == null) {
-////                    saveLocationToRoom();
-//                    currentLocation = liveLocation.getValue();
-//                }
-//                currentSnapshot.setLocationId(currentLocation != null ? currentLocation.getLocationId() : -1);
-//
-//            }
-//            Calendar calendar = Calendar.getInstance();
-//            currentSnapshot.setLastUpdated(calendar);
-//            vm.insertCovidSnapshot(currentSnapshot);
-//        } else {
-//            Log.e(TAG, "Incomplete Snapshot: " + currentSnapshot.toString());
-//        }
-//        Log.d(TAG, "saveSnapshotToRoom invoked");
-//    }
-
-//    public void saveLocationToRoom() {
-//        if (currentLocation != null && currentLocation.hasFieldsSet()) {
-//            Calendar calendar = Calendar.getInstance();
-//            currentLocation.setLastUpdated(calendar);
-//            vm.insertLocation(currentLocation);
-//        } else {
-//            Log.e(TAG, "Incomplete Location:  " + currentLocation.toApiFormat());
-//        }
-//        Log.d(TAG, "saveLocationToRoom invoked");
-//    }
-
-    private void fillLocationsMap() {
-        String jsonString;
-        JSONArray jsonArray;
-        AssetManager assetManager = this.context.getAssets();
-        try {
-            InputStream inputStream = assetManager.open("county_fips.json");
-            byte[] buffer = new byte[inputStream.available()];
-            int read = inputStream.read(buffer);
-            if (read == -1) {
-                inputStream.close();
+    private void makeApiCalls(Location location) {
+        Requests.getCounty(this, location.toApiFormat(), new VolleyJsonCallback() {
+            @Override
+            public void getJsonData(JSONObject response) throws JSONException {
+                if (currentSnapshot == null) { currentSnapshot = new CovidSnapshot(); }
+                // Add Location to Database (if not already present)
+                if (!currentLocation.hasSameData(location)) {
+                    vm.insertLocation(location);
+                }
+                JSONObject stats = (JSONObject) response.get("stats");
+                Integer confirmed = (Integer) stats.get("confirmed");
+                Integer deaths = (Integer) stats.get("deaths");
+                // TODO: calculate better estimate of active cases
+                Integer activeCounty = confirmed - deaths;
+                currentSnapshot.setCountyActiveCount(activeCounty);
+                if (currentSnapshot.hasFieldsSet()) {
+                        saveSnapshotToRoom();
+                }
+                Log.d(TAG, "getJsonData: county " + response);
             }
-            jsonString = new String(buffer, StandardCharsets.UTF_8);
-            jsonArray = new JSONArray(jsonString);
-            for (int i = 1; i < jsonArray.length(); i++) {
-                JSONArray currentArray = jsonArray.getJSONArray(i);
-                // split county and state names
-                String[] nameArray = currentArray.getString(0).split(",");
-                String countyName = nameArray[0].trim();
-                String stateName = nameArray[1].trim();
-                String stateFips = currentArray.getString(1);
-                String countyFips = currentArray.getString(2);
-                Location countyInState = new Location(countyName, stateName, stateFips, countyFips);
 
-                if (mapOfLocations.get(stateName) == null) {
-                    Log.i(TAG, "fillLocationsMap: " + stateName);
-                    mapOfLocations.put(stateName, new ArrayList<>());
-                    mapOfLocations.get(stateName).add(countyInState);
-                } else {
-                    mapOfLocations.get(stateName).add(countyInState);
+            @Override
+            public void getJsonException(Exception exception) {}
+
+            @Override
+            public void getString(String response) {
+
+            }
+        });
+        Requests.getState(this, location.toApiFormat(), new VolleyJsonCallback() {
+            @Override
+            public void getJsonData(JSONObject response) throws JSONException {
+                if (currentSnapshot == null) { currentSnapshot = new CovidSnapshot(); }
+                // Add Location to Database (if not already present)
+                if (!currentLocation.hasSameData(location)) {
+                    vm.insertLocation(location);
+                }                Integer activeState = (Integer) response.get("active");
+                currentSnapshot.setStateActiveCount(activeState);
+                if (currentSnapshot.hasFieldsSet()) {
+                    saveSnapshotToRoom();
+                }
+                Log.d(TAG, "getJsonData: state " + response);
+            }
+
+            @Override
+            public void getJsonException(Exception exception) {}
+
+            @Override
+            public void getString(String response) {}
+        });
+        Requests.getCountyHistorical(this, location.toApiFormat(), "30", new VolleyJsonCallback() {
+            @Override
+            public void getJsonData(JSONObject response) {
+                Log.d(TAG, "getJsonData: countyHistorical " + response);
+            }
+
+            @Override
+            public void getJsonException(Exception exception) {}
+
+            @Override
+            public void getString(String response) {}
+        });
+        Requests.getUSHistorical(this, "1", new VolleyJsonCallback() {
+            @Override
+            public void getJsonData(JSONObject response) throws JSONException, IOException {
+                if (currentSnapshot == null) { currentSnapshot = new CovidSnapshot(); }
+                // Add Location to Database (if not already present)
+                if (!currentLocation.hasSameData(location)) {
+                    vm.insertLocation(location);
+                }
+                JSONObject timeline = response.getJSONObject("timeline");
+                HashMap<String, Integer> totalMap = new ObjectMapper().readValue((timeline.get("cases")).toString(), HashMap.class);
+
+                Integer totalCountry = 0;
+                for (Object value : totalMap.values()) {
+                    totalCountry = (Integer) value;
+                }
+                Integer deathCountry = 0;
+                HashMap<String, Integer> deathMap = new ObjectMapper().readValue((timeline.get("deaths")).toString(), HashMap.class);
+                for (Object value : deathMap.values()) {
+                    deathCountry = (Integer) value;
+                }
+                Integer recoveredCountry = 0;
+                HashMap<String, Integer> recoveredMap = new ObjectMapper().readValue((timeline.get("recovered")).toString(), HashMap.class);
+                for (Object value : recoveredMap.values()) {
+                    recoveredCountry = (Integer) value;
+                }
+                currentSnapshot.setCountryActiveCount(totalCountry - deathCountry - recoveredCountry);
+                if (currentSnapshot.hasFieldsSet()) {
+                    saveSnapshotToRoom();
+                }
+                Log.d(TAG, "getJsonData: country " + response);
+            }
+
+            @Override
+            public void getJsonException(Exception exception) {}
+
+            @Override
+            public void getString(String response) {}
+        });
+        Requests.getCountyPopulation(this, location.toApiFormat(), new VolleyJsonCallback() {
+            @Override
+            public void getJsonData(JSONObject response) {}
+
+            @Override
+            public void getJsonException(Exception exception) {}
+
+            @Override
+            public void getString(String response) {
+                if (currentSnapshot == null) { currentSnapshot = new CovidSnapshot(); }
+                vm.insertLocation(location);
+                currentSnapshot.setCountyTotalPopulation(Integer.parseInt(response));
+                if (currentSnapshot.hasFieldsSet()) {
+                    saveSnapshotToRoom();
+                }
+                Log.d(TAG, "getStringData: County " + response);
+            }
+        });
+        Requests.getStatePopulation(this, location.toApiFormat(), new VolleyJsonCallback() {
+            @Override
+            public void getJsonData(JSONObject response) {}
+
+            @Override
+            public void getJsonException(Exception exception) {}
+
+            @Override
+            public void getString(String response) {
+                if (currentSnapshot == null) { currentSnapshot = new CovidSnapshot(); }
+                vm.insertLocation(location);
+                currentSnapshot.setStateTotalPopulation(Integer.parseInt(response));
+                if (currentSnapshot.hasFieldsSet()) {
+                    saveSnapshotToRoom();
+                }
+                Log.d(TAG, "getStringData: State  " + response);
+            }
+        });
+
+        Requests.getCountryPopulation(this, new VolleyJsonCallback() {
+            @Override
+            public void getJsonData(JSONObject response) {}
+
+            @Override
+            public void getJsonException(Exception exception) {}
+
+            @Override
+            public void getString(String response) {
+                if (currentSnapshot == null) { currentSnapshot = new CovidSnapshot(); }
+                vm.insertLocation(location);
+                currentSnapshot.setCountryTotalPopulation(Integer.parseInt(response));
+                if (currentSnapshot.hasFieldsSet()) {
+                    saveSnapshotToRoom();
+                }
+                Log.d(TAG, "getStringData: Country " + response);
+            }
+        });
+    }
+
+    public void saveSnapshotToRoom() {
+        if (currentSnapshot != null && currentSnapshot.hasFieldsSet()) {
+            // make sure to set LocationIdFK on Snapshot to current LocationIdPK
+            if (currentSnapshot.getLocationId() == null || currentSnapshot.getLocationId() == 0) {
+                if (currentLocation.getLocationId() == null) {
+                    saveLocationToRoom();
+                    currentLocation = liveLocation.getValue();
                 }
 
             }
