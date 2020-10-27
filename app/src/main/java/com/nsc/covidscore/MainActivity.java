@@ -1,29 +1,25 @@
 package com.nsc.covidscore;
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.RequestQueue;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nsc.covidscore.api.RequestSingleton;
-import com.nsc.covidscore.api.Requests;
-import com.nsc.covidscore.api.VolleyJsonCallback;
 //import com.nsc.covidscore.room.CovidSnapshot;
 //import com.nsc.covidscore.room.CovidSnapshotWithLocationViewModel;
 //import com.nsc.covidscore.room.Location;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,30 +28,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private Location currentLocation;
     private HashMap<String, List<Location>> mapOfLocations = new HashMap<>();
-    private LiveData<Location> liveLocation;
-    private List<Location> savedLocations = new ArrayList<>();
-    // so that we only set one observer on Room Location
-    private boolean roomLocationObserved = false;
-    private MutableLiveData<String> mutableSelectedCountyMain = new MutableLiveData<>();
 
-    //    private LiveData<CovidSnapshot> liveCovidSnapshot;
-//    private CovidSnapshot currentSnapshot;
-    // so that we only set one observer on Room CovidSnapshot
-    private boolean roomCovidSnapshotObserved = false;
-
-//    private CovidSnapshotWithLocationViewModel vm;
     private RequestQueue queue;
     private RequestSingleton requestManager;
 
-//    private TextView tempDisplayTextView;
 
     private FragmentAdapter mFragmentAdapter;
     private Fragment mFragment;
     private ViewPager mViewPager;
+    private FragmentAdapter pagerAdapter;
     private Context context;
 
     @Override
@@ -66,74 +50,35 @@ public class MainActivity extends AppCompatActivity {
 
         fillLocationsMap();
 
-        mFragmentAdapter = new FragmentAdapter(getSupportFragmentManager());
-        mViewPager = findViewById(R.id.frag_placeholder);
-        setupViewPager(mViewPager);
+        // Check that the activity is using the layout version with
+        // the fragment_container FrameLayout
+        if (findViewById(R.id.fragContainer) != null) {
+
+            // However, if we're being restored from a previous state,
+            // then we don't need to do anything and should return or else
+            // we could end up with overlapping fragments.
+            if (savedInstanceState != null) {
+                return;
+            }
+
+            // Create a new Fragment to be placed in the activity layout
+            LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("allLocationsMap", mapOfLocations);
+
+            // In case this activity was started with special instructions from an
+            // Intent, pass the Intent's extras to the fragment as arguments
+            locationManualSelectionFragment.setArguments(bundle);
+
+            // Add the fragment to the 'fragment_container' FrameLayout
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragContainer, locationManualSelectionFragment, "lmsf").commit();
+        }
 
         requestManager = RequestSingleton.getInstance(this.getApplicationContext());
         queue = requestManager.getRequestQueue();
 
-
-        // Access to Room Database
-//        vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel.class);
-
-        // Set Room Data to local variables, if saved
-//        currentSnapshot = vm.getSavedCovidSnapshot();
-//        currentLocation = vm.getSavedLocation();
-
-        // These variables will hold latest copies of Room rows
-//        liveCovidSnapshot = vm.getLatestCovidSnapshot();
-//        liveLocation = vm.getLatestLocation();
-
-        // These functions will set observers on those, in case they change
-//        setRoomCovidSnapshotObserved();
-//        setRoomLocationObserved();
-
-        // Attempts to save CovidSnapshot to DB whenever the local variable is changed
-        // - if the fields aren't fully set, it will not insert
-//        if (currentSnapshot == null) {
-//            currentSnapshot = new CovidSnapshot();
-//        }
-//        currentSnapshot.setListener(e -> {
-//            if (currentSnapshot.hasFieldsSet()) {
-////                saveSnapshotToRoom();
-//            }
-//        });
-
-
-        // temp test data - remove
-        Location tempLocation = new Location("washington", "king", "99", "99");
-        currentLocation = tempLocation;
-
-        if (currentLocation == null) {
-            // there is no previously saved location
-            // TODO: pop up dialog here?
-        }
-
-        // Attempts to save Location to DB whenever the local variable is changed
-        // - if the fields aren't fully set, it will not insert
-//        if (currentLocation.hasFieldsSet()) {
-//            saveLocationToRoom();
-//        }
-//        currentLocation.setListener(e -> {
-//            saveLocationToRoom();
-//        });
-
-//        makeApiCalls(currentLocation);
-
         Log.d(TAG,"onCreate invoked");
-    }
-
-    private void setupViewPager(ViewPager viewPager){
-        FragmentAdapter adapter = new FragmentAdapter(getSupportFragmentManager());
-        // adapter.addFragment(new WelcomePageFragment(), "WelcomePageFragment");
-        LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("allLocationsMap", mapOfLocations);
-        locationManualSelectionFragment.setArguments(bundle);
-        adapter.addFragment(locationManualSelectionFragment, "LocationManualSelectionFragment");
-        adapter.addFragment(new RiskDetailPageFragment(), "RiskDetailPageFragment");
-        viewPager.setAdapter(adapter);
     }
 
     public void setViewPager(int fragmentNumber){
@@ -170,6 +115,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        LocationManualSelectionFragment tLmsf = (LocationManualSelectionFragment) getSupportFragmentManager().findFragmentByTag("lmsf");
+        if (tLmsf != null && tLmsf.isVisible()) {
+            Log.i(TAG, "onBackPressed: WEEE");
+            LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("allLocationsMap", mapOfLocations);
+
+            // In case this activity was started with special instructions from an
+            // Intent, pass the Intent's extras to the fragment as arguments
+            locationManualSelectionFragment.setArguments(bundle);
+
+            // Add the fragment to the 'fragment_container' FrameLayout
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragContainer, locationManualSelectionFragment, "lmsf").commit();
+        } else {
+            Log.i(TAG, "onBackPressed: weong frag");
+        }
+
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.i(TAG, "onDestroy()");
@@ -183,88 +151,6 @@ public class MainActivity extends AppCompatActivity {
         }
         Log.d(TAG, "onStop invoked");
     }
-
-    /**
-     * This sets an observer on the Room function that returns the most recent addition to the db
-     * When the new CovidSnapshot comes through, save to local variable and display to user
-     */
-//    private void setRoomCovidSnapshotObserved() {
-//        // Set Listener for Current Covid Snapshot - Add Else - Dialog
-//        if (!roomCovidSnapshotObserved && liveCovidSnapshot != null) {
-//            liveCovidSnapshot.observe(this, new Observer<CovidSnapshot>() {
-//                @Override
-//                public void onChanged(@Nullable final CovidSnapshot covidSnapshotFromDb) {
-//                    // update cached version of snapshot
-//                    currentSnapshot = liveCovidSnapshot.getValue() != null ? liveCovidSnapshot.getValue() : currentSnapshot;
-//                    if (covidSnapshotFromDb != null || (currentSnapshot != null && currentSnapshot.hasFieldsSet())) {
-//                        currentSnapshot = covidSnapshotFromDb == null ? covidSnapshotFromDb : currentSnapshot;
-//                        // TODO: set textfields here! - vv this is temporary vv
-//                        if (currentLocation == null) { // this shouldn't be hit because currentLocation shouldn't be null
-//                            currentLocation = liveLocation.getValue();
-////                            tempDisplayTextView.setText("Most Recent Snapshot:\n" + currentSnapshot.toString());
-//                            Toast.makeText
-//                                    (context, "Most Recent Snapshot:\n" + currentSnapshot.toString(), Toast.LENGTH_SHORT).show();
-//                        } else {
-////                            tempDisplayTextView.setText("Most Recent Location: id: \n" + currentLocation.getLocationId() + ", " + currentLocation.toApiFormat()
-////                                    + "\nMost Recent Snapshot: \n" + currentSnapshot.toString());
-//                            Toast.makeText
-//                                    (context, "Most Recent Location: id: \n" + currentLocation.getLocationId() + ", " + currentLocation.toApiFormat()
-//                                    + "\nMost Recent Snapshot: \n" + currentSnapshot.toString(), Toast.LENGTH_SHORT).show();
-//                        }
-//                        Log.e(TAG, "CovidSnapshot Room listener invoked");
-//                    }
-//                    else if (covidSnapshotFromDb == null) {
-//                        Log.e(TAG, "Observer returned null CovidSnapshot");
-//                        // run API call, if location is saved
-//                    }
-//                }
-//            });
-//            roomCovidSnapshotObserved = true;
-//        }
-//    }
-
-    /**
-     * This sets an observer on the Room function that returns the most recent addition to the db
-     * When the new Location comes through, ?
-     */
-//    private void setRoomLocationObserved() {
-//        // Set Listener for Location
-//        if (!roomLocationObserved && liveLocation != null) {
-//            liveLocation.observe(this, new Observer<Location>() {
-//                @Override
-//                public void onChanged(@Nullable final Location locationFromDb) {
-//                    // update cached version of location
-//                    currentLocation = liveLocation.getValue() != null ? liveLocation.getValue() : currentLocation;
-//                    if ((locationFromDb != null && !Location.alreadyInRoom(locationFromDb, savedLocations))
-//                        || (currentLocation != null && currentLocation.hasFieldsSet())) {
-//                        currentLocation = locationFromDb != null ? locationFromDb : currentLocation;
-//                        savedLocations.add(currentLocation);
-//                        currentSnapshot.setLocationId(currentLocation.getLocationId());
-//                        Log.e(TAG, "Locally saved location set to :" + currentLocation.toApiFormat());
-//                    } else {
-//                        Log.d(TAG, "Location not saved locally: " + locationFromDb.toApiFormat());
-//                        // no location is saved
-//                        // pop up dialog
-//                    }
-//                }
-//            });
-//        }
-//        roomLocationObserved = true;
-//    }
-//    public void saveSnapshotToRoom() {
-//        if (currentSnapshot != null && currentSnapshot.hasFieldsSet()) {
-//            // make sure to set LocationIdFK on Snapshot to current LocationIdPK
-//            if (currentSnapshot.getLocationId() == null || currentSnapshot.getLocationId() == 0) {
-//                if (currentLocation.getLocationId() == null) {
-//                    saveLocationToRoom();
-//                    currentLocation = liveLocation.getValue();
-//                }
-//
-//            }
-//        } catch (IOException | JSONException exception) {
-//            exception.printStackTrace();
-//        }
-//    }
 
     private void fillLocationsMap() {
         String jsonString;

@@ -73,4 +73,11 @@ public class CovidSnapshot {
         boolean countryNotZero = countryActiveCount != null && countryActiveCount != 0;
         return countsNotNull && populationsNotNull && countryNotZero;
     }
+
+        public boolean hasSameData(CovidSnapshot other) {
+            boolean countsMatch = ((this.countyActiveCount.equals(other.countyActiveCount)) && (this.stateActiveCount.equals(other.stateActiveCount))) && (this.countryActiveCount.equals(other.countryActiveCount));
+            boolean populationsMatch = ((this.countyTotalPopulation.equals(other.countyTotalPopulation)) && this.stateTotalPopulation.equals(other.stateTotalPopulation)) && this.countryTotalPopulation.equals(other.countryTotalPopulation);
+
+            return countsMatch && populationsMatch;
+        }
 }
