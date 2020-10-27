@@ -137,8 +137,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                     locationTextView.setText("Please pick a state and county");
 
                 } else {
-                    locationTextView.setText("Data still loading, please click submit again");
-                    snapshotTextView.setText("");
+                    locationTextView.setText("Loading COVID data...");
                 }
 
             });
