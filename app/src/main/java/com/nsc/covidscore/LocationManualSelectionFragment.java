@@ -105,6 +105,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
         super.onViewCreated(v, savedInstanceState);
         locationTextView = v.findViewById(R.id.locationTextView);
         snapshotTextView = v.findViewById(R.id.snapshotTextView);
+        int[] groupSizes = {10, 50, 200};
 
         Button btnNavRiskDetail = v.findViewById(R.id.submit_btn);
         btnNavRiskDetail.setOnClickListener(v1 -> {
@@ -115,6 +116,10 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                     FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
                     RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
 
+                    String riskDisplay = RiskCalculation.printRiskCalculations(selectedCovidSnapshot.getCountyActiveCount(),
+                            selectedCovidSnapshot.getCountyTotalPopulation(), groupSizes);
+                    Log.i(TAG, "EEEE" + riskDisplay);
+
                     Log.i(TAG, "onViewCreated: FFF" + selectedCovidSnapshot.getCountyActiveCount());
                     Bundle bundle = new Bundle();
                     bundle.putString("currentLocation", selectedLocation.getCounty() + ", " + selectedLocation.getState());
@@ -124,6 +129,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                     bundle.putString("totalCounty", selectedCovidSnapshot.getCountyTotalPopulation().toString());
                     bundle.putString("totalState", selectedCovidSnapshot.getStateTotalPopulation().toString());
                     bundle.putString("totalCountry", selectedCovidSnapshot.getCountyTotalPopulation().toString());
+                    bundle.putString("riskDisplay",riskDisplay);
                     riskDetailPageFragment.setArguments(bundle);
                     transaction.replace(R.id.fragContainer, riskDetailPageFragment, "rdpf");
                     transaction.addToBackStack(null);

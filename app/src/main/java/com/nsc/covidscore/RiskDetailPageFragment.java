@@ -26,6 +26,7 @@ public class RiskDetailPageFragment extends Fragment {
     private String totalCounty;
     private String totalState;
     private String totalCountry;
+    private String riskDisplay;
 
     private TextView currentLocationV;
     private TextView activeCountyV;
@@ -34,6 +35,7 @@ public class RiskDetailPageFragment extends Fragment {
     private TextView totalCountyV;
     private TextView totalStateV;
     private TextView totalCountryV;
+    private TextView riskDisplayV;
 
     public RiskDetailPageFragment() {
         // Required empty public constructor
@@ -69,6 +71,7 @@ public class RiskDetailPageFragment extends Fragment {
         totalCountyV = v.findViewById(R.id.totalCounty);
         totalStateV = v.findViewById(R.id.totalState);
         totalCountryV = v.findViewById(R.id.totalCountry);
+        riskDisplayV = v.findViewById(R.id.riskDisplay);
 
         Bundle bundle = getArguments();
 
@@ -80,6 +83,7 @@ public class RiskDetailPageFragment extends Fragment {
             totalCounty = bundle.getString("totalCounty");
             totalState = bundle.getString("totalState");
             totalCountry = bundle.getString("totalCountry");
+            riskDisplay = bundle.getString("riskDisplay");
 
             currentLocationV.setText(currentLocation);
             activeCountyV.setText(activeCounty);
@@ -88,6 +92,7 @@ public class RiskDetailPageFragment extends Fragment {
             totalCountyV.setText(totalCounty);
             totalStateV.setText(totalState);
             totalCountryV.setText(totalCountry);
+            riskDisplayV.setText(riskDisplay);
 
             Log.i(TAG, "onCreateView: Bundle received from LocationManualSelectionFragment");
         }
