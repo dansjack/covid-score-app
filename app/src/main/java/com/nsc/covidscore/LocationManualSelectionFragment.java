@@ -116,9 +116,11 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                     FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
                     RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
 
-                    String riskDisplay = RiskCalculation.printRiskCalculations(selectedCovidSnapshot.getCountyActiveCount(),
-                            selectedCovidSnapshot.getCountyTotalPopulation(), groupSizes);
-                    Log.i(TAG, "EEEE" + riskDisplay);
+                    HashMap<Integer, Double> riskMap = RiskCalculation.getRiskCalculationsMap(
+                            selectedCovidSnapshot.getCountyActiveCount(),
+                            selectedCovidSnapshot.getCountyTotalPopulation(),
+                            groupSizes);
+                    Log.i(TAG, "onViewCreated: riskMap" + riskMap.toString());
 
                     Log.i(TAG, "onViewCreated: FFF" + selectedCovidSnapshot.getCountyActiveCount());
                     Bundle bundle = new Bundle();
@@ -129,7 +131,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                     bundle.putString("totalCounty", selectedCovidSnapshot.getCountyTotalPopulation().toString());
                     bundle.putString("totalState", selectedCovidSnapshot.getStateTotalPopulation().toString());
                     bundle.putString("totalCountry", selectedCovidSnapshot.getCountyTotalPopulation().toString());
-                    bundle.putString("riskDisplay",riskDisplay);
+                    bundle.putSerializable("riskMap",riskMap);
                     riskDetailPageFragment.setArguments(bundle);
                     transaction.replace(R.id.fragContainer, riskDetailPageFragment, "rdpf");
                     transaction.addToBackStack(null);

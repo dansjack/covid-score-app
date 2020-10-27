@@ -2,6 +2,7 @@ package com.nsc.covidscore;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.HashMap;
 
 public class RiskCalculation {
 
@@ -17,6 +18,16 @@ public class RiskCalculation {
         }
 
         return sb.toString();
+    }
+
+    public static HashMap<Integer, Double> getRiskCalculationsMap(Integer activeCases, Integer totalPopulation, int[] groupSizes) {
+        HashMap<Integer, Double> riskMap = new HashMap<>();
+
+        for (int groupSize : groupSizes) {
+            riskMap.put(groupSize, calculateRisk(activeCases, totalPopulation, groupSize));
+        }
+
+        return riskMap;
     }
 
     public static double calculateRisk(int activeCases, int totalPopulation, int groupSize) {

@@ -26,7 +26,7 @@ public class RiskDetailPageFragment extends Fragment {
     private String totalCounty;
     private String totalState;
     private String totalCountry;
-    private String riskDisplay;
+    private HashMap<Integer, Double> riskMap;
 
     private TextView currentLocationV;
     private TextView activeCountyV;
@@ -35,7 +35,10 @@ public class RiskDetailPageFragment extends Fragment {
     private TextView totalCountyV;
     private TextView totalStateV;
     private TextView totalCountryV;
-    private TextView riskDisplayV;
+
+    private TextView risk10V;
+    private TextView risk50V;
+    private TextView risk200V;
 
     public RiskDetailPageFragment() {
         // Required empty public constructor
@@ -65,34 +68,48 @@ public class RiskDetailPageFragment extends Fragment {
     public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
         currentLocationV = v.findViewById(R.id.currentLocation);
+
         activeCountyV = v.findViewById(R.id.activeCounty);
         activeStateV = v.findViewById(R.id.activeState);
         activeCountryV = v.findViewById(R.id.activeUS);
+
         totalCountyV = v.findViewById(R.id.totalCounty);
         totalStateV = v.findViewById(R.id.totalState);
         totalCountryV = v.findViewById(R.id.totalCountry);
-        riskDisplayV = v.findViewById(R.id.riskDisplay);
+
+        risk10V = v.findViewById(R.id.group10);
+        risk50V = v.findViewById(R.id.group50);
+        risk200V = v.findViewById(R.id.group200);
 
         Bundle bundle = getArguments();
 
         if (bundle != null) {
             currentLocation = bundle.getString("currentLocation");
+
             activeCounty = bundle.getString("activeCounty");
             activeState = bundle.getString("activeState");
             activeCountry = bundle.getString("activeCountry");
+
             totalCounty = bundle.getString("totalCounty");
             totalState = bundle.getString("totalState");
             totalCountry = bundle.getString("totalCountry");
-            riskDisplay = bundle.getString("riskDisplay");
+
+            riskMap = (HashMap<Integer, Double>) bundle.getSerializable("riskMap");
 
             currentLocationV.setText(currentLocation);
+
             activeCountyV.setText(activeCounty);
             activeStateV.setText(activeState);
             activeCountryV.setText(activeCountry);
+
             totalCountyV.setText(totalCounty);
             totalStateV.setText(totalState);
             totalCountryV.setText(totalCountry);
-            riskDisplayV.setText(riskDisplay);
+
+            risk10V.setText(riskMap.get(10).toString() + "%");
+            risk50V.setText(riskMap.get(50).toString() + "%");
+            risk200V.setText(riskMap.get(200).toString() + "%");
+
 
             Log.i(TAG, "onCreateView: Bundle received from LocationManualSelectionFragment");
         }
