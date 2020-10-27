@@ -1,17 +1,25 @@
 package com.nsc.covidscore;
 
+import android.content.res.Configuration;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
+import android.widget.TextView;
+
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.os.Bundle;
-import android.util.Log;
-import android.widget.TextView;
-
 import com.android.volley.RequestQueue;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.android.material.navigation.NavigationView;
 import com.nsc.covidscore.api.RequestSingleton;
 import com.nsc.covidscore.api.Requests;
 import com.nsc.covidscore.api.VolleyJsonCallback;
@@ -46,10 +54,54 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView tempDisplayTextView;
 
+    private DrawerLayout mDrawer;
+    private Toolbar toolbar;
+    private NavigationView nvDrawer;
+    // Make sure to be using androidx.appcompat.app.ActionBarDrawerToggle version.
+    private ActionBarDrawerToggle drawerToggle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Toolbar to replace actionbar
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Find drawer view
+        mDrawer = (DrawerLayout)findViewById(R.id.drawer_layout);
+        drawerToggle = setupDrawerToggle();
+
+        // Setup toggle to display hamburger icon with nice animation
+        drawerToggle.setDrawerIndicatorEnabled(true);
+        drawerToggle.syncState();
+
+        // Tie DrawerLayout events to the ActionBarToggle
+        mDrawer.addDrawerListener(drawerToggle);
+
+        nvDrawer = (NavigationView) findViewById(R.id.nvView);
+        setupDrawerContent(nvDrawer);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         requestManager = RequestSingleton.getInstance(this.getApplicationContext());
         queue = requestManager.getRequestQueue();
         tempDisplayTextView = findViewById(R.id.hello_world);
@@ -102,6 +154,107 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(TAG,"onCreate invoked");
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // The action bar home/up action should open or close the drawer.
+        if (drawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        selectDrawerItem(menuItem);
+                        return true;
+                    }
+                });
+    }
+//TODO: after merge, first and default fragment should be RiskDetailPage.class
+    public void selectDrawerItem(MenuItem menuItem) {
+        // Create a new fragment and specify the fragment to show based on nav item clicked
+        Fragment fragment = null;
+        Class fragmentClass;
+        switch(menuItem.getItemId()) {
+            case R.id.nav_location_fragment:
+                fragmentClass = LocationSettingsPageFragment.class;
+                break;
+            case R.id.nav_location_settings_fragment:
+                fragmentClass = LocationSettingsPageFragment.class;
+                break;
+            default:
+                fragmentClass = LocationSettingsPageFragment.class;
+        }
+        try {
+            fragment = (Fragment) fragmentClass.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Insert the fragment by replacing any existing fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+
+        // Highlight the selected item has been done by NavigationView
+        menuItem.setChecked(true);
+        // Set action bar title
+        setTitle(menuItem.getTitle());
+        // Close the navigation drawer
+        mDrawer.closeDrawers();
+    }
+    private ActionBarDrawerToggle setupDrawerToggle() {
+        // NOTE: Make sure you pass in a valid toolbar reference.  ActionBarDrawToggle() does not require it
+        // and will not render the hamburger icon without it.
+        return new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open,  R.string.drawer_close);
+    }
+
+    // `onPostCreate` called when activity start-up is complete after `onStart()`
+    // NOTE 1: Make sure to override the method with only a single `Bundle` argument
+    // Note 2: Make sure you implement the correct `onPostCreate(Bundle savedInstanceState)` method.
+    // There are 2 signatures and only `onPostCreate(Bundle state)` shows the hamburger icon.
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        drawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggles
+        drawerToggle.onConfigurationChanged(newConfig);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Override
     protected void onStop () {

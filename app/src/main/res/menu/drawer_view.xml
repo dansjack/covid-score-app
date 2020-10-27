@@ -1,0 +1,22 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+<!--    //TODO: change android:title={locationValue} to fill with stored locations-->
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_location_fragment"
+            android:icon="@drawable/ic_outline_push_pin_24"
+            android:title="King County, Washington" />
+
+    </group>
+
+    <item android:title="@string/settings">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_location_settings_fragment"
+                    android:icon="@drawable/ic_baseline_add_location_24"
+                    android:title="@string/manage_locations" />
+            </group>
+        </menu>
+    </item>
+</menu>
