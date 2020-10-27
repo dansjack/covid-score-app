@@ -6,6 +6,12 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import android.content.Context;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +22,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.RequestQueue;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -52,7 +61,12 @@ public class MainActivity extends AppCompatActivity {
     private RequestQueue queue;
     private RequestSingleton requestManager;
 
-    private TextView tempDisplayTextView;
+//    private TextView tempDisplayTextView;
+
+    private FragmentAdapter mFragmentAdapter;
+    private Fragment mFragment;
+    private ViewPager mViewPager;
+    private Context context;
 
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
@@ -101,10 +115,15 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+        context = this;
+
+
+        mFragmentAdapter = new FragmentAdapter(getSupportFragmentManager());
+        mViewPager = (ViewPager) findViewById(R.id.frag_placeholder);
+        setupViewPager(mViewPager);
 
         requestManager = RequestSingleton.getInstance(this.getApplicationContext());
         queue = requestManager.getRequestQueue();
-        tempDisplayTextView = findViewById(R.id.hello_world);
 
         // Access to Room Database
         vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel.class);
@@ -256,6 +275,54 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    private void setupViewPager(ViewPager viewPager){
+        FragmentAdapter adapter = new FragmentAdapter(getSupportFragmentManager());
+        adapter.addFragment(new WelcomePageFragment(), "WelcomePageFragment");
+//        adapter.addFragment(new LocationSelectionPageFragment(), "LocationSelectionPageFragment");
+        adapter.addFragment(new RiskDetailPageFragment(), "RiskDetailPageFragment");
+        viewPager.setAdapter(adapter);
+    }
+
+    public void setViewPager(int fragmentNumber){
+        mViewPager.setCurrentItem(fragmentNumber);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.i(TAG, "onRestart()");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i(TAG, "onStart()");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i(TAG, "onResume()");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.i(TAG, "onPause()");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i(TAG, "onDestroy()");
+    }
+
     @Override
     protected void onStop () {
         super.onStop();
@@ -282,10 +349,15 @@ public class MainActivity extends AppCompatActivity {
                         // TODO: set textfields here! - vv this is temporary vv
                         if (currentLocation == null) { // this shouldn't be hit because currentLocation shouldn't be null
                             currentLocation = liveLocation.getValue();
-                            tempDisplayTextView.setText("Most Recent Snapshot:\n" + currentSnapshot.toString());
+//                            tempDisplayTextView.setText("Most Recent Snapshot:\n" + currentSnapshot.toString());
+                            Toast.makeText
+                                    (context, "Most Recent Snapshot:\n" + currentSnapshot.toString(), Toast.LENGTH_SHORT).show();
                         } else {
-                            tempDisplayTextView.setText("Most Recent Location: id: \n" + currentLocation.getLocationId() + ", " + currentLocation.toApiFormat()
-                                    + "\nMost Recent Snapshot: \n" + currentSnapshot.toString());
+//                            tempDisplayTextView.setText("Most Recent Location: id: \n" + currentLocation.getLocationId() + ", " + currentLocation.toApiFormat()
+//                                    + "\nMost Recent Snapshot: \n" + currentSnapshot.toString());
+                            Toast.makeText
+                                    (context, "Most Recent Location: id: \n" + currentLocation.getLocationId() + ", " + currentLocation.toApiFormat()
+                                    + "\nMost Recent Snapshot: \n" + currentSnapshot.toString(), Toast.LENGTH_SHORT).show();
                         }
                         Log.e(TAG, "CovidSnapshot Room listener invoked");
                     }
