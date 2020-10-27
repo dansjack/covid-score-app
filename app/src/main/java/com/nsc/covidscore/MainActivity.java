@@ -1,28 +1,21 @@
 package com.nsc.covidscore;
 
+import android.content.Context;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-
-import android.os.Bundle;
-import android.util.Log;
-import android.widget.TextView;
-import android.graphics.Color;
+import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.RequestQueue;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-
 import com.nsc.covidscore.api.RequestSingleton;
 import com.nsc.covidscore.api.Requests;
 import com.nsc.covidscore.api.VolleyJsonCallback;
@@ -55,37 +48,26 @@ public class MainActivity extends AppCompatActivity {
     private RequestQueue queue;
     private RequestSingleton requestManager;
 
-    private TextView tempDisplayTextView;
-    public LineChart riskTrends;
+//    private TextView tempDisplayTextView;
+
+    private FragmentAdapter mFragmentAdapter;
+    private Fragment mFragment;
+    private ViewPager mViewPager;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = this;
+
+
+        mFragmentAdapter = new FragmentAdapter(getSupportFragmentManager());
+        mViewPager = (ViewPager) findViewById(R.id.frag_placeholder);
+        setupViewPager(mViewPager);
+
         requestManager = RequestSingleton.getInstance(this.getApplicationContext());
         queue = requestManager.getRequestQueue();
-        tempDisplayTextView = findViewById(R.id.hello_world);
-
-        //Draws graph for risks vs. group size relationship
-        riskTrends = findViewById(R.id.lineGraph);
-        LineDataSet riskDataSet1 = new LineDataSet(dataSet1(),"Risk vs. Group size");
-        ArrayList<ILineDataSet> riskTrendDataSet = new ArrayList<>();
-        riskTrendDataSet.add(riskDataSet1);
-        LineData riskData = new LineData(riskTrendDataSet);
-
-
-        riskDataSet1.setCircleColor(Color.BLACK);
-        riskDataSet1.setAxisDependency(YAxis.AxisDependency.LEFT);
-
-        riskTrends.setData(riskData);
-        XAxis xAxis = riskTrends.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        riskTrends.getDescription().setEnabled(true);
-        Description description = new Description();
-        description.setText("Group Size vs. Risk at your location");
-        description.setTextSize(15f);
-        description.setPosition(0f,0f);
-        riskTrends.invalidate();
 
         // Access to Room Database
         vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel.class);
@@ -136,18 +118,53 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG,"onCreate invoked");
     }
 
-    //Array of dummy data to be deleted after we can plug in the real data
-    private ArrayList<Entry> dataSet1()
-    {
-        ArrayList<Entry> riskVals = new ArrayList<Entry>();
+    private void setupViewPager(ViewPager viewPager){
+        FragmentAdapter adapter = new FragmentAdapter(getSupportFragmentManager());
+        adapter.addFragment(new WelcomePageFragment(), "WelcomePageFragment");
+//        adapter.addFragment(new LocationSelectionPageFragment(), "LocationSelectionPageFragment");
+        adapter.addFragment(new RiskDetailPageFragment(), "RiskDetailPageFragment");
+        viewPager.setAdapter(adapter);
+    }
 
-        riskVals.add(new Entry(10f, 1f));
-        riskVals.add(new Entry(100f,  10f));
-        riskVals.add(new Entry(1f,   0.1f));
+    public void setViewPager(int fragmentNumber){
+        mViewPager.setCurrentItem(fragmentNumber);
+    }
 
-        return riskVals;
-    };
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
 
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.i(TAG, "onRestart()");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i(TAG, "onStart()");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i(TAG, "onResume()");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.i(TAG, "onPause()");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i(TAG, "onDestroy()");
+    }
 
     @Override
     protected void onStop () {
@@ -175,11 +192,16 @@ public class MainActivity extends AppCompatActivity {
                         // TODO: set textfields here! - vv this is temporary vv
                         if (currentLocation == null) { // this shouldn't be hit because currentLocation shouldn't be null
                             currentLocation = liveLocation.getValue();
-                            //tempDisplayTextView.setText("Most Recent Snapshot:\n" + currentSnapshot.toString());
-                        }// else {
-                            //tempDisplayTextView.setText("Most Recent Location: id: \n" + currentLocation.getLocationId() + ", " + currentLocation.toApiFormat()
-                                    //+ "\nMost Recent Snapshot: \n" + currentSnapshot.toString());
-                        //}
+//                            tempDisplayTextView.setText("Most Recent Snapshot:\n" + currentSnapshot.toString());
+                            Toast.makeText
+                                    (context, "Most Recent Snapshot:\n" + currentSnapshot.toString(), Toast.LENGTH_SHORT).show();
+                        } else {
+//                            tempDisplayTextView.setText("Most Recent Location: id: \n" + currentLocation.getLocationId() + ", " + currentLocation.toApiFormat()
+//                                    + "\nMost Recent Snapshot: \n" + currentSnapshot.toString());
+                            Toast.makeText
+                                    (context, "Most Recent Location: id: \n" + currentLocation.getLocationId() + ", " + currentLocation.toApiFormat()
+                                    + "\nMost Recent Snapshot: \n" + currentSnapshot.toString(), Toast.LENGTH_SHORT).show();
+                        }
                         Log.e(TAG, "CovidSnapshot Room listener invoked");
                     }
                     else if (covidSnapshotFromDb == null) {
