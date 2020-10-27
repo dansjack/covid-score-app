@@ -4,27 +4,14 @@ import androidx.test.rule.ActivityTestRule;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-import java.util.Date;
-
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class MainActivityTest {
 
     @Rule
     public ActivityTestRule<MainActivity> activityTestRule
             = new ActivityTestRule<>(MainActivity.class, true, true);
-
-
-    @Test
-    public void loadsViews() {
-        onView(withId(R.id.hello_world))
-                .check(matches(isDisplayed()));
-    }
 
     @Test
     public void testCalculation() {
