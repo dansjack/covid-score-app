@@ -21,7 +21,9 @@ public class MainActivityTest {
 
     @Test
     public void loadsViews() {
-        onView(withId(R.id.hello_world))
+        onView(withId(R.id.location))
+                .check(matches(isDisplayed()));
+        onView(withId(R.id.snapshot))
                 .check(matches(isDisplayed()));
     }
 
