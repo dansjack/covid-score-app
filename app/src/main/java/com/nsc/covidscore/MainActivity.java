@@ -119,7 +119,6 @@ public class MainActivity extends FragmentActivity {
         super.onBackPressed();
         LocationManualSelectionFragment tLmsf = (LocationManualSelectionFragment) getSupportFragmentManager().findFragmentByTag("lmsf");
         if (tLmsf != null && tLmsf.isVisible()) {
-            Log.i(TAG, "onBackPressed: WEEE");
             LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
             Bundle bundle = new Bundle();
             bundle.putSerializable("allLocationsMap", mapOfLocations);
@@ -131,10 +130,7 @@ public class MainActivity extends FragmentActivity {
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragContainer, locationManualSelectionFragment, "lmsf").commit();
-        } else {
-            Log.i(TAG, "onBackPressed: weong frag");
         }
-
     }
 
     @Override
