@@ -27,4 +27,5 @@ public class Constants {
     public static final String LAST_UPDATED_SNAPSHOT = "lastUpdatedSnapshot";
     public static final String LOCATION_ID_PK = "locationIdPK";
     public static final String LAST_UPDATED_LOCATION = "lastUpdatedLocation";
+    public static final int[] GROUP_SIZES = {10, 20, 30, 40, 50};
 }

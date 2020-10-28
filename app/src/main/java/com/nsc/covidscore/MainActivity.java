@@ -30,15 +30,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends FragmentActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private HashMap<String, List<Location>> mapOfLocations = new HashMap<>();
+    private HashMap<String, List<Location>> mapOfLocationsByState = new HashMap<>();
+    private HashMap<Integer, Location> mapOfLocationsById = new HashMap<>();
 
-    private LiveData<CovidSnapshot> liveCovidSnapshot;
+    private Location lastSavedLocation;
     private CovidSnapshot lastSavedCovidSnapshot = new CovidSnapshot();
 
     private CovidSnapshotWithLocationViewModel vm;
@@ -57,17 +57,36 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         context = this;
 
-        fillLocationsMap();
-
         // Access to Room Database
         vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel.class);
 
         // This variable will hold latest copy of Covid Snapshot
-        liveCovidSnapshot = vm.getLatestCovidSnapshot();
+        vm.getLatestCovidSnapshot().observe(this, new Observer<CovidSnapshot>() {
+            @Override
+            public void onChanged(@Nullable final CovidSnapshot covidSnapshotFromDb) {
+                if (covidSnapshotFromDb != null) {
+                    lastSavedCovidSnapshot = covidSnapshotFromDb;
+                    lastSavedLocation = mapOfLocationsById.get(covidSnapshotFromDb.getLocationId());
+                    Log.e(TAG, "Most recently saved Snapshot: " + covidSnapshotFromDb.toString());
 
-        // This sets an observer on that Snapshot, for when it is updated
-        setRoomCovidSnapshotObserved();
+                } else {
+                    Log.d(TAG, "Observer returned null CovidSnapshot");
+                }
+                if (lastSavedCovidSnapshot.hasFieldsSet() && lastSavedLocation != null) {
+                    loadFragments(savedInstanceState);
+                }
+            }
+        });
 
+        fillLocationsMap();
+
+        requestManager = RequestSingleton.getInstance(this.getApplicationContext());
+        queue = requestManager.getRequestQueue();
+
+        Log.d(TAG,"onCreate invoked");
+    }
+
+    private void loadFragments(Bundle savedInstanceState) {
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
         if (findViewById(R.id.fragContainer) != null) {
@@ -83,23 +102,33 @@ public class MainActivity extends FragmentActivity {
                 Log.e(TAG, "no saved CovidSnapshot");
                 openLocationSelectionFragment();
             } else {
-                //openRiskDetailPageFragment();
-                // TODO: fix this method to work
                 Log.e(TAG, "saved CovidSnapshot exists");
-                openLocationSelectionFragment();
+                openRiskDetailPageFragment();
             }
         }
 
-        requestManager = RequestSingleton.getInstance(this.getApplicationContext());
-        queue = requestManager.getRequestQueue();
-
-        Log.d(TAG,"onCreate invoked");
     }
 
     public void openRiskDetailPageFragment() {
         // Create a new Risk Detail Fragment to be placed in the activity layout
         RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
+
+        HashMap<Integer, Double> riskMap = RiskCalculation.getRiskCalculationsMap(
+                lastSavedCovidSnapshot.getCountyActiveCount(),
+                lastSavedCovidSnapshot.getCountyTotalPopulation(),
+                Constants.GROUP_SIZES);
+
         Bundle bundle = new Bundle();
+        bundle.putString("currentLocation", lastSavedLocation.getCounty() + ", " + lastSavedLocation.getState());
+        bundle.putString("activeCounty", lastSavedCovidSnapshot.getCountyActiveCount().toString());
+        bundle.putString("activeState", lastSavedCovidSnapshot.getStateActiveCount().toString());
+        bundle.putString("activeCountry", lastSavedCovidSnapshot.getCountryActiveCount().toString());
+        bundle.putString("totalCounty", lastSavedCovidSnapshot.getCountyTotalPopulation().toString());
+        bundle.putString("totalState", lastSavedCovidSnapshot.getStateTotalPopulation().toString());
+        bundle.putString("totalCountry", lastSavedCovidSnapshot.getCountyTotalPopulation().toString());
+        bundle.putSerializable("riskMap",riskMap);
+        bundle.putSerializable("allLocationsMapByState", mapOfLocationsByState);
+        bundle.putSerializable("allLocationsMapById", mapOfLocationsById);
 
         // TODO: Save current CovidSnapshot and Location to this bundle
 
@@ -116,7 +145,8 @@ public class MainActivity extends FragmentActivity {
         // Create a new Location Selection Fragment to be placed in the activity layout
         LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable("allLocationsMap", mapOfLocations);
+        bundle.putSerializable("allLocationsMapByState", mapOfLocationsByState);
+        bundle.putSerializable("allLocationsMapById", mapOfLocationsById);
 
         // In case this activity was started with special instructions from an
         // Intent, pass the Intent's extras to the fragment as arguments
@@ -129,28 +159,6 @@ public class MainActivity extends FragmentActivity {
 
     public void setViewPager(int fragmentNumber){
         mViewPager.setCurrentItem(fragmentNumber);
-    }
-
-    /**
-     * This sets an observer on the Room function that returns the most recent addition to the db
-     * When the new CovidSnapshot comes through, save to local variable and display to user
-     */
-    private void setRoomCovidSnapshotObserved() {
-        // Set Listener for Current Covid Snapshot - Add Else - Dialog
-        if (liveCovidSnapshot != null && !liveCovidSnapshot.hasActiveObservers()) {
-            liveCovidSnapshot.observe(this, new Observer<CovidSnapshot>() {
-                @Override
-                public void onChanged(@Nullable final CovidSnapshot covidSnapshotFromDb) {
-                    if (covidSnapshotFromDb != null) {
-                        lastSavedCovidSnapshot = covidSnapshotFromDb;
-                        Log.d(TAG, "Most recently saved Snapshot: " + covidSnapshotFromDb.toString());
-
-                    } else {
-                        Log.d(TAG, "Observer returned null CovidSnapshot");
-                    }
-                }
-            });
-        }
     }
 
     @Override
@@ -189,7 +197,7 @@ public class MainActivity extends FragmentActivity {
         if (tLmsf != null && tLmsf.isVisible()) {
             LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
             Bundle bundle = new Bundle();
-            bundle.putSerializable("allLocationsMap", mapOfLocations);
+            bundle.putSerializable("allLocationsMap", mapOfLocationsByState);
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
@@ -240,12 +248,13 @@ public class MainActivity extends FragmentActivity {
                 String countyFips = currentArray.getString(3);
                 Location countyInState = new Location(locationId, countyName, stateName, stateFips, countyFips);
 
-                if (mapOfLocations.get(stateName) == null) {
+                mapOfLocationsById.put(locationId, countyInState);
+                if (mapOfLocationsByState.get(stateName) == null) {
                     Log.i(TAG, "fillLocationsMap: " + stateName);
-                    mapOfLocations.put(stateName, new ArrayList<>());
-                    mapOfLocations.get(stateName).add(countyInState);
+                    mapOfLocationsByState.put(stateName, new ArrayList<>());
+                    mapOfLocationsByState.get(stateName).add(countyInState);
                 } else {
-                    mapOfLocations.get(stateName).add(countyInState);
+                    mapOfLocationsByState.get(stateName).add(countyInState);
                 }
             }
 

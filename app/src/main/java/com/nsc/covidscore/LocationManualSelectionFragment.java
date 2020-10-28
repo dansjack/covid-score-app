@@ -56,7 +56,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     private TextView locationTextView;
     private TextView snapshotTextView;
     private FragmentActivity listener;
-    private HashMap<String, List<Location>> mapOfLocations = new HashMap<>();
+    private HashMap<String, List<Location>> mapOfLocationsByState = new HashMap<>();
+    private HashMap<Integer, List<Location>> mapOfLocationsById = new HashMap<>();
     private List<Location> countyLocations = new ArrayList<>();
 
     public LocationManualSelectionFragment() {
@@ -96,7 +97,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
 
         if (bundle != null) {
             // noinspection unchecked
-            mapOfLocations = (HashMap<String, List<Location>>) bundle.getSerializable("allLocationsMap");
+            mapOfLocationsByState = (HashMap<String, List<Location>>) bundle.getSerializable("allLocationsMapByState");
+            mapOfLocationsById = (HashMap<Integer, List<Location>>) bundle.getSerializable("allLocationsMapById");
             Log.i(TAG, "onCreateView: Bundle received from MainActivity");
         }
 
@@ -114,7 +116,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
         super.onViewCreated(v, savedInstanceState);
         locationTextView = v.findViewById(R.id.locationTextView);
         snapshotTextView = v.findViewById(R.id.snapshotTextView);
-        int[] groupSizes = {10, 50, 200};
 
         Button btnNavRiskDetail = v.findViewById(R.id.submit_btn);
         btnNavRiskDetail.setOnClickListener(v1 -> {
@@ -132,7 +133,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                     HashMap<Integer, Double> riskMap = RiskCalculation.getRiskCalculationsMap(
                             selectedCovidSnapshot.getCountyActiveCount(),
                             selectedCovidSnapshot.getCountyTotalPopulation(),
-                            groupSizes);
+                            Constants.GROUP_SIZES);
                     Log.i(TAG, "onViewCreated: riskMap" + riskMap.toString());
 
                     Log.i(TAG, "onViewCreated: FFF" + selectedCovidSnapshot.getCountyActiveCount());
@@ -167,7 +168,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     }
 
     private void handleSpinners(View v) {
-        List<String> stateNames = new ArrayList<>(mapOfLocations.keySet());
+        List<String> stateNames = new ArrayList<>(mapOfLocationsByState.keySet());
         Collections.sort(stateNames);
         stateNames.add(0, "Select State");
 
@@ -196,7 +197,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             if (selectedState != null) {
                 mutableCovidSnapshot.setValue(new CovidSnapshot());
                 Log.i(TAG, "onCreateView - mutableSelectedState: STATE SELECTED " + selectedState);
-                countyLocations= mapOfLocations.get(selectedState);
+                countyLocations= mapOfLocationsByState.get(selectedState);
                 List<String> countyNamesInner = countyLocations.stream().map(Location::getCounty).sorted().collect(Collectors.toList());
                 countyNamesInner.add(0, "Select County");
                 ArrayAdapter<String> countyAdapterInner = new ArrayAdapter<>(

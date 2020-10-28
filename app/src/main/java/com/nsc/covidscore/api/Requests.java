@@ -148,7 +148,7 @@ public class Requests {
         if (fipsLocationArray != null) {
             StringBuilder url = new StringBuilder(
                     "https://api.census.gov/data/2019/pep/population?get=NAME,POP&for=state:")
-                    .append(fipsLocationArray[1]).append("&key=")
+                    .append(fipsLocationArray[2]).append("&key=")
                     .append(Constants.CENSUS_API_KEY);
 
             StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
