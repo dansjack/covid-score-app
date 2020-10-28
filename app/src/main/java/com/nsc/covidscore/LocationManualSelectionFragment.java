@@ -315,7 +315,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             }
 
             @Override
-            public void getJsonException(Exception exception) {}
+            public void getJsonException(Exception exception) {
+                Log.e(TAG, exception.getMessage());}
 
             @Override
             public void getString(String response) {}
@@ -333,7 +334,9 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             }
 
             @Override
-            public void getJsonException(Exception exception) {}
+            public void getJsonException(Exception exception) {
+                Log.e(TAG, exception.getMessage());
+            }
 
             @Override
             public void getString(String response) {}
@@ -345,7 +348,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             }
 
             @Override
-            public void getJsonException(Exception exception) {}
+            public void getJsonException(Exception exception) {
+                Log.e(TAG, exception.getMessage());}
 
             @Override
             public void getString(String response) {}
@@ -380,7 +384,9 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             }
 
             @Override
-            public void getJsonException(Exception exception) {}
+            public void getJsonException(Exception exception) {
+                Log.e(TAG, exception.getMessage());
+            }
 
             @Override
             public void getString(String response) {}
@@ -390,7 +396,9 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             public void getJsonData(JSONObject response) throws JSONException, IOException {}
 
             @Override
-            public void getJsonException(Exception exception) {}
+            public void getJsonException(Exception exception) {
+                Log.e(TAG, exception.getMessage());
+            }
 
             @Override
             public void getString(String response) {
@@ -408,7 +416,9 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             public void getJsonData(JSONObject response) {}
 
             @Override
-            public void getJsonException(Exception exception) {}
+            public void getJsonException(Exception exception) {
+                Log.e(TAG, exception.getMessage());
+            }
 
             @Override
             public void getString(String response) {
@@ -427,7 +437,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             public void getJsonData(JSONObject response) {}
 
             @Override
-            public void getJsonException(Exception exception) {}
+            public void getJsonException(Exception exception) {
+                Log.e(TAG, exception.getMessage());}
 
             @Override
             public void getString(String response) {
