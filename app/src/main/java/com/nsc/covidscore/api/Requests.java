@@ -23,8 +23,8 @@ public class Requests {
     public static void getCounty(Context context, String location, final VolleyJsonCallback cb) {
         final String county = location.split(",")[0];
         final String state = location.split(",")[1];
-        String url = "https://corona.lmao.ninja/v2/jhucsse/counties/" + county;
-        Log.i("FFF ", "getCounty: URL" + url);
+        String url = "https://disease.sh/v3/covid-19/jhucsse/counties/" + county;
+        Log.i("FFF ", "getCounty: URL " + url);
         final String TAG = Constants.COUNTY;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -118,8 +118,8 @@ public class Requests {
         if (fipsLocationArray != null) {
             StringBuilder url = new StringBuilder(
                     "https://api.census.gov/data/2019/pep/population?get=NAME,POP&for=county:")
-                    .append(fipsLocationArray[2]).append("&in=state:")
-                    .append(fipsLocationArray[1]).append("&key=")
+                    .append(fipsLocationArray[3]).append("&in=state:")
+                    .append(fipsLocationArray[2]).append("&key=")
                     .append(Constants.CENSUS_API_KEY);
 
             StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
@@ -131,7 +131,7 @@ public class Requests {
             // Add the request to the RequestQueue.
             RequestSingleton.getInstance(context.getApplicationContext()).addToRequestQueue(stringRequest);
         } else {
-            throw new Resources.NotFoundException(Constants.ERROR_STATE_COUNTY);
+            throw new Resources.NotFoundException(Constants.ERROR_STATE_COUNTY + " " + location.toString());
         }
     }
 

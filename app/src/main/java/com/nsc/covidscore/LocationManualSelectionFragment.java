@@ -119,10 +119,12 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
         Button btnNavRiskDetail = v.findViewById(R.id.submit_btn);
         btnNavRiskDetail.setOnClickListener(v1 -> {
             mutableCovidSnapshot.observe(getViewLifecycleOwner(), covidSnapshot -> {
+
                 if (covidSnapshot.hasFieldsSet()) {
                     Log.i(TAG, "onViewCreated: covidSnapshot-- " + covidSnapshot.toString());
                     Log.i(TAG, "onViewCreated: location-- " + selectedLocation.toString());
-                    // TODO: Save to Room
+                    // TODO: Save to Room, set Location ID on snapshot
+                    saveSnapshotToRoom(selectedCovidSnapshot, selectedLocation);
 
                     FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
                     RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
@@ -216,6 +218,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                     if (location.getCounty().equals(selectedCounty)) {
                         Log.i(TAG, "onCreateView - mutableSelectedCounty: COUNTY FOUND, MAKING API CALLS" + selectedCounty);
                         selectedLocation = location;
+                        selectedCovidSnapshot.setLocationId(selectedLocation.getLocationId());
                         makeApiCalls(selectedLocation);
                     }
                 }
@@ -223,7 +226,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
         });
     }
 
-    public void saveSnapshotToRoom(com.nsc.covidscore.room.CovidSnapshot currentCovidSnapshot, com.nsc.covidscore.room.Location currentLocation) {
+    public void saveSnapshotToRoom(CovidSnapshot currentCovidSnapshot, Location currentLocation) {
         if (currentCovidSnapshot != null && currentCovidSnapshot.hasFieldsSet()) {
             // make sure to set LocationIdFK on Snapshot to current LocationIdPK
             if (currentCovidSnapshot.getLocationId() == null || currentCovidSnapshot.getLocationId() == 0) {
@@ -292,6 +295,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     private void makeApiCalls(Location location) {
         Log.i(TAG, "makeApiCalls: CALLED " + location.toString());
         CovidSnapshot covidSnapshot = new CovidSnapshot();
+        covidSnapshot.setLocationId(location.getLocationId());
+        mutableCovidSnapshot.getValue().setLocationId(location.getLocationId());
         Requests.getCounty(getActivity(), location.toApiFormat(), new VolleyJsonCallback() {
             @Override
             public void getJsonData(JSONObject response) throws JSONException {

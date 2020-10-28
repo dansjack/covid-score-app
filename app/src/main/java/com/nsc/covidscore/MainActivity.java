@@ -231,13 +231,14 @@ public class MainActivity extends FragmentActivity {
             jsonArray = new JSONArray(jsonString);
             for (int i = 1; i < jsonArray.length(); i++) {
                 JSONArray currentArray = jsonArray.getJSONArray(i);
+                Integer locationId = currentArray.getInt(0);
                 // split county and state names
-                String[] nameArray = currentArray.getString(0).split(",");
+                String[] nameArray = currentArray.getString(1).split(",");
                 String countyName = nameArray[0].trim();
                 String stateName = nameArray[1].trim();
-                String stateFips = currentArray.getString(1);
-                String countyFips = currentArray.getString(2);
-                Location countyInState = new Location(countyName, stateName, stateFips, countyFips);
+                String stateFips = currentArray.getString(2);
+                String countyFips = currentArray.getString(3);
+                Location countyInState = new Location(locationId, countyName, stateName, stateFips, countyFips);
 
                 if (mapOfLocations.get(stateName) == null) {
                     Log.i(TAG, "fillLocationsMap: " + stateName);

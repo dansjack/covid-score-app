@@ -72,6 +72,17 @@ public class Location {
 
     public Location() {}
 
+    public Location(Integer locationId, String county, String state, String countyFips, String stateFips) {
+        propertyChangeSupport = new PropertyChangeSupport(this);
+        this.locationId = locationId;
+        this.county = county.toLowerCase();
+        this.state = state.toLowerCase();
+        this.countyFips = countyFips;
+        this.stateFips = stateFips;
+        Calendar calendar = Calendar.getInstance();
+        this.lastUpdated = calendar;
+    }
+
     public Location(String county, String state, String countyFips, String stateFips) {
         propertyChangeSupport = new PropertyChangeSupport(this);
         this.county = county.toLowerCase();
