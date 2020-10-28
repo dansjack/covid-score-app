@@ -2,7 +2,6 @@ package com.nsc.covidscore;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -10,19 +9,9 @@ import androidx.lifecycle.ViewModelProvider;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
-import android.graphics.Color;
 
 import com.android.volley.RequestQueue;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-
 import com.nsc.covidscore.api.RequestSingleton;
 import com.nsc.covidscore.api.Requests;
 import com.nsc.covidscore.api.VolleyJsonCallback;
@@ -56,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
     private RequestSingleton requestManager;
 
     private TextView tempDisplayTextView;
-    public LineChart riskTrends;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,27 +53,6 @@ public class MainActivity extends AppCompatActivity {
         requestManager = RequestSingleton.getInstance(this.getApplicationContext());
         queue = requestManager.getRequestQueue();
         tempDisplayTextView = findViewById(R.id.hello_world);
-
-        //Draws graph for risks vs. group size relationship
-        riskTrends = findViewById(R.id.lineGraph);
-        LineDataSet riskDataSet1 = new LineDataSet(dataSet1(),"Risk vs. Group size");
-        ArrayList<ILineDataSet> riskTrendDataSet = new ArrayList<>();
-        riskTrendDataSet.add(riskDataSet1);
-        LineData riskData = new LineData(riskTrendDataSet);
-
-
-        riskDataSet1.setCircleColor(Color.BLACK);
-        riskDataSet1.setAxisDependency(YAxis.AxisDependency.LEFT);
-
-        riskTrends.setData(riskData);
-        XAxis xAxis = riskTrends.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        riskTrends.getDescription().setEnabled(true);
-        Description description = new Description();
-        description.setText("Group Size vs. Risk at your location");
-        description.setTextSize(15f);
-        description.setPosition(0f,0f);
-        riskTrends.invalidate();
 
         // Access to Room Database
         vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel.class);
@@ -136,19 +103,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG,"onCreate invoked");
     }
 
-    //Array of dummy data to be deleted after we can plug in the real data
-    private ArrayList<Entry> dataSet1()
-    {
-        ArrayList<Entry> riskVals = new ArrayList<Entry>();
-
-        riskVals.add(new Entry(10f, 1f));
-        riskVals.add(new Entry(100f,  10f));
-        riskVals.add(new Entry(1f,   0.1f));
-
-        return riskVals;
-    };
-
-
     @Override
     protected void onStop () {
         super.onStop();
@@ -175,11 +129,11 @@ public class MainActivity extends AppCompatActivity {
                         // TODO: set textfields here! - vv this is temporary vv
                         if (currentLocation == null) { // this shouldn't be hit because currentLocation shouldn't be null
                             currentLocation = liveLocation.getValue();
-                            //tempDisplayTextView.setText("Most Recent Snapshot:\n" + currentSnapshot.toString());
-                        }// else {
-                            //tempDisplayTextView.setText("Most Recent Location: id: \n" + currentLocation.getLocationId() + ", " + currentLocation.toApiFormat()
-                                    //+ "\nMost Recent Snapshot: \n" + currentSnapshot.toString());
-                        //}
+                            tempDisplayTextView.setText("Most Recent Snapshot:\n" + currentSnapshot.toString());
+                        } else {
+                            tempDisplayTextView.setText("Most Recent Location: id: \n" + currentLocation.getLocationId() + ", " + currentLocation.toApiFormat()
+                                    + "\nMost Recent Snapshot: \n" + currentSnapshot.toString());
+                        }
                         Log.e(TAG, "CovidSnapshot Room listener invoked");
                     }
                     else if (covidSnapshotFromDb == null) {
