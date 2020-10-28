@@ -72,9 +72,7 @@ public class MainActivity extends FragmentActivity {
                 } else {
                     Log.d(TAG, "Observer returned null CovidSnapshot");
                 }
-                if (lastSavedCovidSnapshot.hasFieldsSet() && lastSavedLocation != null) {
-                    loadFragments(savedInstanceState);
-                }
+                loadFragments(savedInstanceState);
             }
         });
 
