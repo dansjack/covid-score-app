@@ -24,6 +24,7 @@ public class Requests {
         final String county = location.split(",")[0];
         final String state = location.split(",")[1];
         String url = "https://corona.lmao.ninja/v2/jhucsse/counties/" + county;
+        Log.i("FFF ", "getCounty: URL" + url);
         final String TAG = Constants.COUNTY;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -91,7 +92,7 @@ public class Requests {
      * @param cb callback class (see VolleyJsonCallback interface)
      */
     public static void getUSHistorical(Context context, String days, final VolleyJsonCallback cb) {
-        String url = "https://corona.lmao.ninja/v2/historical/usa" + "?lastdays=" + days;
+        String url = "https://disease.sh/v3/covid-19/historical/usa" + "?lastdays=" + days;
         final String TAG = Constants.COUNTRY_HISTORICAL;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -142,6 +143,7 @@ public class Requests {
      */
     public static void getStatePopulation(Context context, String location, final VolleyJsonCallback cb) {
         final String TAG = Constants.STATE_POPULATION;
+        Log.i(TAG, "getStatePopulation: FAILED LOCATION " + location);
         String[] fipsLocationArray = APIHelpers.getLocationFIPS(context, location);
         if (fipsLocationArray != null) {
             StringBuilder url = new StringBuilder(

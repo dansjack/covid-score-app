@@ -18,6 +18,7 @@ public class WelcomePageFragment extends Fragment {
         // Required empty public constructor
     }
 
+
     // access parameters from newInstance() here
     @Override
     public void onCreate(Bundle savedInstanceState) {

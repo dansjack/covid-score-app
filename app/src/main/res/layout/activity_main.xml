@@ -20,13 +20,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <!-- The main content view where fragments are loaded -->
-    <<androidx.viewpager.widget.ViewPager
-        android:id="@+id/flContent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-    </androidx.viewpager.widget.ViewPager>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragContainer"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"></FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
     <!-- The navigation drawer that comes from the left -->
@@ -42,3 +42,12 @@
 
 <!-- android:id="@+id/frag_placeholder" -->
 
+
+<!-- 
+        <!-- The main content view where fragments are loaded -->
+    <<androidx.viewpager.widget.ViewPager
+        android:id="@+id/flContent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    </androidx.viewpager.widget.ViewPager> -->
