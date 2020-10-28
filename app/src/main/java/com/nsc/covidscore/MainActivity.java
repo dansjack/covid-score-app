@@ -10,14 +10,16 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.RequestQueue;
 import com.nsc.covidscore.api.RequestSingleton;
-//import com.nsc.covidscore.room.CovidSnapshot;
-//import com.nsc.covidscore.room.CovidSnapshotWithLocationViewModel;
-//import com.nsc.covidscore.room.Location;
+import com.nsc.covidscore.room.CovidSnapshot;
+import com.nsc.covidscore.room.CovidSnapshotWithLocationViewModel;
+import com.nsc.covidscore.room.Location;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +39,7 @@ public class MainActivity extends FragmentActivity {
     private Location lastLocation;
     private List<Location> savedLocations = new ArrayList<>();
     private LiveData<CovidSnapshot> liveCovidSnapshot;
-    private CovidSnapshot lastSnapshot;
+    private CovidSnapshot currentCovidSnapshot;
 
     private CovidSnapshotWithLocationViewModel vm;
     private RequestQueue queue;
@@ -56,6 +58,34 @@ public class MainActivity extends FragmentActivity {
         context = this;
 
         fillLocationsMap();
+
+        // Access to Room Database
+        vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel.class);
+
+        // This variable will hold latest copy of Covid Snapshot
+        liveCovidSnapshot = vm.getLatestCovidSnapshot();
+
+        // This sets an observer on that Snapshot, for when it is updated
+        setRoomCovidSnapshotObserved();
+
+        // Attempts to save CovidSnapshot to DB whenever the local variable is changed
+        // - if the fields aren't fully set, it will not insert
+        if (currentCovidSnapshot == null) {
+            currentCovidSnapshot = new CovidSnapshot();
+        }
+        currentCovidSnapshot.setListener(e -> {
+            if (currentCovidSnapshot.hasFieldsSet()) {
+                saveSnapshotToRoom();
+            }
+        });
+
+        // temp test data - remove
+        Location currentLocation = new Location("", "");
+
+        if (currentLocation == null) {
+            // there is no previously saved location
+            // TODO: pop up dialog here?
+        }
 
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
@@ -103,38 +133,6 @@ public class MainActivity extends FragmentActivity {
 
         requestManager = RequestSingleton.getInstance(this.getApplicationContext());
         queue = requestManager.getRequestQueue();
-
-        // Access to Room Database
-        vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel.class);
-
-        // This variable will hold latest copies of Room rows
-        lastCovidSnapshot = vm.getLatestCovidSnapshot();
-
-        // These functions will set observers on those, in case they change
-        setRoomCovidSnapshotObserved();
-        setRoomLocationObserved();
-
-        // Attempts to save CovidSnapshot to DB whenever the local variable is changed
-        // - if the fields aren't fully set, it will not insert
-        if (currentSnapshot == null) {
-            currentSnapshot = new CovidSnapshot();
-        }
-        currentSnapshot.setListener(e -> {
-            if (currentSnapshot.hasFieldsSet()) {
-                saveSnapshotToRoom();
-            }
-        });
-
-        // temp test data - remove
-        Location tempLocation = new Location("king", "washington");
-        currentLocation = tempLocation;
-
-        if (currentLocation == null) {
-            // there is no previously saved location
-            // TODO: pop up dialog here?
-        }
-
-        makeApiCalls(tempLocation);
 
         Log.d(TAG,"onCreate invoked");
     }
