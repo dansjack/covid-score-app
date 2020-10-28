@@ -14,13 +14,8 @@ import java.beans.PropertyChangeSupport;
 import java.util.Calendar;
 import java.util.List;
 
-@Entity(tableName = "location",
-    indices = {@Index(value = {"county", "state"}, unique = true)})
 public class Location {
 
-    @NonNull
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "location_id")
     private Integer locationId;
     public Integer getLocationId() { return locationId; }
     public void setLocationId(Integer locationId) {
@@ -28,8 +23,6 @@ public class Location {
         this.locationId = locationId;
     }
 
-    @NonNull
-    @ColumnInfo(name = "county")
     private String county;
     public String getCounty() { return county; }
     public void setCounty(String county) {
@@ -37,8 +30,6 @@ public class Location {
         this.county = county.toLowerCase();
     }
 
-    @NonNull
-    @ColumnInfo(name = "state")
     private String state;
     public String getState() { return state; }
     public void setState(String state) {
@@ -46,23 +37,18 @@ public class Location {
         this.state = state.toLowerCase();
     }
 
-    @NonNull
-    @ColumnInfo(name = "county_FIPS")
     private String countyFips;
     public String getCountyFips() { return countyFips; }
     public void setCountyFips(String countyFips) {
         this.countyFips = countyFips;
     }
 
-    @NonNull
-    @ColumnInfo(name = "state_FIPS")
     private String stateFips;
     public String getStateFips() { return stateFips; }
     public void setStateFips(String stateFips) {
         this.stateFips = stateFips;
     }
 
-    @ColumnInfo(name = "last_updated")
     private Calendar lastUpdated;
     public Calendar getLastUpdated() { return lastUpdated; }
     public void setLastUpdated(Calendar lastUpdated) {
@@ -72,7 +58,6 @@ public class Location {
 
     // For Observer
 
-    @Ignore
     protected PropertyChangeSupport propertyChangeSupport;
 
     public void setListener(PropertyChangeListener listener) {
@@ -102,7 +87,7 @@ public class Location {
         this.state = state.toLowerCase();
     }
 
-    public void setState(Location other) {
+    public void setAllState(Location other) {
         this.locationId = other.locationId;
         this.setCounty(other.county);
         this.setState(other.state);
@@ -126,15 +111,6 @@ public class Location {
 
     public boolean hasSameData(Location other) {
         return this.state.equals(other.state) && this.county.equals(other.county);
-    }
-
-    public static boolean alreadyInRoom(Location location, List<Location> allLocations) {
-        for (Location savedLocation : allLocations) {
-            if (savedLocation.hasSameData(location)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override

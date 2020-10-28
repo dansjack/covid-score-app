@@ -11,7 +11,6 @@ import com.nsc.covidscore.room.AppDatabase;
 import com.nsc.covidscore.room.CovidSnapshot;
 import com.nsc.covidscore.room.CovidSnapshotDao;
 import com.nsc.covidscore.room.Location;
-import com.nsc.covidscore.room.LocationDao;
 
 import org.junit.After;
 import org.junit.Before;

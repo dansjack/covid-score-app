@@ -19,10 +19,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nsc.covidscore.api.Requests;
 import com.nsc.covidscore.api.VolleyJsonCallback;
+import com.nsc.covidscore.room.CovidSnapshotWithLocationViewModel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,6 +32,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +48,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     private Location selectedLocation = new Location();
     private CovidSnapshot selectedCovidSnapshot = new CovidSnapshot();
     private MutableLiveData<CovidSnapshot> mutableCovidSnapshot = new MutableLiveData<CovidSnapshot>(new CovidSnapshot());
+
+    private CovidSnapshotWithLocationViewModel vm;
 
     private TextView locationTextView;
     private TextView snapshotTextView;
@@ -74,6 +79,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Access to Room Database
+        vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel.class);
         Log.d(TAG, "onCreate invoked");
     }
 
@@ -113,6 +120,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                 if (covidSnapshot.hasFieldsSet()) {
                     Log.i(TAG, "onViewCreated: covidSnapshot-- " + covidSnapshot.toString());
                     Log.i(TAG, "onViewCreated: location-- " + selectedLocation.toString());
+                    // TODO: Save to Room
+
                     FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
                     RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
 
@@ -212,7 +221,23 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
         });
     }
 
-
+    public void saveSnapshotToRoom(com.nsc.covidscore.room.CovidSnapshot currentCovidSnapshot, com.nsc.covidscore.room.Location currentLocation) {
+        if (currentCovidSnapshot != null && currentCovidSnapshot.hasFieldsSet()) {
+            // make sure to set LocationIdFK on Snapshot to current LocationIdPK
+            if (currentCovidSnapshot.getLocationId() == null || currentCovidSnapshot.getLocationId() == 0) {
+                if (currentCovidSnapshot.getLocationId() == null) {
+                    // TODO: set boolean?
+                }
+                currentCovidSnapshot.setLocationId(currentLocation != null ? currentLocation.getLocationId() : -1);
+            }
+            Calendar calendar = Calendar.getInstance();
+            currentCovidSnapshot.setLastUpdated(calendar);
+            vm.insertCovidSnapshot(currentCovidSnapshot);
+        } else {
+            Log.e(TAG, "Incomplete Snapshot: " + currentCovidSnapshot.toString());
+        }
+        Log.d(TAG, "saveSnapshotToRoom invoked");
+    }
 
     @Override
     public void onDestroy() {
