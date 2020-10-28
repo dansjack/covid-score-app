@@ -24,7 +24,9 @@ import androidx.lifecycle.ViewModelProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nsc.covidscore.api.Requests;
 import com.nsc.covidscore.api.VolleyJsonCallback;
+import com.nsc.covidscore.room.CovidSnapshot;
 import com.nsc.covidscore.room.CovidSnapshotWithLocationViewModel;
+import com.nsc.covidscore.room.Location;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -369,7 +371,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                 if (covidSnapshot.hasFieldsSet()) {
                     selectedCovidSnapshot = covidSnapshot;
                 }
-                Log.e(TAG, "getJsonData: country " + response);
+                Log.i(TAG, "getJsonData: country " + response);
             }
 
             @Override

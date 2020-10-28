@@ -70,6 +70,8 @@ public class Location {
 
     // CONSTRUCTOR
 
+    public Location() {}
+
     public Location(String county, String state, String countyFips, String stateFips) {
         propertyChangeSupport = new PropertyChangeSupport(this);
         this.county = county.toLowerCase();

@@ -80,9 +80,13 @@ public class MainActivity extends FragmentActivity {
             }
 
             if (!lastSavedCovidSnapshot.hasFieldsSet()) {
+                Log.e(TAG, "no saved CovidSnapshot");
                 openLocationSelectionFragment();
             } else {
-                openRiskDetailPageFragment();
+                //openRiskDetailPageFragment();
+                // TODO: fix this method to work
+                Log.e(TAG, "saved CovidSnapshot exists");
+                openLocationSelectionFragment();
             }
         }
 
@@ -137,7 +141,7 @@ public class MainActivity extends FragmentActivity {
             liveCovidSnapshot.observe(this, new Observer<CovidSnapshot>() {
                 @Override
                 public void onChanged(@Nullable final CovidSnapshot covidSnapshotFromDb) {
-                    if (covidSnapshotFromDb == null) {
+                    if (covidSnapshotFromDb != null) {
                         lastSavedCovidSnapshot = covidSnapshotFromDb;
                         Log.d(TAG, "Most recently saved Snapshot: " + covidSnapshotFromDb.toString());
 
