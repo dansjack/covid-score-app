@@ -9,6 +9,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -61,18 +62,37 @@ public class MainActivity extends FragmentActivity {
                 return;
             }
 
-            // Create a new Fragment to be placed in the activity layout
-            LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("allLocationsMap", mapOfLocations);
+            boolean hasSavedCovidSnapshot = false;
 
-            // In case this activity was started with special instructions from an
-            // Intent, pass the Intent's extras to the fragment as arguments
-            locationManualSelectionFragment.setArguments(bundle);
+            if (!hasSavedCovidSnapshot) {
 
-            // Add the fragment to the 'fragment_container' FrameLayout
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragContainer, locationManualSelectionFragment, "lmsf").commit();
+                // Create a new Location Selection Fragment to be placed in the activity layout
+                LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("allLocationsMap", mapOfLocations);
+
+                // In case this activity was started with special instructions from an
+                // Intent, pass the Intent's extras to the fragment as arguments
+                locationManualSelectionFragment.setArguments(bundle);
+
+                // Add the fragment to the 'fragment_container' FrameLayout
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.fragContainer, locationManualSelectionFragment, "lmsf").commit();
+            } else {
+                // Create a new Risk Detail Fragment to be placed in the activity layout
+                RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
+                Bundle bundle = new Bundle();
+
+                // Save current CovidSnapshot and Location to this bundle
+
+                // In case this activity was started with special instructions from an
+                // Intent, pass the Intent's extras to the fragment as arguments
+                riskDetailPageFragment.setArguments(bundle);
+
+                // Add the fragment to the "Fragment_container" FrameLayout
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.fragContainer, riskDetailPageFragment, "rdpf").commit();
+            }
         }
 
         requestManager = RequestSingleton.getInstance(this.getApplicationContext());
