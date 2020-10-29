@@ -1,6 +1,5 @@
 package com.nsc.covidscore;
 
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Bundle;
@@ -9,7 +8,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.RequestQueue;
@@ -65,7 +63,7 @@ public class MainActivity extends FragmentActivity {
             // Create a new Fragment to be placed in the activity layout
             LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
             Bundle bundle = new Bundle();
-            bundle.putSerializable(Constants.BUNDLE_LOCATIONS_MAP, mapOfLocations);
+            bundle.putSerializable(Constants.LOCATIONS_MAP, mapOfLocations);
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
@@ -120,7 +118,7 @@ public class MainActivity extends FragmentActivity {
         if (tLmsf != null && tLmsf.isVisible()) {
             LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
             Bundle bundle = new Bundle();
-            bundle.putSerializable(Constants.BUNDLE_LOCATIONS_MAP, mapOfLocations);
+            bundle.putSerializable(Constants.LOCATIONS_MAP, mapOfLocations);
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments

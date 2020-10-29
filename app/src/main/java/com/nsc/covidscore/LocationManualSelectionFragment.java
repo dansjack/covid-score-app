@@ -34,16 +34,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * A simple {@link Fragment} subclass.
- */
+
 public class LocationManualSelectionFragment extends Fragment implements AdapterView.OnItemSelectedListener {
     private static final String TAG = LocationManualSelectionFragment.class.getSimpleName();
     private MutableLiveData<String> mutableSelectedState = new MutableLiveData<>();
     private MutableLiveData<String> mutableSelectedCounty = new MutableLiveData<>();
     private Location selectedLocation = new Location();
     private CovidSnapshot selectedCovidSnapshot = new CovidSnapshot();
-    private MutableLiveData<CovidSnapshot> mutableCovidSnapshot = new MutableLiveData<CovidSnapshot>(new CovidSnapshot());
+    private MutableLiveData<CovidSnapshot> mutableCovidSnapshot = new MutableLiveData<>(new CovidSnapshot());
 
     private TextView loadingTextView;
     private FragmentActivity listener;
@@ -85,7 +83,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
 
         if (bundle != null) {
             // noinspection unchecked
-            mapOfLocations = (HashMap<String, List<Location>>) bundle.getSerializable(Constants.BUNDLE_LOCATIONS_MAP);
+            mapOfLocations = (HashMap<String, List<Location>>) bundle.getSerializable(Constants.LOCATIONS_MAP);
             Log.i(TAG, "onCreateView: Bundle received from MainActivity");
         }
 
@@ -117,18 +115,20 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                             groupSizes);
                     Log.i(TAG, "onViewCreated: riskMap" + riskMap.toString());
 
-                    Log.i(TAG, "onViewCreated: FFF" + selectedCovidSnapshot.getCountyActiveCount());
                     Bundle bundle = new Bundle();
-                    bundle.putString("currentLocation", selectedLocation.getCounty() + ", " + selectedLocation.getState());
-                    bundle.putString("activeCounty", selectedCovidSnapshot.getCountyActiveCount().toString());
-                    bundle.putString("activeState", selectedCovidSnapshot.getStateActiveCount().toString());
-                    bundle.putString("activeCountry", selectedCovidSnapshot.getCountryActiveCount().toString());
-                    bundle.putString("totalCounty", selectedCovidSnapshot.getCountyTotalPopulation().toString());
-                    bundle.putString("totalState", selectedCovidSnapshot.getStateTotalPopulation().toString());
-                    bundle.putString("totalCountry", selectedCovidSnapshot.getCountyTotalPopulation().toString());
-                    bundle.putSerializable("riskMap",riskMap);
+                    StringBuilder currentLocationSB = new StringBuilder(selectedLocation.getCounty())
+                            .append(Constants.COMMA_SPACE).append(selectedLocation.getState());
+                    bundle.putString(Constants.CURRENT_LOCATION, String.valueOf(currentLocationSB));
+                    bundle.putString(Constants.ACTIVE_COUNTY, selectedCovidSnapshot.getCountyActiveCount().toString());
+                    bundle.putString(Constants.ACTIVE_STATE, selectedCovidSnapshot.getStateActiveCount().toString());
+                    bundle.putString(Constants.ACTIVE_COUNTRY, selectedCovidSnapshot.getCountryActiveCount().toString());
+                    bundle.putString(Constants.TOTAL_COUNTY, selectedCovidSnapshot.getCountyTotalPopulation().toString());
+                    bundle.putString(Constants.TOTAL_STATE, selectedCovidSnapshot.getStateTotalPopulation().toString());
+                    bundle.putString(Constants.TOTAL_COUNTRY, selectedCovidSnapshot.getCountyTotalPopulation().toString());
+                    bundle.putSerializable(Constants.RISK_MAP,riskMap);
                     riskDetailPageFragment.setArguments(bundle);
-                    transaction.replace(R.id.fragContainer, riskDetailPageFragment, "rdpf");
+                    bundle = new Bundle();
+                    transaction.replace(R.id.fragContainer, riskDetailPageFragment, Constants.FRAGMENT_RDPF);
                     transaction.addToBackStack(null);
 
                     // Commit the transaction
@@ -137,10 +137,9 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
 //                    selectedLocation = new Location();
 //                    selectedCovidSnapshot = new CovidSnapshot();
                 } else if (mutableSelectedState.getValue() == null || mutableSelectedCounty.getValue() == null) {
-                    loadingTextView.setText("Please pick a state and county");
-
+                    loadingTextView.setText(R.string.pick_state_county);
                 } else {
-                    loadingTextView.setText("Loading COVID data...");
+                    loadingTextView.setText(R.string.loading_data);
                 }
 
             });
@@ -151,7 +150,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     private void handleSpinners(View v) {
         List<String> stateNames = new ArrayList<>(mapOfLocations.keySet());
         Collections.sort(stateNames);
-        stateNames.add(0, "Select State");
+        stateNames.add(0, Constants.SELECT_STATE);
 
 
         // State spinner
@@ -166,7 +165,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
         // County spinner
         Spinner county_spinner = v.findViewById(R.id.county_spinner);
         List<String> countyNames = new ArrayList<>();
-        countyNames.add(0, "Select County");
+        countyNames.add(0, Constants.SELECT_COUNTY);
         ArrayAdapter<String> county_adapter = new ArrayAdapter<>(
                 getActivity(), android.R.layout.simple_spinner_item, countyNames);
         county_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -180,7 +179,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                 Log.i(TAG, "onCreateView - mutableSelectedState: STATE SELECTED " + selectedState);
                 countyLocations= mapOfLocations.get(selectedState);
                 List<String> countyNamesInner = countyLocations.stream().map(Location::getCounty).sorted().collect(Collectors.toList());
-                countyNamesInner.add(0, "Select County");
+                countyNamesInner.add(0, Constants.SELECT_COUNTY);
                 ArrayAdapter<String> countyAdapterInner = new ArrayAdapter<>(
                         getActivity(), android.R.layout.simple_spinner_item, countyNamesInner);
                 countyAdapterInner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -206,8 +205,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             }
         });
     }
-
-
 
     @Override
     public void onDestroy() {
@@ -246,7 +243,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                 mutableSelectedState.setValue(stateSelected);
             } else if (parent.getId() == R.id.county_spinner) {
                 String countySelected = (String) parent.getItemAtPosition(position);
-                Log.i(TAG, "onItemSelected: in county.. " + mutableSelectedState);
                 mutableSelectedCounty.setValue(countySelected);
             }
         }
@@ -263,9 +259,9 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
         Requests.getCounty(getActivity(), location.toApiFormat(), new VolleyJsonCallback() {
             @Override
             public void getJsonData(JSONObject response) throws JSONException {
-                JSONObject stats = (JSONObject) response.get("stats");
-                Integer confirmed = (Integer) stats.get("confirmed");
-                Integer deaths = (Integer) stats.get("deaths");
+                JSONObject stats = (JSONObject) response.get(Constants.RESPONSE_STATS);
+                Integer confirmed = (Integer) stats.get(Constants.RESPONSE_CONFIRMED);
+                Integer deaths = (Integer) stats.get(Constants.RESPONSE_DEATHS);
                 // TODO: calculate better estimate of active cases
                 Integer activeCounty = confirmed - deaths;
                 covidSnapshot.setCountyActiveCount(activeCounty);
@@ -286,7 +282,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
         Requests.getState(getContext(), location.toApiFormat(), new VolleyJsonCallback() {
             @Override
             public void getJsonData(JSONObject response) throws JSONException {
-                Integer activeState = (Integer) response.get("active");
+                Integer activeState = (Integer) response.get(Constants.RESPONSE_ACTIVE);
                 covidSnapshot.setStateActiveCount(activeState);
                 mutableCovidSnapshot.getValue().setStateActiveCount(activeState);
                 if (covidSnapshot.hasFieldsSet()) {
@@ -301,7 +297,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             @Override
             public void getString(String response) {}
         });
-        Requests.getCountyHistorical(getContext(), location.toApiFormat(), "30", new VolleyJsonCallback() {
+        Requests.getCountyHistorical(getContext(), location.toApiFormat(), Constants.DAYS_30, new VolleyJsonCallback() {
             @Override
             public void getJsonData(JSONObject response) {
                 Log.d(TAG, "getJsonData: countyHistorical " + response);
@@ -313,23 +309,23 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             @Override
             public void getString(String response) {}
         });
-        Requests.getUSHistorical(getContext(), "1", new VolleyJsonCallback() {
+        Requests.getUSHistorical(getContext(), Constants.DAYS_01, new VolleyJsonCallback() {
             @Override
             public void getJsonData(JSONObject response) throws JSONException, IOException {
-                JSONObject timeline = response.getJSONObject("timeline");
-                HashMap<String, Integer> totalMap = new ObjectMapper().readValue((timeline.get("cases")).toString(), HashMap.class);
+                JSONObject timeline = response.getJSONObject(Constants.RESPONSE_TIMELINE);
+                HashMap<String, Integer> totalMap = new ObjectMapper().readValue((timeline.get(Constants.RESPONSE_CASES)).toString(), HashMap.class);
 
                 Integer totalCountry = 0;
                 for (Object value : totalMap.values()) {
                     totalCountry = (Integer) value;
                 }
                 Integer deathCountry = 0;
-                HashMap<String, Integer> deathMap = new ObjectMapper().readValue((timeline.get("deaths")).toString(), HashMap.class);
+                HashMap<String, Integer> deathMap = new ObjectMapper().readValue((timeline.get(Constants.RESPONSE_DEATHS)).toString(), HashMap.class);
                 for (Object value : deathMap.values()) {
                     deathCountry = (Integer) value;
                 }
                 Integer recoveredCountry = 0;
-                HashMap<String, Integer> recoveredMap = new ObjectMapper().readValue((timeline.get("recovered")).toString(), HashMap.class);
+                HashMap<String, Integer> recoveredMap = new ObjectMapper().readValue((timeline.get(Constants.RESPONSE_RECOVERED)).toString(), HashMap.class);
                 for (Object value : recoveredMap.values()) {
                     recoveredCountry = (Integer) value;
                 }
@@ -350,7 +346,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
         });
         Requests.getCountyPopulation(getActivity(), location.toApiFormat(), new VolleyJsonCallback() {
             @Override
-            public void getJsonData(JSONObject response) throws JSONException, IOException {}
+            public void getJsonData(JSONObject response) {}
 
             @Override
             public void getJsonException(Exception exception) {}
@@ -363,7 +359,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                     selectedCovidSnapshot = covidSnapshot;
                     mutableCovidSnapshot.setValue(covidSnapshot);
                 }
-//                Log.d(TAG, "getStringData: State  " + response);
             }
         });
         Requests.getStatePopulation(getActivity(), location.toApiFormat(), new VolleyJsonCallback() {
@@ -381,8 +376,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                     selectedCovidSnapshot = covidSnapshot;
                     mutableCovidSnapshot.setValue(covidSnapshot);
                 }
-//                Log.i(TAG, "snapShot settings: " + covidSnapshot.toString());
-//                Log.d(TAG, "getStringData: State  " + response);
             }
         });
         Requests.getCountryPopulation(getActivity(), new VolleyJsonCallback() {
@@ -400,8 +393,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                     selectedCovidSnapshot = covidSnapshot;
                     mutableCovidSnapshot.setValue(covidSnapshot);
                 }
-//                Log.i(TAG, "snapShot settings: " + covidSnapshot.toString());
-//                Log.d(TAG, "getStringData: Country " + response);
             }
         });
     }
