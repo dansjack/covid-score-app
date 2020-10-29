@@ -27,4 +27,14 @@ public class Constants {
     public static final String LAST_UPDATED_SNAPSHOT = "lastUpdatedSnapshot";
     public static final String LOCATION_ID_PK = "locationIdPK";
     public static final String LAST_UPDATED_LOCATION = "lastUpdatedLocation";
+
+    public static final String BUNDLE_LOCATIONS_MAP = "allLocationsMap";
+
+    public static final String FRAGMENT_LMSF = "locationManualSelectionFragment";
+
+    public static final String LOCATION_FILENAME = "county_fips.json";
+    public static final int[] GROUP_SIZES_DEFAULT = {10, 50, 200};
+
+    public static final String COMMA = ",";
+
 }

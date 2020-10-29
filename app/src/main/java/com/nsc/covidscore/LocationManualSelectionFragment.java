@@ -29,7 +29,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -46,8 +45,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     private CovidSnapshot selectedCovidSnapshot = new CovidSnapshot();
     private MutableLiveData<CovidSnapshot> mutableCovidSnapshot = new MutableLiveData<CovidSnapshot>(new CovidSnapshot());
 
-    private TextView locationTextView;
-    private TextView snapshotTextView;
+    private TextView loadingTextView;
     private FragmentActivity listener;
     private HashMap<String, List<Location>> mapOfLocations = new HashMap<>();
     private List<Location> countyLocations = new ArrayList<>();
@@ -87,7 +85,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
 
         if (bundle != null) {
             // noinspection unchecked
-            mapOfLocations = (HashMap<String, List<Location>>) bundle.getSerializable("allLocationsMap");
+            mapOfLocations = (HashMap<String, List<Location>>) bundle.getSerializable(Constants.BUNDLE_LOCATIONS_MAP);
             Log.i(TAG, "onCreateView: Bundle received from MainActivity");
         }
 
@@ -103,16 +101,13 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     @Override
     public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
-        locationTextView = v.findViewById(R.id.locationTextView);
-        snapshotTextView = v.findViewById(R.id.snapshotTextView);
-        int[] groupSizes = {10, 50, 200};
+        loadingTextView = v.findViewById(R.id.locationTextView);
+        int[] groupSizes = Constants.GROUP_SIZES_DEFAULT;
 
         Button btnNavRiskDetail = v.findViewById(R.id.submit_btn);
         btnNavRiskDetail.setOnClickListener(v1 -> {
             mutableCovidSnapshot.observe(getViewLifecycleOwner(), covidSnapshot -> {
                 if (covidSnapshot.hasFieldsSet()) {
-                    Log.i(TAG, "onViewCreated: covidSnapshot-- " + covidSnapshot.toString());
-                    Log.i(TAG, "onViewCreated: location-- " + selectedLocation.toString());
                     FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
                     RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
 
@@ -142,10 +137,10 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
 //                    selectedLocation = new Location();
 //                    selectedCovidSnapshot = new CovidSnapshot();
                 } else if (mutableSelectedState.getValue() == null || mutableSelectedCounty.getValue() == null) {
-                    locationTextView.setText("Please pick a state and county");
+                    loadingTextView.setText("Please pick a state and county");
 
                 } else {
-                    locationTextView.setText("Loading COVID data...");
+                    loadingTextView.setText("Loading COVID data...");
                 }
 
             });

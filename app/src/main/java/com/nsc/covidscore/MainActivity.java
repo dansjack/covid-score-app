@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+
 public class MainActivity extends FragmentActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private HashMap<String, List<Location>> mapOfLocations = new HashMap<>();
@@ -64,7 +65,7 @@ public class MainActivity extends FragmentActivity {
             // Create a new Fragment to be placed in the activity layout
             LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
             Bundle bundle = new Bundle();
-            bundle.putSerializable("allLocationsMap", mapOfLocations);
+            bundle.putSerializable(Constants.BUNDLE_LOCATIONS_MAP, mapOfLocations);
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
@@ -72,17 +73,13 @@ public class MainActivity extends FragmentActivity {
 
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragContainer, locationManualSelectionFragment, "lmsf").commit();
+                    .add(R.id.fragContainer, locationManualSelectionFragment, Constants.FRAGMENT_LMSF).commit();
         }
 
         requestManager = RequestSingleton.getInstance(this.getApplicationContext());
         queue = requestManager.getRequestQueue();
 
         Log.d(TAG,"onCreate invoked");
-    }
-
-    public void setViewPager(int fragmentNumber){
-        mViewPager.setCurrentItem(fragmentNumber);
     }
 
     @Override
@@ -117,11 +114,13 @@ public class MainActivity extends FragmentActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        LocationManualSelectionFragment tLmsf = (LocationManualSelectionFragment) getSupportFragmentManager().findFragmentByTag("lmsf");
+        LocationManualSelectionFragment tLmsf = (LocationManualSelectionFragment)
+                getSupportFragmentManager().findFragmentByTag(Constants.FRAGMENT_LMSF);
+
         if (tLmsf != null && tLmsf.isVisible()) {
             LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
             Bundle bundle = new Bundle();
-            bundle.putSerializable("allLocationsMap", mapOfLocations);
+            bundle.putSerializable(Constants.BUNDLE_LOCATIONS_MAP, mapOfLocations);
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
@@ -129,7 +128,7 @@ public class MainActivity extends FragmentActivity {
 
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragContainer, locationManualSelectionFragment, "lmsf").commit();
+                    .replace(R.id.fragContainer, locationManualSelectionFragment, Constants.FRAGMENT_LMSF).commit();
         }
     }
 
@@ -153,7 +152,7 @@ public class MainActivity extends FragmentActivity {
         JSONArray jsonArray;
         AssetManager assetManager = this.context.getAssets();
         try {
-            InputStream inputStream = assetManager.open("county_fips.json");
+            InputStream inputStream = assetManager.open(Constants.LOCATION_FILENAME);
             byte[] buffer = new byte[inputStream.available()];
             int read = inputStream.read(buffer);
             if (read == -1) {
@@ -164,7 +163,7 @@ public class MainActivity extends FragmentActivity {
             for (int i = 1; i < jsonArray.length(); i++) {
                 JSONArray currentArray = jsonArray.getJSONArray(i);
                 // split county and state names
-                String[] nameArray = currentArray.getString(0).split(",");
+                String[] nameArray = currentArray.getString(0).split(Constants.COMMA);
                 String countyName = nameArray[0].trim();
                 String stateName = nameArray[1].trim();
                 String stateFips = currentArray.getString(1);
@@ -174,10 +173,8 @@ public class MainActivity extends FragmentActivity {
                 if (mapOfLocations.get(stateName) == null) {
                     Log.i(TAG, "fillLocationsMap: " + stateName);
                     mapOfLocations.put(stateName, new ArrayList<>());
-                    mapOfLocations.get(stateName).add(countyInState);
-                } else {
-                    mapOfLocations.get(stateName).add(countyInState);
                 }
+                    mapOfLocations.get(stateName).add(countyInState);
             }
 
         } catch (IOException | JSONException exception) {
