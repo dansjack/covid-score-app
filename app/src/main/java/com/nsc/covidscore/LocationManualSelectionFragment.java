@@ -94,8 +94,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
 
         if (bundle != null) {
             // noinspection unchecked
-            mapOfLocationsByState = (HashMap<String, List<Location>>) bundle.getSerializable("allLocationsMapByState");
-            mapOfLocationsById = (HashMap<Integer, List<Location>>) bundle.getSerializable("allLocationsMapById");
+            mapOfLocationsByState = (HashMap<String, List<Location>>) bundle.getSerializable(Constants.LOCATIONS_MAP_BY_STATE);
+            mapOfLocationsById = (HashMap<Integer, List<Location>>) bundle.getSerializable(Constants.LOCATIONS_MAP_BY_ID);
             Log.i(TAG, "onCreateView: Bundle received from MainActivity");
         }
 

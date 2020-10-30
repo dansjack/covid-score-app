@@ -25,7 +25,8 @@ public class Constants {
     public static final String LAST_UPDATED_SNAPSHOT = "lastUpdatedSnapshot";
     public static final String LOCATION_ID_FK = "locationIdFK";
     public static final String LOCATION_ID_PK = "locationIdPK";
-    public static final String LOCATIONS_MAP = "allLocationsMap";
+    public static final String LOCATIONS_MAP_BY_STATE = "allLocationsMapByState";
+    public static final String LOCATIONS_MAP_BY_ID = "allLocationsMapById";
     public static final String RISK_MAP = "riskMap";
     public static final String TOTAL_COUNTY = "totalCounty";
     public static final String TOTAL_COUNTRY = "totalCountry";
