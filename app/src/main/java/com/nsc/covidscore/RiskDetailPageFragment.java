@@ -42,9 +42,16 @@ public class RiskDetailPageFragment extends Fragment {
     private TextView totalStateV;
     private TextView totalCountryV;
 
-    private TextView risk10V;
-    private TextView risk50V;
-    private TextView risk200V;
+    private TextView labelRiskGroup1;
+    private TextView labelRiskGroup2;
+    private TextView labelRiskGroup3;
+    private TextView labelRiskGroup4;
+    private TextView labelRiskGroup5;
+    private TextView riskGroup1;
+    private TextView riskGroup2;
+    private TextView riskGroup3;
+    private TextView riskGroup4;
+    private TextView riskGroup5;
 
     public RiskDetailPageFragment() {
         // Required empty public constructor
@@ -90,9 +97,17 @@ public class RiskDetailPageFragment extends Fragment {
         totalStateV = v.findViewById(R.id.totalState);
         totalCountryV = v.findViewById(R.id.totalCountry);
 
-        risk10V = v.findViewById(R.id.group10);
-        risk50V = v.findViewById(R.id.group50);
-        risk200V = v.findViewById(R.id.group200);
+        labelRiskGroup1 = v.findViewById(R.id.labelFirstGroup);
+        labelRiskGroup2 = v.findViewById(R.id.labelSecondGroup);
+        labelRiskGroup3 = v.findViewById(R.id.labelThirdGroup);
+        labelRiskGroup4 = v.findViewById(R.id.labelFourthGroup);
+        labelRiskGroup5 = v.findViewById(R.id.labelFifthGroup);
+
+        riskGroup1 = v.findViewById(R.id.firstGroup);
+        riskGroup2 = v.findViewById(R.id.secondGroup);
+        riskGroup3 = v.findViewById(R.id.thirdGroup);
+        riskGroup4 = v.findViewById(R.id.fourthGroup);
+        riskGroup5 = v.findViewById(R.id.fifthGroup);
 
         Button btnSelectNewLocation = v.findViewById(R.id.select_location_btn);
         btnSelectNewLocation.setOnClickListener(v1 -> {
@@ -137,10 +152,17 @@ public class RiskDetailPageFragment extends Fragment {
             totalStateV.setText(totalState);
             totalCountryV.setText(totalCountry);
 
-            risk10V.setText(riskMap.get(Constants.GROUP_SIZES[0]).toString() + "%");
-            risk50V.setText(riskMap.get(Constants.GROUP_SIZES[1]).toString() + "%");
-            risk200V.setText(riskMap.get(Constants.GROUP_SIZES[2]).toString() + "%");
+            labelRiskGroup1.setText("- " + Constants.GROUP_SIZES[0]);
+            labelRiskGroup2.setText("- " + Constants.GROUP_SIZES[1]);
+            labelRiskGroup3.setText("- " + Constants.GROUP_SIZES[2]);
+            labelRiskGroup4.setText("- " + Constants.GROUP_SIZES[3]);
+            labelRiskGroup5.setText("- " + Constants.GROUP_SIZES[4]);
 
+            riskGroup1.setText(riskMap.get(Constants.GROUP_SIZES[0]).toString() + "%");
+            riskGroup2.setText(riskMap.get(Constants.GROUP_SIZES[1]).toString() + "%");
+            riskGroup3.setText(riskMap.get(Constants.GROUP_SIZES[2]).toString() + "%");
+            riskGroup4.setText(riskMap.get(Constants.GROUP_SIZES[3]).toString() + "%");
+            riskGroup5.setText(riskMap.get(Constants.GROUP_SIZES[4]).toString() + "%");
 
             Log.i(TAG, "onCreateView: Bundle received from LocationManualSelectionFragment");
         }

@@ -26,6 +26,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:textSize="@dimen/std_text_size"
                 android:text="@string/active_state"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/labelActiveCounty" />
@@ -35,6 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:textSize="@dimen/std_text_size"
                 android:text="@string/active_country"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/labelActiveState" />
@@ -43,6 +45,7 @@
                 android:id="@+id/labelCurrentLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="@dimen/std_text_size"
                 android:text="@string/current_location"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -52,6 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:textSize="@dimen/std_text_size"
                 android:text="@string/active_county"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/labelCurrentLocation" />
@@ -61,6 +65,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:textSize="@dimen/std_text_size"
                 app:layout_constraintStart_toEndOf="@+id/labelActiveCounty"
                 app:layout_constraintTop_toTopOf="@+id/labelActiveCounty" />
 
@@ -69,6 +74,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:textSize="@dimen/std_text_size"
                 app:layout_constraintStart_toEndOf="@+id/labelActiveState"
                 app:layout_constraintTop_toTopOf="@+id/labelActiveState" />
 
@@ -77,6 +83,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:textSize="@dimen/std_text_size"
                 app:layout_constraintStart_toEndOf="@+id/labelActiveCountry"
                 app:layout_constraintTop_toTopOf="@+id/labelActiveCountry" />
 
@@ -94,6 +101,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
+                android:textSize="@dimen/std_text_size"
                 android:text="Total County:"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/populations" />
@@ -145,6 +153,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
+                android:textSize="@dimen/std_text_size"
                 android:text="Populations"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -155,6 +164,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
+                android:textSize="@dimen/std_text_size"
                 android:text="Risk Assessment"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -165,6 +175,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:textSize="@dimen/std_text_size"
                 android:text="Group Size"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/labelRiskDisplay" />
@@ -173,63 +184,110 @@
                 android:id="@+id/labelRiskAmount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="@dimen/std_text_size"
                 android:text="Risk of being exposed to COVID"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/labelGroupSize" />
 
             <TextView
-                android:id="@+id/labelGroup10"
+                android:id="@+id/labelFirstGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="- 10"
+                android:textSize="@dimen/std_text_size"
+                android:text="- "
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/labelGroupSize" />
 
             <TextView
-                android:id="@+id/labelGroup50"
+                android:id="@+id/labelSecondGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="- 50"
+                android:textSize="@dimen/std_text_size"
+                android:text="- "
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/labelGroup10" />
+                app:layout_constraintTop_toBottomOf="@+id/labelFirstGroup" />
 
             <TextView
-                android:id="@+id/labelGroup200"
+                android:id="@+id/labelThirdGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="- 200"
+                android:textSize="@dimen/std_text_size"
+                android:text="- "
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/labelGroup50" />
+                app:layout_constraintTop_toBottomOf="@+id/labelSecondGroup" />
 
             <TextView
-                android:id="@+id/group10"
+                android:id="@+id/labelFourthGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textSize="@dimen/std_text_size"
+                android:text="- "
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/labelThirdGroup" />
+
+            <TextView
+                android:id="@+id/labelFifthGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textSize="@dimen/std_text_size"
+                android:text="- "
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/labelFourthGroup" />
+
+            <TextView
+                android:id="@+id/firstGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/std_text_size"
                 android:text="TextView"
                 app:layout_constraintEnd_toEndOf="@+id/labelRiskAmount"
                 app:layout_constraintStart_toStartOf="@+id/labelRiskAmount"
-                app:layout_constraintTop_toTopOf="@+id/labelGroup10" />
+                app:layout_constraintTop_toTopOf="@+id/labelFirstGroup" />
 
             <TextView
-                android:id="@+id/group50"
+                android:id="@+id/secondGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="@dimen/std_text_size"
                 android:text="TextView"
                 app:layout_constraintEnd_toEndOf="@+id/labelRiskAmount"
                 app:layout_constraintStart_toStartOf="@+id/labelRiskAmount"
-                app:layout_constraintTop_toTopOf="@+id/labelGroup50" />
+                app:layout_constraintTop_toTopOf="@+id/labelSecondGroup" />
 
             <TextView
-                android:id="@+id/group200"
+                android:id="@+id/thirdGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="@dimen/std_text_size"
                 android:text="TextView"
                 app:layout_constraintEnd_toEndOf="@+id/labelRiskAmount"
                 app:layout_constraintStart_toStartOf="@+id/labelRiskAmount"
-                app:layout_constraintTop_toTopOf="@+id/labelGroup200" />
+                app:layout_constraintTop_toTopOf="@+id/labelThirdGroup" />
+
+            <TextView
+                android:id="@+id/fourthGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/std_text_size"
+                android:text="TextView"
+                app:layout_constraintEnd_toEndOf="@+id/labelRiskAmount"
+                app:layout_constraintStart_toStartOf="@+id/labelRiskAmount"
+                app:layout_constraintTop_toTopOf="@+id/labelFourthGroup" />
+
+            <TextView
+                android:id="@+id/fifthGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/std_text_size"
+                android:text="TextView"
+                app:layout_constraintEnd_toEndOf="@+id/labelRiskAmount"
+                app:layout_constraintStart_toStartOf="@+id/labelRiskAmount"
+                app:layout_constraintTop_toTopOf="@+id/labelFifthGroup" />
 
             <Button
                 android:id="@+id/select_location_btn"
@@ -239,7 +297,7 @@
                 android:text="@string/select_location"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:gravity="center"
-                app:layout_constraintTop_toBottomOf="@+id/group200" />
+                app:layout_constraintTop_toBottomOf="@+id/fifthGroup" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
