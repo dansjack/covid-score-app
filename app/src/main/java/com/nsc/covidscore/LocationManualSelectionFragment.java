@@ -33,7 +33,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
@@ -52,7 +51,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     private CovidSnapshotWithLocationViewModel vm;
     private TextView loadingTextView;
 
-    private TextView locationTextView;
     private TextView snapshotTextView;
     private FragmentActivity listener;
     private HashMap<String, List<Location>> mapOfLocationsByState = new HashMap<>();
@@ -113,9 +111,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     @Override
     public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
-        locationTextView = v.findViewById(R.id.locationTextView);
+        loadingTextView = v.findViewById(R.id.locationTextView);
         snapshotTextView = v.findViewById(R.id.snapshotTextView);
-        int[] groupSizes = Constants.GROUP_SIZES_DEFAULT;
 
         Button btnNavRiskDetail = v.findViewById(R.id.submit_btn);
         btnNavRiskDetail.setOnClickListener(v1 -> {
@@ -145,10 +142,9 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                     bundle.putString(Constants.ACTIVE_COUNTRY, selectedCovidSnapshot.getCountryActiveCount().toString());
                     bundle.putString(Constants.TOTAL_COUNTY, selectedCovidSnapshot.getCountyTotalPopulation().toString());
                     bundle.putString(Constants.TOTAL_STATE, selectedCovidSnapshot.getStateTotalPopulation().toString());
-                    bundle.putString(Constants.TOTAL_COUNTRY, selectedCovidSnapshot.getCountyTotalPopulation().toString());
+                    bundle.putString(Constants.TOTAL_COUNTRY, selectedCovidSnapshot.getCountryTotalPopulation().toString());
                     bundle.putSerializable(Constants.RISK_MAP,riskMap);
                     riskDetailPageFragment.setArguments(bundle);
-                    bundle = new Bundle();
                     transaction.replace(R.id.fragContainer, riskDetailPageFragment, Constants.FRAGMENT_RDPF);
                     transaction.addToBackStack(null);
 
@@ -159,6 +155,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
 //                    selectedCovidSnapshot = new CovidSnapshot();
                 } else if (mutableSelectedState.getValue() == null || mutableSelectedCounty.getValue() == null) {
                     loadingTextView.setText(R.string.pick_state_county);
+
                 } else {
                     loadingTextView.setText(R.string.loading_data);
                 }
@@ -283,6 +280,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                 mutableSelectedState.setValue(stateSelected);
             } else if (parent.getId() == R.id.county_spinner) {
                 String countySelected = (String) parent.getItemAtPosition(position);
+                Log.i(TAG, "onItemSelected: in county.. " + mutableSelectedState);
                 mutableSelectedCounty.setValue(countySelected);
             }
         }
@@ -409,6 +407,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                     selectedCovidSnapshot = covidSnapshot;
                     mutableCovidSnapshot.setValue(covidSnapshot);
                 }
+//                Log.d(TAG, "getStringData: State  " + response);
             }
         });
         Requests.getStatePopulation(getActivity(), location.toApiFormat(), new VolleyJsonCallback() {
@@ -428,6 +427,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                     selectedCovidSnapshot = covidSnapshot;
                     mutableCovidSnapshot.setValue(covidSnapshot);
                 }
+//                Log.i(TAG, "snapShot settings: " + covidSnapshot.toString());
+//                Log.d(TAG, "getStringData: State  " + response);
             }
         });
         Requests.getCountryPopulation(getActivity(), new VolleyJsonCallback() {
@@ -446,6 +447,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                     selectedCovidSnapshot = covidSnapshot;
                     mutableCovidSnapshot.setValue(covidSnapshot);
                 }
+//                Log.i(TAG, "snapShot settings: " + covidSnapshot.toString());
+//                Log.d(TAG, "getStringData: Country " + response);
             }
         });
     }

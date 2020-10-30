@@ -123,7 +123,7 @@ public class MainActivity extends FragmentActivity {
         bundle.putString("activeCountry", lastSavedCovidSnapshot.getCountryActiveCount().toString());
         bundle.putString("totalCounty", lastSavedCovidSnapshot.getCountyTotalPopulation().toString());
         bundle.putString("totalState", lastSavedCovidSnapshot.getStateTotalPopulation().toString());
-        bundle.putString("totalCountry", lastSavedCovidSnapshot.getCountyTotalPopulation().toString());
+        bundle.putString("totalCountry", lastSavedCovidSnapshot.getCountryTotalPopulation().toString());
         bundle.putSerializable("riskMap",riskMap);
         bundle.putSerializable("allLocationsMapByState", mapOfLocationsByState);
         bundle.putSerializable("allLocationsMapById", mapOfLocationsById);
