@@ -11,10 +11,11 @@ import com.nsc.covidscore.Constants;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
 
-public class Location {
+public class Location implements Serializable {
 
     private Integer locationId;
     public Integer getLocationId() { return locationId; }
