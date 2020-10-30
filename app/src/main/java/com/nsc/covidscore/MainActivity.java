@@ -1,5 +1,6 @@
 package com.nsc.covidscore;
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Bundle;
@@ -31,7 +32,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 
 public class MainActivity extends FragmentActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -136,7 +136,7 @@ public class MainActivity extends FragmentActivity {
 
         // Add the fragment to the "Fragment_container" FrameLayout
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragContainer, riskDetailPageFragment, Constants.FRAGMENT_LMSF).commit();
+                .add(R.id.fragContainer, riskDetailPageFragment, "rdpf").commit();
     }
 
     public void openLocationSelectionFragment() {
@@ -189,11 +189,10 @@ public class MainActivity extends FragmentActivity {
         super.onBackPressed();
         LocationManualSelectionFragment tLmsf = (LocationManualSelectionFragment)
                 getSupportFragmentManager().findFragmentByTag(Constants.FRAGMENT_LMSF);
-
         if (tLmsf != null && tLmsf.isVisible()) {
             LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
             Bundle bundle = new Bundle();
-            bundle.putSerializable(Constants.LOCATIONS_MAP, mapOfLocationsByState);
+            bundle.putSerializable("allLocationsMap", mapOfLocationsByState);
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
@@ -237,7 +236,7 @@ public class MainActivity extends FragmentActivity {
                 JSONArray currentArray = jsonArray.getJSONArray(i);
                 Integer locationId = currentArray.getInt(0);
                 // split county and state names
-                String[] nameArray = currentArray.getString(0).split(Constants.COMMA);
+                String[] nameArray = currentArray.getString(1).split(Constants.COMMA);
                 String countyName = nameArray[0].trim();
                 String stateName = nameArray[1].trim();
                 String stateFips = currentArray.getString(2);
