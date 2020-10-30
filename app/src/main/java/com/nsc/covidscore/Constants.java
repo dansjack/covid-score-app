@@ -54,4 +54,6 @@ public class Constants {
     public static final String SELECT_COUNTY = "Select County";
     public static final String SELECT_STATE = "Select State";
 
+    public static final String LAST_UPDATED_LOCATION = "lastUpdatedLocation";
+    public static final int[] GROUP_SIZES = {10, 20, 50, 100, 200};
 }
