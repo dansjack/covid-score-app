@@ -231,7 +231,7 @@ public class MainActivity extends FragmentActivity {
 
                 mapOfLocationsById.put(locationId, countyInState);
                 if (mapOfLocationsByState.get(stateName) == null) {
-                    Log.i(TAG, "fillLocationsMap: " + stateName);
+//                    Log.i(TAG, "fillLocationsMap: " + stateName);
                     mapOfLocationsByState.put(stateName, new ArrayList<>());
                 }
                 mapOfLocationsByState.get(stateName).add(countyInState);

@@ -1,7 +1,5 @@
 package com.nsc.covidscore.api;
 
-import android.util.Log;
-
 import com.nsc.covidscore.Constants;
 
 import org.json.JSONArray;
