@@ -48,7 +48,6 @@ public class Constants {
     public static final String FRAGMENT_RDPF = "riskDetailPageFragment";
 
     public static final String LOCATION_FILENAME = "county_fips.json";
-    public static final int[] GROUP_SIZES_DEFAULT = {10, 50, 200};
 
     public static final String COMMA = ",";
     public static final String COMMA_SPACE = ", ";

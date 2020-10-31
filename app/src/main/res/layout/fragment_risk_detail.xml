@@ -194,8 +194,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:text="@string/group"
                 android:textSize="@dimen/std_text_size"
-                android:text="- "
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/labelGroupSize" />
 
@@ -204,8 +204,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:text="@string/group"
                 android:textSize="@dimen/std_text_size"
-                android:text="- "
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/labelFirstGroup" />
 
@@ -214,8 +214,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:text="@string/group"
                 android:textSize="@dimen/std_text_size"
-                android:text="- "
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/labelSecondGroup" />
 
@@ -224,8 +224,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:text="@string/group"
                 android:textSize="@dimen/std_text_size"
-                android:text="- "
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/labelThirdGroup" />
 
@@ -234,8 +234,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:text="@string/group"
                 android:textSize="@dimen/std_text_size"
-                android:text="- "
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/labelFourthGroup" />
 
@@ -243,8 +243,8 @@
                 android:id="@+id/firstGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/risk"
                 android:textSize="@dimen/std_text_size"
-                android:text="TextView"
                 app:layout_constraintEnd_toEndOf="@+id/labelRiskAmount"
                 app:layout_constraintStart_toStartOf="@+id/labelRiskAmount"
                 app:layout_constraintTop_toTopOf="@+id/labelFirstGroup" />
