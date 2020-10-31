@@ -51,7 +51,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     private CovidSnapshotWithLocationViewModel vm;
     private TextView loadingTextView;
 
-    private TextView snapshotTextView;
     private FragmentActivity listener;
     private HashMap<String, List<Location>> mapOfLocationsByState = new HashMap<>();
     private HashMap<Integer, List<Location>> mapOfLocationsById = new HashMap<>();
@@ -112,15 +111,12 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
         loadingTextView = v.findViewById(R.id.locationTextView);
-        snapshotTextView = v.findViewById(R.id.snapshotTextView);
 
         Button btnNavRiskDetail = v.findViewById(R.id.submit_btn);
         btnNavRiskDetail.setOnClickListener(v1 -> {
             mutableCovidSnapshot.observe(getViewLifecycleOwner(), covidSnapshot -> {
 
                 if (covidSnapshot.hasFieldsSet()) {
-                    Log.i(TAG, "onViewCreated: covidSnapshot-- " + covidSnapshot.toString());
-                    Log.i(TAG, "onViewCreated: location-- " + selectedLocation.toString());
                     // TODO: Save to Room, set Location ID on snapshot
                     saveSnapshotToRoom(selectedCovidSnapshot, selectedLocation);
 
@@ -280,7 +276,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                 mutableSelectedState.setValue(stateSelected);
             } else if (parent.getId() == R.id.county_spinner) {
                 String countySelected = (String) parent.getItemAtPosition(position);
-                Log.i(TAG, "onItemSelected: in county.. " + mutableSelectedState);
+                Log.i(TAG, "onItemSelected: in county... " + mutableSelectedState);
                 mutableSelectedCounty.setValue(countySelected);
             }
         }
@@ -395,9 +391,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             public void getJsonData(JSONObject response) {}
 
             @Override
-            public void getJsonException(Exception exception) {
-                Log.e(TAG, exception.getMessage());
-            }
+            public void getJsonException(Exception exception) {}
 
             @Override
             public void getString(String response) {
@@ -407,7 +401,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                     selectedCovidSnapshot = covidSnapshot;
                     mutableCovidSnapshot.setValue(covidSnapshot);
                 }
-//                Log.d(TAG, "getStringData: State  " + response);
+                //  Log.d(TAG, "getStringData: County  " + response);
             }
         });
         Requests.getStatePopulation(getActivity(), location.toApiFormat(), new VolleyJsonCallback() {
@@ -415,9 +409,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             public void getJsonData(JSONObject response) {}
 
             @Override
-            public void getJsonException(Exception exception) {
-                Log.e(TAG, exception.getMessage());
-            }
+            public void getJsonException(Exception exception) {}
 
             @Override
             public void getString(String response) {
@@ -427,8 +419,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                     selectedCovidSnapshot = covidSnapshot;
                     mutableCovidSnapshot.setValue(covidSnapshot);
                 }
-//                Log.i(TAG, "snapShot settings: " + covidSnapshot.toString());
-//                Log.d(TAG, "getStringData: State  " + response);
+                //  Log.d(TAG, "getStringData: State  " + response);
             }
         });
         Requests.getCountryPopulation(getActivity(), new VolleyJsonCallback() {
@@ -436,8 +427,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             public void getJsonData(JSONObject response) {}
 
             @Override
-            public void getJsonException(Exception exception) {
-                Log.e(TAG, exception.getMessage());}
+            public void getJsonException(Exception exception) {}
 
             @Override
             public void getString(String response) {
@@ -447,8 +437,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                     selectedCovidSnapshot = covidSnapshot;
                     mutableCovidSnapshot.setValue(covidSnapshot);
                 }
-//                Log.i(TAG, "snapShot settings: " + covidSnapshot.toString());
-//                Log.d(TAG, "getStringData: Country " + response);
+                //  Log.d(TAG, "getStringData: Country " + response);
             }
         });
     }
