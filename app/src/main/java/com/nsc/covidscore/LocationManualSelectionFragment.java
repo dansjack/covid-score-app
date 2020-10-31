@@ -51,7 +51,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     private CovidSnapshotWithLocationViewModel vm;
     private TextView loadingTextView;
 
-    private FragmentActivity listener;
     private HashMap<String, List<Location>> mapOfLocationsByState = new HashMap<>();
     private HashMap<Integer, List<Location>> mapOfLocationsById = new HashMap<>();
     private List<Location> countyLocations = new ArrayList<>();
@@ -66,9 +65,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (context instanceof Activity){
-            this.listener = (FragmentActivity) context;
-        }
         Log.d(TAG, "onAttach invoked");
     }
 
@@ -265,7 +261,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     @Override
     public void onDetach() {
         super.onDetach();
-        this.listener = null;
     }
 
     @Override
