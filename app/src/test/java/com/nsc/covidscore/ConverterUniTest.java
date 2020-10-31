@@ -10,6 +10,7 @@ import static org.junit.Assert.assertNull;
 public class ConverterUniTest {
     @Test
     public void dateToTimestampTest() {
+        new Converters();
         Calendar calendar = Calendar.getInstance();
         assertNull(Converters.dateToTimestamp(null));
         assertEquals((Long) calendar.getTime().getTime(), Converters.dateToTimestamp(calendar));

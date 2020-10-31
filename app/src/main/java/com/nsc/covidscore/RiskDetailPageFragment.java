@@ -183,7 +183,7 @@ public class RiskDetailPageFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.d(TAG, String.valueOf(outState));
+//        Log.d(TAG, String.valueOf(outState));
     }
 
     @Override

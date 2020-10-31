@@ -1,6 +1,7 @@
 package com.nsc.covidscore;
 
 import com.nsc.covidscore.api.APIHelpers;
+import com.nsc.covidscore.api.Requests;
 import com.nsc.covidscore.api.VolleyJsonCallback;
 
 import org.json.JSONException;
@@ -47,6 +48,9 @@ public class APIHelpersUnitTest {
 
     @Test
     public void handleResponse_country(){
+        new APIHelpers();
+        new Requests();
+
         APIHelpers.handleResponse(
                 "", COUNTRY_OBJECT, "", "", new VolleyJsonCallback() {
             @Override

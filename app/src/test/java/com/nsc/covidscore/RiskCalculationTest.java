@@ -9,6 +9,7 @@ import static org.junit.Assert.assertEquals;
 public class RiskCalculationTest {
     @Test
     public void testCalculation() {
+        new RiskCalculation();
         // King County 10/23/20
         assertEquals(RiskCalculation.calculateRisk(24914, 2252782, 20), 20.83, 0);
         // WA State 10/23/20
