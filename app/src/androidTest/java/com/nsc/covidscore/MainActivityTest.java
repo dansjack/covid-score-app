@@ -60,6 +60,7 @@ public class MainActivityTest {
 
     @Test
     public void t3_canSelectNewLocation() throws InterruptedException {
+        Thread.sleep(1000);
         onView(withId(R.id.select_location_btn)).perform(click());
 
         // click submit
