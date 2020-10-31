@@ -51,7 +51,7 @@ public class APIHelpersUnitTest {
         new APIHelpers();
         new Requests();
 
-        APIHelpers.handleResponse(
+        APIHelpers.handleJsonResponse(
                 "", COUNTRY_OBJECT, "", "", new VolleyJsonCallback() {
             @Override
             public void getJsonData(JSONObject response) throws JSONException {
@@ -68,7 +68,7 @@ public class APIHelpersUnitTest {
 
     @Test
     public void handleException_country() {
-        APIHelpers.handleResponse(
+        APIHelpers.handleJsonResponse(
                 "", TEST_JSONOBJECT_EXCEPTION, "", "", new VolleyJsonCallback() {
             @Override
             public void getJsonData(JSONObject response) {}
@@ -86,7 +86,7 @@ public class APIHelpersUnitTest {
     @Test
     public void handleResponse_county1(){
         // counties array of 5
-        APIHelpers.handleResponse(
+        APIHelpers.handleJsonResponse(
                 Constants.COUNTY, COUNTY_OBJECT, TEST_COUNTY, TEST_STATE, new VolleyJsonCallback() {
                     @Override
                     public void getJsonData(JSONObject response) {
@@ -104,7 +104,7 @@ public class APIHelpersUnitTest {
     @Test
     public void handleResponse_county2(){
         // counties array equal to 1
-        APIHelpers.handleResponse(
+        APIHelpers.handleJsonResponse(
                 Constants.COUNTY, COUNTY_OBJECT2, TEST_COUNTY, TEST_STATE, new VolleyJsonCallback() {
                     @Override
                     public void getJsonData(JSONObject response) {
@@ -121,7 +121,7 @@ public class APIHelpersUnitTest {
     @Test
     public void handleResponse_county3(){
         // counties array of 10
-        APIHelpers.handleResponse(
+        APIHelpers.handleJsonResponse(
                 Constants.COUNTY, COUNTY_OBJECT3, TEST_COUNTY, TEST_STATE, new VolleyJsonCallback() {
                     @Override
                     public void getJsonData(JSONObject response) {
@@ -138,7 +138,7 @@ public class APIHelpersUnitTest {
     @Test
     public void handleResponse_county4(){
         // counties array of not found
-        APIHelpers.handleResponse(
+        APIHelpers.handleJsonResponse(
                 Constants.COUNTY, COUNTY_OBJECT4, TEST_COUNTY, TEST_STATE, new VolleyJsonCallback() {
                     @Override
                     public void getJsonData(JSONObject response) {}
@@ -154,7 +154,7 @@ public class APIHelpersUnitTest {
 
     @Test
     public void handleException_county(){
-        APIHelpers.handleResponse(
+        APIHelpers.handleJsonResponse(
                 Constants.COUNTY, TEST_JSONARRAY_EXCEPTION, TEST_COUNTY, TEST_STATE, new VolleyJsonCallback() {
                     @Override
                     public void getJsonData(JSONObject response) {}
@@ -170,7 +170,7 @@ public class APIHelpersUnitTest {
 
     @Test
     public void handleResponse_state(){
-        APIHelpers.handleResponse(
+        APIHelpers.handleJsonResponse(
                 Constants.PROVINCE, STATE_OBJECT, TEST_COUNTY, TEST_STATE, new VolleyJsonCallback() {
                     @Override
                     public void getJsonData(JSONObject response) throws JSONException {
@@ -186,7 +186,7 @@ public class APIHelpersUnitTest {
 
     @Test
     public void handleNotFoundException_state(){
-        APIHelpers.handleResponse(
+        APIHelpers.handleJsonResponse(
                 Constants.PROVINCE, STATE_OBJECT_NOTFOUND, TEST_COUNTY, TEST_STATE, new VolleyJsonCallback() {
                     @Override
                     public void getJsonData(JSONObject response) {}
@@ -202,7 +202,7 @@ public class APIHelpersUnitTest {
 
     @Test
     public void handleResponse_countyHistorical(){
-        APIHelpers.handleResponse(
+        APIHelpers.handleJsonResponse(
                 Constants.COUNTY_HISTORICAL, COUNTY_HISTORICAL_OBJECT, TEST_COUNTY, TEST_STATE, new VolleyJsonCallback() {
                     @Override
                     public void getJsonData(JSONObject response) {
@@ -218,7 +218,7 @@ public class APIHelpersUnitTest {
 
     @Test
     public void handleNotFoundException_countyHistorical(){
-        APIHelpers.handleResponse(
+        APIHelpers.handleJsonResponse(
                 Constants.COUNTY_HISTORICAL, COUNTY_HISTORICAL_OBJECT_NOTFOUND, TEST_COUNTY, TEST_STATE, new VolleyJsonCallback() {
                     @Override
                     public void getJsonData(JSONObject response) {}
@@ -234,7 +234,7 @@ public class APIHelpersUnitTest {
 
     @Test
     public void handleResponse_countryHistorical(){
-        APIHelpers.handleResponse(
+        APIHelpers.handleJsonResponse(
                 Constants.COUNTRY_HISTORICAL, COUNTRY_HISTORICAL_OBJECT, "", "", new VolleyJsonCallback() {
                     @Override
                     public void getJsonData(JSONObject response) throws JSONException {
@@ -250,7 +250,7 @@ public class APIHelpersUnitTest {
 
     @Test
     public void handleResponse_population(){
-        APIHelpers.handleResponse(
+        APIHelpers.handleJsonResponse(
                 Constants.COUNTY_POPULATION, POPULATION_ARRAY, "", "", new VolleyJsonCallback() {
                     @Override
                     public void getJsonData(JSONObject response) {}

@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nsc.covidscore.api.Requests;
 import com.nsc.covidscore.api.VolleyJsonCallback;
+import com.nsc.covidscore.api.VolleyStringCallback;
 import com.nsc.covidscore.room.CovidSnapshot;
 import com.nsc.covidscore.room.CovidSnapshotWithLocationViewModel;
 import com.nsc.covidscore.room.Location;
@@ -307,9 +308,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             @Override
             public void getJsonException(Exception exception) {
                 Log.e(TAG, exception.getMessage());}
-
-            @Override
-            public void getString(String response) {}
         });
         Requests.getState(getContext(), location.toApiFormat(), new VolleyJsonCallback() {
             @Override
@@ -329,9 +327,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             public void getJsonException(Exception exception) {
                 Log.e(TAG, exception.getMessage());
             }
-
-            @Override
-            public void getString(String response) {}
         });
         Requests.getCountyHistorical(getContext(), location.toApiFormat(), Constants.DAYS_30, new VolleyJsonCallback() {
             @Override
@@ -342,9 +337,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             @Override
             public void getJsonException(Exception exception) {
                 Log.e(TAG, exception.getMessage());}
-
-            @Override
-            public void getString(String response) {}
         });
         Requests.getUSHistorical(getContext(), Constants.DAYS_01, new VolleyJsonCallback() {
             @Override
@@ -379,63 +371,33 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             public void getJsonException(Exception exception) {
                 Log.e(TAG, exception.getMessage());
             }
-
-            @Override
-            public void getString(String response) {}
         });
-        Requests.getCountyPopulation(getActivity(), location, new VolleyJsonCallback() {
-            @Override
-            public void getJsonData(JSONObject response) {}
-
-            @Override
-            public void getJsonException(Exception exception) {}
-
-            @Override
-            public void getString(String response) {
-                covidSnapshot.setCountyTotalPopulation(Integer.parseInt(response));
-                mutableCovidSnapshot.getValue().setCountyTotalPopulation(Integer.parseInt(response));
-                if (covidSnapshot.hasFieldsSet()) {
-                    selectedCovidSnapshot = covidSnapshot;
-                    mutableCovidSnapshot.setValue(covidSnapshot);
-                }
-                  Log.d(TAG, "req: getCountyPopulation  " + response);
+        Requests.getCountyPopulation(getActivity(), location, response -> {
+            covidSnapshot.setCountyTotalPopulation(Integer.parseInt(response));
+            mutableCovidSnapshot.getValue().setCountyTotalPopulation(Integer.parseInt(response));
+            if (covidSnapshot.hasFieldsSet()) {
+                selectedCovidSnapshot = covidSnapshot;
+                mutableCovidSnapshot.setValue(covidSnapshot);
             }
+              Log.d(TAG, "req: getCountyPopulation  " + response);
         });
-        Requests.getStatePopulation(getActivity(), location, new VolleyJsonCallback() {
-            @Override
-            public void getJsonData(JSONObject response) {}
-
-            @Override
-            public void getJsonException(Exception exception) {}
-
-            @Override
-            public void getString(String response) {
-                covidSnapshot.setStateTotalPopulation(Integer.parseInt(response));
-                mutableCovidSnapshot.getValue().setStateTotalPopulation(Integer.parseInt(response));
-                if (covidSnapshot.hasFieldsSet()) {
-                    selectedCovidSnapshot = covidSnapshot;
-                    mutableCovidSnapshot.setValue(covidSnapshot);
-                }
-                  Log.d(TAG, "req: getStatePopulation  " + response);
+        Requests.getStatePopulation(getActivity(), location, response -> {
+            covidSnapshot.setStateTotalPopulation(Integer.parseInt(response));
+            mutableCovidSnapshot.getValue().setStateTotalPopulation(Integer.parseInt(response));
+            if (covidSnapshot.hasFieldsSet()) {
+                selectedCovidSnapshot = covidSnapshot;
+                mutableCovidSnapshot.setValue(covidSnapshot);
             }
+              Log.d(TAG, "req: getStatePopulation  " + response);
         });
-        Requests.getCountryPopulation(getActivity(), new VolleyJsonCallback() {
-            @Override
-            public void getJsonData(JSONObject response) {}
-
-            @Override
-            public void getJsonException(Exception exception) {}
-
-            @Override
-            public void getString(String response) {
-                covidSnapshot.setCountryTotalPopulation(Integer.parseInt(response));
-                mutableCovidSnapshot.getValue().setCountryTotalPopulation(Integer.parseInt(response));
-                if (covidSnapshot.hasFieldsSet()) {
-                    selectedCovidSnapshot = covidSnapshot;
-                    mutableCovidSnapshot.setValue(covidSnapshot);
-                }
-                  Log.d(TAG, "req: getCountryPopulation " + response);
+        Requests.getCountryPopulation(getActivity(), response -> {
+            covidSnapshot.setCountryTotalPopulation(Integer.parseInt(response));
+            mutableCovidSnapshot.getValue().setCountryTotalPopulation(Integer.parseInt(response));
+            if (covidSnapshot.hasFieldsSet()) {
+                selectedCovidSnapshot = covidSnapshot;
+                mutableCovidSnapshot.setValue(covidSnapshot);
             }
+              Log.d(TAG, "req: getCountryPopulation " + response);
         });
     }
 

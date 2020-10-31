@@ -9,7 +9,16 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 public class APIHelpers {
-    public static void handleResponse(
+    public static void handleStringResponse(String response, VolleyStringCallback cb) {
+        try {
+            JSONArray jsonArray = new JSONArray(response);
+            String countyPopulation = jsonArray.getJSONArray(1).getString(1);
+            cb.getString(countyPopulation);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    public static void handleJsonResponse(
             String type, String response, String county, String state, VolleyJsonCallback cb) {
         try {
             switch (type) {
@@ -41,13 +50,6 @@ public class APIHelpers {
                     }
                     break;
                 }
-                case Constants.COUNTY_POPULATION:
-                case Constants.STATE_POPULATION:
-                case Constants.POPULATION:
-                    JSONArray jsonArray = new JSONArray(response);
-                    String countyPopulation = jsonArray.getJSONArray(1).getString(1);
-                    cb.getString(countyPopulation);
-                    break;
                 case Constants.PROVINCE:
                     JSONObject jsonObject = new JSONObject(response);
                     String stateName = jsonObject.optString(Constants.STATE);
