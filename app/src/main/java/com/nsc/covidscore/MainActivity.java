@@ -227,7 +227,7 @@ public class MainActivity extends FragmentActivity {
                 String stateName = nameArray[1].trim();
                 String stateFips = currentArray.getString(2);
                 String countyFips = currentArray.getString(3);
-                Location countyInState = new Location(locationId, countyName, stateName, stateFips, countyFips);
+                Location countyInState = new Location(locationId, countyName, stateName, countyFips, stateFips);
 
                 mapOfLocationsById.put(locationId, countyInState);
                 if (mapOfLocationsByState.get(stateName) == null) {
