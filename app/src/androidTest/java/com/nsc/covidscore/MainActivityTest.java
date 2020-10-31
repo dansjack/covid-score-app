@@ -55,7 +55,7 @@ public class MainActivityTest {
             // click submit
             onView(withId(R.id.submit_btn)).perform(click());
 
-            Thread.sleep(1000);
+            Thread.sleep(5000);
         } catch (NoMatchingViewException ex) {
             // pass over this test to avoid crashing, we're in the RiskDetailPageFragment
         }
