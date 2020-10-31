@@ -7,9 +7,12 @@ import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.nsc.covidscore.Constants;
+import com.nsc.covidscore.room.Location;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+
+import java.util.Arrays;
 
 public class Requests {
     /**
@@ -112,27 +115,22 @@ public class Requests {
      * @param location the county and state the user selected, separated by a comma. e.g. "king,washington"
      * @param cb callback class (see VolleyJsonCallback interface)
      */
-    public static void getCountyPopulation(Context context, String location, final VolleyJsonCallback cb) {
+    public static void getCountyPopulation(Context context, Location location, final VolleyJsonCallback cb) {
         final String TAG = Constants.COUNTY_POPULATION;
-        String[] fipsLocationArray = APIHelpers.getLocationFIPS(context, location);
-        if (fipsLocationArray != null) {
-            StringBuilder url = new StringBuilder(
-                    "https://api.census.gov/data/2019/pep/population?get=NAME,POP&for=county:")
-                    .append(fipsLocationArray[3]).append("&in=state:")
-                    .append(fipsLocationArray[2]).append("&key=")
-                    .append(Constants.CENSUS_API_KEY);
+        StringBuilder url = new StringBuilder(
+                "https://api.census.gov/data/2019/pep/population?get=NAME,POP&for=county:")
+                .append(location.getCountyFips()).append("&in=state:")
+                .append(location.getStateFips()).append("&key=")
+                .append(Constants.CENSUS_API_KEY);
 
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
-                    response -> APIHelpers.handleResponse(
-                            Constants.POPULATION, response, "", "", cb),
-                    error -> Log.d(TAG, "onErrorResponse: " + error));
-            stringRequest.setTag(TAG);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
+                response -> APIHelpers.handleResponse(
+                        Constants.POPULATION, response, "", "", cb),
+                error -> Log.d(TAG, "onErrorResponse: " + error));
+        stringRequest.setTag(TAG);
 
-            // Add the request to the RequestQueue.
-            RequestSingleton.getInstance(context.getApplicationContext()).addToRequestQueue(stringRequest);
-        } else {
-            throw new Resources.NotFoundException(Constants.ERROR_STATE_COUNTY + " " + location.toString());
-        }
+        // Add the request to the RequestQueue.
+        RequestSingleton.getInstance(context.getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
     /**
@@ -141,27 +139,22 @@ public class Requests {
      * @param location the county and state the user selected, separated by a comma. e.g. "king,washington"
      * @param cb callback class (see VolleyJsonCallback interface)
      */
-    public static void getStatePopulation(Context context, String location, final VolleyJsonCallback cb) {
+    public static void getStatePopulation(Context context, Location location, final VolleyJsonCallback cb) {
         final String TAG = Constants.STATE_POPULATION;
         Log.i(TAG, "getStatePopulation: FAILED LOCATION " + location);
-        String[] fipsLocationArray = APIHelpers.getLocationFIPS(context, location);
-        if (fipsLocationArray != null) {
-            StringBuilder url = new StringBuilder(
-                    "https://api.census.gov/data/2019/pep/population?get=NAME,POP&for=state:")
-                    .append(fipsLocationArray[2]).append("&key=")
-                    .append(Constants.CENSUS_API_KEY);
+        StringBuilder url = new StringBuilder(
+                "https://api.census.gov/data/2019/pep/population?get=NAME,POP&for=state:")
+                .append(location.getStateFips()).append("&key=")
+                .append(Constants.CENSUS_API_KEY);
 
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
-                    response -> APIHelpers.handleResponse(
-                            Constants.POPULATION, response, "", "", cb),
-                    error -> Log.d(TAG, "onErrorResponse: " + error));
-            stringRequest.setTag(TAG);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
+                response -> APIHelpers.handleResponse(
+                        Constants.POPULATION, response, "", "", cb),
+                error -> Log.d(TAG, "onErrorResponse: " + error));
+        stringRequest.setTag(TAG);
 
-            // Add the request to the RequestQueue.
-            RequestSingleton.getInstance(context.getApplicationContext()).addToRequestQueue(stringRequest);
-        } else {
-            throw new Resources.NotFoundException(Constants.ERROR_STATE_COUNTY);
-        }
+        // Add the request to the RequestQueue.
+        RequestSingleton.getInstance(context.getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
     /**

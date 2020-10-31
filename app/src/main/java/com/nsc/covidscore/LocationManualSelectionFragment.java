@@ -301,7 +301,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                     selectedCovidSnapshot = covidSnapshot;
                     mutableCovidSnapshot.setValue(covidSnapshot);
                 }
-                Log.d(TAG, "getJsonData: county " + activeCounty);
+                Log.d(TAG, "req: getActiveCounty " + activeCounty);
             }
 
             @Override
@@ -321,6 +321,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
 //                    selectedCovidSnapshot = covidSnapshot;
                     mutableCovidSnapshot.setValue(covidSnapshot);
                 }
+                Log.d(TAG, "req: getActiveState " + activeState);
+
             }
 
             @Override
@@ -334,7 +336,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
         Requests.getCountyHistorical(getContext(), location.toApiFormat(), Constants.DAYS_30, new VolleyJsonCallback() {
             @Override
             public void getJsonData(JSONObject response) {
-                Log.d(TAG, "getJsonData: countyHistorical " + response);
+                Log.d(TAG, "req: getCountyHistorical " + response);
             }
 
             @Override
@@ -370,7 +372,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                 if (covidSnapshot.hasFieldsSet()) {
                     selectedCovidSnapshot = covidSnapshot;
                 }
-                Log.i(TAG, "getJsonData: country " + response);
+                Log.i(TAG, "req: getCountryHistorical " + response);
             }
 
             @Override
@@ -381,7 +383,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             @Override
             public void getString(String response) {}
         });
-        Requests.getCountyPopulation(getActivity(), location.toApiFormat(), new VolleyJsonCallback() {
+        Requests.getCountyPopulation(getActivity(), location, new VolleyJsonCallback() {
             @Override
             public void getJsonData(JSONObject response) {}
 
@@ -396,10 +398,10 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                     selectedCovidSnapshot = covidSnapshot;
                     mutableCovidSnapshot.setValue(covidSnapshot);
                 }
-                //  Log.d(TAG, "getStringData: County  " + response);
+                  Log.d(TAG, "req: getCountyPopulation  " + response);
             }
         });
-        Requests.getStatePopulation(getActivity(), location.toApiFormat(), new VolleyJsonCallback() {
+        Requests.getStatePopulation(getActivity(), location, new VolleyJsonCallback() {
             @Override
             public void getJsonData(JSONObject response) {}
 
@@ -414,7 +416,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                     selectedCovidSnapshot = covidSnapshot;
                     mutableCovidSnapshot.setValue(covidSnapshot);
                 }
-                //  Log.d(TAG, "getStringData: State  " + response);
+                  Log.d(TAG, "req: getStatePopulation  " + response);
             }
         });
         Requests.getCountryPopulation(getActivity(), new VolleyJsonCallback() {
@@ -432,7 +434,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                     selectedCovidSnapshot = covidSnapshot;
                     mutableCovidSnapshot.setValue(covidSnapshot);
                 }
-                //  Log.d(TAG, "getStringData: Country " + response);
+                  Log.d(TAG, "req: getCountryPopulation " + response);
             }
         });
     }
