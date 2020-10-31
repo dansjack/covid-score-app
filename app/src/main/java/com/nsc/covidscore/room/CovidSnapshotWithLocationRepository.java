@@ -36,16 +36,16 @@ public class CovidSnapshotWithLocationRepository {
         currentSnapshot = covidSnapshotDao.getLatest();
     }
 
-    LiveData<CovidSnapshot> getLatestCovidSnapshotByLocation(Location location) {
-        return covidSnapshotDao.findLatestByLocationId(location.getLocationId());
-    }
+//    LiveData<CovidSnapshot> getLatestCovidSnapshotByLocation(Location location) {
+//        return covidSnapshotDao.findLatestByLocationId(location.getLocationId());
+//    }
 
     LiveData<CovidSnapshot> getLatestSnapshot() {
         return covidSnapshotDao.getLatest();
     }
 
-    LiveData<CovidSnapshot> getSavedCovidSnapshot() {
-        return currentSnapshot;
-    }
+//    LiveData<CovidSnapshot> getSavedCovidSnapshot() {
+//        return currentSnapshot;
+//    }
 
 }

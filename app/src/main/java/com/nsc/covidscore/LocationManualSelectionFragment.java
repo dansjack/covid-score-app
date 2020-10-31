@@ -265,7 +265,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if (position > 0) {
+        if (position > 0 && view != null) {
             if (parent.getId()==R.id.state_spinner) {
                 String stateSelected = (String) parent.getItemAtPosition(position);
                 mutableSelectedState.setValue(stateSelected);
