@@ -77,18 +77,12 @@
         tools:layout_editor_absoluteX="800dp" />
 
     <TextView
-        android:id="@+id/locationTextView"
+        android:id="@+id/loadingTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/submit_btn" />
-
-    <TextView
-        android:id="@+id/snapshotTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/locationTextView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

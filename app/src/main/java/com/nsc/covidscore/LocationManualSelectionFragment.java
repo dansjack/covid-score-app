@@ -110,7 +110,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     @Override
     public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
-        loadingTextView = v.findViewById(R.id.locationTextView);
+        loadingTextView = v.findViewById(R.id.loadingTextView);
 
         Button btnNavRiskDetail = v.findViewById(R.id.submit_btn);
         btnNavRiskDetail.setOnClickListener(v1 -> {
@@ -276,7 +276,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                 mutableSelectedState.setValue(stateSelected);
             } else if (parent.getId() == R.id.county_spinner) {
                 String countySelected = (String) parent.getItemAtPosition(position);
-                Log.i(TAG, "onItemSelected: in county... " + mutableSelectedState);
+                Log.i(TAG, "onItemSelected: in county... " + countySelected);
                 mutableSelectedCounty.setValue(countySelected);
             }
         }
