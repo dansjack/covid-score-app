@@ -132,7 +132,7 @@ public class RiskDetailPageFragment extends Fragment {
 
             // Commit the transaction
             transaction.commit();
-                });
+        });
 
         Bundle bundle = getArguments();
 

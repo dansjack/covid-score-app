@@ -15,6 +15,13 @@
     <string name="select_location">Select Location</string>
     <string name="group">- %s</string>
     <string name="risk">%.2f%%</string>
+    <string name="total_county">Total County:</string>
+    <string name="total_country">Total Country:</string>
+    <string name="total_state">Total State:</string>
+    <string name="populations">Populations</string>
+    <string name="risk_assessment">Risk Assessment</string>
+    <string name="group_size">Group Size</string>
+    <string name="risk_of_being_exposed_to_covid">Risk of being exposed to COVID</string>
 
     <string-array name="group_sizes">
         <item>10</item>
