@@ -105,16 +105,16 @@ public class APIHelpers {
         String jsonString = getJsonFromFile(context, "county_fips.json");
         if (jsonString != null) {
             try {
-                Log.i("getLocationFIPS", ": location before " + location);
+                Log.i("getLocationFIPS", "location before: " + location);
                 location = formatLocationFIPS(location);
-                Log.i("getLocationFIPS", ": location after " + location);
+                Log.i("getLocationFIPS", "location after: " + location);
                 JSONArray fipsArray = new JSONArray(jsonString);
                 int fipsArrayLen = fipsArray.length();
                 int i = 0;
 
                 while (i < fipsArrayLen) {
                     JSONArray fipsLocationArray = fipsArray.getJSONArray(i);
-                    String fipsArrayLocationName = fipsLocationArray.getString(0).toLowerCase();
+                    String fipsArrayLocationName = fipsLocationArray.getString(1).toLowerCase();
                     if (location.equals(fipsArrayLocationName)) {
                         int j = 0;
                         String[] resultArray = new String[fipsLocationArray.length()];

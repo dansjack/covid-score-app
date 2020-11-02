@@ -8,27 +8,36 @@
     android:layout_height="match_parent">
 
     <!-- This ConstraintLayout represents the contents of the screen  -->
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
-    <!-- The ActionBar displayed at the top -->
-    <include
-        layout="@layout/toolbar"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fragContainer"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity"></FrameLayout>
+        <!-- The ActionBar displayed at the top -->
+        <include
+            layout="@layout/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+            
+        <!-- The main content view where fragments are loaded -->
+        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/fragContainer"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".MainActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageView
+                android:src="@drawable/swiiirl"
+                android:scaleType="centerCrop"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <!-- The navigation drawer that comes from the left -->
     <!-- Note: `android:layout_gravity` needs to be set to 'start' -->
     <com.google.android.material.navigation.NavigationView
@@ -38,16 +47,5 @@
         android:layout_gravity="start"
         android:background="@android:color/white"
         app:menu="@menu/drawer_view" />
+        
 </androidx.drawerlayout.widget.DrawerLayout>
-
-<!-- android:id="@+id/frag_placeholder" -->
-
-
-<!-- 
-        <!-- The main content view where fragments are loaded -->
-    <<androidx.viewpager.widget.ViewPager
-        android:id="@+id/flContent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-    </androidx.viewpager.widget.ViewPager> -->
