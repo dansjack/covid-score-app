@@ -19,10 +19,14 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nsc.covidscore.api.Requests;
 import com.nsc.covidscore.api.VolleyJsonCallback;
+import com.nsc.covidscore.room.CovidSnapshot;
+import com.nsc.covidscore.room.CovidSnapshotWithLocationViewModel;
+import com.nsc.covidscore.room.Location;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,6 +34,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -46,10 +51,13 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     private CovidSnapshot selectedCovidSnapshot = new CovidSnapshot();
     private MutableLiveData<CovidSnapshot> mutableCovidSnapshot = new MutableLiveData<CovidSnapshot>(new CovidSnapshot());
 
+    private CovidSnapshotWithLocationViewModel vm;
+
     private TextView locationTextView;
     private TextView snapshotTextView;
     private FragmentActivity listener;
-    private HashMap<String, List<Location>> mapOfLocations = new HashMap<>();
+    private HashMap<String, List<Location>> mapOfLocationsByState = new HashMap<>();
+    private HashMap<Integer, List<Location>> mapOfLocationsById = new HashMap<>();
     private List<Location> countyLocations = new ArrayList<>();
 
     public LocationManualSelectionFragment() {
@@ -74,6 +82,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Access to Room Database
+        vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel.class);
         Log.d(TAG, "onCreate invoked");
     }
 
@@ -87,7 +97,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
 
         if (bundle != null) {
             // noinspection unchecked
-            mapOfLocations = (HashMap<String, List<Location>>) bundle.getSerializable("allLocationsMap");
+            mapOfLocationsByState = (HashMap<String, List<Location>>) bundle.getSerializable("allLocationsMapByState");
+            mapOfLocationsById = (HashMap<Integer, List<Location>>) bundle.getSerializable("allLocationsMapById");
             Log.i(TAG, "onCreateView: Bundle received from MainActivity");
         }
 
@@ -105,21 +116,24 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
         super.onViewCreated(v, savedInstanceState);
         locationTextView = v.findViewById(R.id.locationTextView);
         snapshotTextView = v.findViewById(R.id.snapshotTextView);
-        int[] groupSizes = {10, 50, 200};
 
         Button btnNavRiskDetail = v.findViewById(R.id.submit_btn);
         btnNavRiskDetail.setOnClickListener(v1 -> {
             mutableCovidSnapshot.observe(getViewLifecycleOwner(), covidSnapshot -> {
+
                 if (covidSnapshot.hasFieldsSet()) {
                     Log.i(TAG, "onViewCreated: covidSnapshot-- " + covidSnapshot.toString());
                     Log.i(TAG, "onViewCreated: location-- " + selectedLocation.toString());
+                    // TODO: Save to Room, set Location ID on snapshot
+                    saveSnapshotToRoom(selectedCovidSnapshot, selectedLocation);
+
                     FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
                     RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
 
                     HashMap<Integer, Double> riskMap = RiskCalculation.getRiskCalculationsMap(
                             selectedCovidSnapshot.getCountyActiveCount(),
                             selectedCovidSnapshot.getCountyTotalPopulation(),
-                            groupSizes);
+                            Constants.GROUP_SIZES);
                     Log.i(TAG, "onViewCreated: riskMap" + riskMap.toString());
 
                     Log.i(TAG, "onViewCreated: FFF" + selectedCovidSnapshot.getCountyActiveCount());
@@ -154,7 +168,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     }
 
     private void handleSpinners(View v) {
-        List<String> stateNames = new ArrayList<>(mapOfLocations.keySet());
+        List<String> stateNames = new ArrayList<>(mapOfLocationsByState.keySet());
         Collections.sort(stateNames);
         stateNames.add(0, "Select State");
 
@@ -183,7 +197,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             if (selectedState != null) {
                 mutableCovidSnapshot.setValue(new CovidSnapshot());
                 Log.i(TAG, "onCreateView - mutableSelectedState: STATE SELECTED " + selectedState);
-                countyLocations= mapOfLocations.get(selectedState);
+                countyLocations= mapOfLocationsByState.get(selectedState);
                 List<String> countyNamesInner = countyLocations.stream().map(Location::getCounty).sorted().collect(Collectors.toList());
                 countyNamesInner.add(0, "Select County");
                 ArrayAdapter<String> countyAdapterInner = new ArrayAdapter<>(
@@ -205,6 +219,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                     if (location.getCounty().equals(selectedCounty)) {
                         Log.i(TAG, "onCreateView - mutableSelectedCounty: COUNTY FOUND, MAKING API CALLS" + selectedCounty);
                         selectedLocation = location;
+                        selectedCovidSnapshot.setLocationId(selectedLocation.getLocationId());
                         makeApiCalls(selectedLocation);
                     }
                 }
@@ -212,7 +227,23 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
         });
     }
 
-
+    public void saveSnapshotToRoom(CovidSnapshot currentCovidSnapshot, Location currentLocation) {
+        if (currentCovidSnapshot != null && currentCovidSnapshot.hasFieldsSet()) {
+            // make sure to set LocationIdFK on Snapshot to current LocationIdPK
+            if (currentCovidSnapshot.getLocationId() == null || currentCovidSnapshot.getLocationId() == 0) {
+                if (currentCovidSnapshot.getLocationId() == null) {
+                    // TODO: set boolean?
+                }
+                currentCovidSnapshot.setLocationId(currentLocation != null ? currentLocation.getLocationId() : -1);
+            }
+            Calendar calendar = Calendar.getInstance();
+            currentCovidSnapshot.setLastUpdated(calendar);
+            vm.insertCovidSnapshot(currentCovidSnapshot);
+        } else {
+            Log.e(TAG, "Incomplete Snapshot: " + currentCovidSnapshot.toString());
+        }
+        Log.d(TAG, "saveSnapshotToRoom invoked");
+    }
 
     @Override
     public void onDestroy() {
@@ -265,6 +296,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     private void makeApiCalls(Location location) {
         Log.i(TAG, "makeApiCalls: CALLED " + location.toString());
         CovidSnapshot covidSnapshot = new CovidSnapshot();
+        covidSnapshot.setLocationId(location.getLocationId());
+        mutableCovidSnapshot.getValue().setLocationId(location.getLocationId());
         Requests.getCounty(getActivity(), location.toApiFormat(), new VolleyJsonCallback() {
             @Override
             public void getJsonData(JSONObject response) throws JSONException {
@@ -283,7 +316,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             }
 
             @Override
-            public void getJsonException(Exception exception) {}
+            public void getJsonException(Exception exception) {
+                Log.e(TAG, exception.getMessage());}
 
             @Override
             public void getString(String response) {}
@@ -301,7 +335,9 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             }
 
             @Override
-            public void getJsonException(Exception exception) {}
+            public void getJsonException(Exception exception) {
+                Log.e(TAG, exception.getMessage());
+            }
 
             @Override
             public void getString(String response) {}
@@ -313,7 +349,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             }
 
             @Override
-            public void getJsonException(Exception exception) {}
+            public void getJsonException(Exception exception) {
+                Log.e(TAG, exception.getMessage());}
 
             @Override
             public void getString(String response) {}
@@ -344,11 +381,13 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                 if (covidSnapshot.hasFieldsSet()) {
                     selectedCovidSnapshot = covidSnapshot;
                 }
-                Log.e(TAG, "getJsonData: country " + response);
+                Log.i(TAG, "getJsonData: country " + response);
             }
 
             @Override
-            public void getJsonException(Exception exception) {}
+            public void getJsonException(Exception exception) {
+                Log.e(TAG, exception.getMessage());
+            }
 
             @Override
             public void getString(String response) {}
@@ -358,7 +397,9 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             public void getJsonData(JSONObject response) throws JSONException, IOException {}
 
             @Override
-            public void getJsonException(Exception exception) {}
+            public void getJsonException(Exception exception) {
+                Log.e(TAG, exception.getMessage());
+            }
 
             @Override
             public void getString(String response) {
@@ -376,7 +417,9 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             public void getJsonData(JSONObject response) {}
 
             @Override
-            public void getJsonException(Exception exception) {}
+            public void getJsonException(Exception exception) {
+                Log.e(TAG, exception.getMessage());
+            }
 
             @Override
             public void getString(String response) {
@@ -395,7 +438,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             public void getJsonData(JSONObject response) {}
 
             @Override
-            public void getJsonException(Exception exception) {}
+            public void getJsonException(Exception exception) {
+                Log.e(TAG, exception.getMessage());}
 
             @Override
             public void getString(String response) {

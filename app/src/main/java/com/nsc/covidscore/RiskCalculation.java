@@ -3,22 +3,10 @@ package com.nsc.covidscore;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class RiskCalculation {
-
-    public static String printRiskCalculations(Integer activeCases, Integer totalPopulation, int[] groupSizes) {
-        StringBuilder sb = new StringBuilder("");
-
-        for (int groupSize : groupSizes) {
-            String row = "For a group of size " + groupSize + ", there is a ";
-            row += calculateRisk(activeCases, totalPopulation, groupSize);
-            row += "% chance that you will be exposed to COVID.\n";
-
-            sb.append(row);
-        }
-
-        return sb.toString();
-    }
 
     public static HashMap<Integer, Double> getRiskCalculationsMap(Integer activeCases, Integer totalPopulation, int[] groupSizes) {
         HashMap<Integer, Double> riskMap = new HashMap<>();

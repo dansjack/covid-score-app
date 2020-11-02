@@ -24,5 +24,6 @@
     <string name="active_county">Active Cases in County:</string>
     <string name="active_state">Active Cases in State:</string>
     <string name="active_country">Active Cases in US:</string>
+    <string name="select_location">Select Location</string>
 
 </resources>
