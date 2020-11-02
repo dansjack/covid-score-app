@@ -1,6 +1,5 @@
 package com.nsc.covidscore;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,7 +15,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
@@ -24,7 +22,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nsc.covidscore.api.Requests;
 import com.nsc.covidscore.api.VolleyJsonCallback;
-import com.nsc.covidscore.api.VolleyStringCallback;
 import com.nsc.covidscore.room.CovidSnapshot;
 import com.nsc.covidscore.room.CovidSnapshotWithLocationViewModel;
 import com.nsc.covidscore.room.Location;
@@ -43,8 +40,6 @@ import java.util.stream.Collectors;
 
 public class LocationManualSelectionFragment extends Fragment implements AdapterView.OnItemSelectedListener {
     private static final String TAG = LocationManualSelectionFragment.class.getSimpleName();
-    private MutableLiveData<String> mutableSelectedState = new MutableLiveData<>();
-    private MutableLiveData<String> mutableSelectedCounty = new MutableLiveData<>();
     private Location selectedLocation = new Location();
     private CovidSnapshot selectedCovidSnapshot = new CovidSnapshot();
     private MutableLiveData<CovidSnapshot> mutableCovidSnapshot = new MutableLiveData<>(new CovidSnapshot());
@@ -55,6 +50,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     private HashMap<String, List<Location>> mapOfLocationsByState = new HashMap<>();
     private HashMap<Integer, List<Location>> mapOfLocationsById = new HashMap<>();
     private List<Location> countyLocations = new ArrayList<>();
+    private Spinner state_spinner;
+    private Spinner county_spinner;
 
     public LocationManualSelectionFragment() {
         // Required empty public constructor
@@ -95,15 +92,14 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             Log.i(TAG, "onCreateView: Bundle received from MainActivity");
         }
 
-        handleSpinners(v);
-
+        setInitialSpinners(v);
         Log.d(TAG, "onCreateView invoked");
         return v;
     }
 
-//     This event is triggered soon after onCreateView().
-//     onViewCreated() is only called if the view returned from onCreateView() is non-null.
-//     Any view setup should occur here.  E.g., view lookups and attaching view listeners.
+    //     This event is triggered soon after onCreateView().
+    //     onViewCreated() is only called if the view returned from onCreateView() is non-null.
+    //     Any view setup should occur here.  E.g., view lookups and attaching view listeners.
     @Override
     public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
@@ -111,111 +107,62 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
 
         Button btnNavRiskDetail = v.findViewById(R.id.submit_btn);
         btnNavRiskDetail.setOnClickListener(v1 -> {
-            mutableCovidSnapshot.observe(getViewLifecycleOwner(), covidSnapshot -> {
-
-                if (covidSnapshot.hasFieldsSet()) {
-                    // TODO: Save to Room, set Location ID on snapshot
-                    saveSnapshotToRoom(selectedCovidSnapshot, selectedLocation);
-
-                    FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-                    RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
-
-                    HashMap<Integer, Double> riskMap = RiskCalculation.getRiskCalculationsMap(
-                            selectedCovidSnapshot.getCountyActiveCount(),
-                            selectedCovidSnapshot.getCountyTotalPopulation(),
-                            Constants.GROUP_SIZES);
-                    Log.i(TAG, "onViewCreated: riskMap" + riskMap.toString());
-
-                    Bundle bundle = new Bundle();
-                    StringBuilder currentLocationSB = new StringBuilder(selectedLocation.getCounty())
-                            .append(Constants.COMMA_SPACE).append(selectedLocation.getState());
-                    bundle.putString(Constants.CURRENT_LOCATION, String.valueOf(currentLocationSB));
-                    bundle.putString(Constants.ACTIVE_COUNTY, selectedCovidSnapshot.getCountyActiveCount().toString());
-                    bundle.putString(Constants.ACTIVE_STATE, selectedCovidSnapshot.getStateActiveCount().toString());
-                    bundle.putString(Constants.ACTIVE_COUNTRY, selectedCovidSnapshot.getCountryActiveCount().toString());
-                    bundle.putString(Constants.TOTAL_COUNTY, selectedCovidSnapshot.getCountyTotalPopulation().toString());
-                    bundle.putString(Constants.TOTAL_STATE, selectedCovidSnapshot.getStateTotalPopulation().toString());
-                    bundle.putString(Constants.TOTAL_COUNTRY, selectedCovidSnapshot.getCountryTotalPopulation().toString());
-                    bundle.putSerializable(Constants.RISK_MAP,riskMap);
-                    riskDetailPageFragment.setArguments(bundle);
-                    transaction.replace(R.id.fragContainer, riskDetailPageFragment, Constants.FRAGMENT_RDPF);
-                    transaction.addToBackStack(null);
-
-                    // Commit the transaction
-                    transaction.commit();
-                    mutableCovidSnapshot.setValue(new CovidSnapshot());
-//                    selectedLocation = new Location();
-//                    selectedCovidSnapshot = new CovidSnapshot();
-                } else if (mutableSelectedState.getValue() == null || mutableSelectedCounty.getValue() == null) {
-                    loadingTextView.setText(R.string.pick_state_county);
-
+            // user selected a state and county, call APIs
+            if (selectedLocation.getCounty() != null) {
+                // API data retrieved for selected state and county
+                if (selectedCovidSnapshot.hasFieldsSet()) {
+                    transitionToRDPFragment();
                 } else {
+                    // wait for API data to be retrieved before proceeding
                     loadingTextView.setText(R.string.loading_data);
+                    makeApiCalls(selectedLocation);
+                    mutableCovidSnapshot.observe(getViewLifecycleOwner(), covidSnapshot -> {
+                        if (covidSnapshot != null && covidSnapshot.hasFieldsSet()) {
+                            transitionToRDPFragment();
+                        }
+                    });
                 }
-
-            });
-
+            } else {
+                loadingTextView.setText(R.string.pick_state_county);
+                Log.i(TAG, "onViewCreated - btnNavRiskDetail - selectedLocation not filled: " + selectedLocation.toString());
+            }
         });
     }
 
-    private void handleSpinners(View v) {
-        List<String> stateNames = new ArrayList<>(mapOfLocationsByState.keySet());
-        Collections.sort(stateNames);
-        stateNames.add(0, Constants.SELECT_STATE);
+    public void transitionToRDPFragment() {
+        Log.i(TAG, "onViewCreated - btnNavRiskDetail - selectedLocation filled: " + selectedLocation.toString());
+        // TODO: Save to Room, set Location ID on snapshot
+        saveSnapshotToRoom(selectedCovidSnapshot, selectedLocation);
 
+        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+        RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
 
-        // State spinner
-        Spinner state_spinner = v.findViewById(R.id.state_spinner);
-        ArrayAdapter<String> state_adapter = new ArrayAdapter<>(
-                getActivity(), android.R.layout.simple_spinner_item, stateNames);
-        state_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        state_spinner.setSelection(0, false);
-        state_spinner.setAdapter(state_adapter);
-        state_spinner.setOnItemSelectedListener(this);
+        HashMap<Integer, Double> riskMap = RiskCalculation.getRiskCalculationsMap(
+                selectedCovidSnapshot.getCountyActiveCount(),
+                selectedCovidSnapshot.getCountyTotalPopulation(),
+                Constants.GROUP_SIZES);
+        Log.i(TAG, "onViewCreated: riskMap" + riskMap.toString());
 
-        // County spinner
-        Spinner county_spinner = v.findViewById(R.id.county_spinner);
-        List<String> countyNames = new ArrayList<>();
-        countyNames.add(0, Constants.SELECT_COUNTY);
-        ArrayAdapter<String> county_adapter = new ArrayAdapter<>(
-                getActivity(), android.R.layout.simple_spinner_item, countyNames);
-        county_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        county_spinner.setAdapter(county_adapter);
-        county_spinner.setOnItemSelectedListener(this);
+        Bundle bundle = new Bundle();
+        StringBuilder currentLocationSB = new StringBuilder(selectedLocation.getCounty())
+                .append(Constants.COMMA_SPACE).append(selectedLocation.getState());
+        bundle.putString(Constants.CURRENT_LOCATION, String.valueOf(currentLocationSB));
+        bundle.putString(Constants.ACTIVE_COUNTY, selectedCovidSnapshot.getCountyActiveCount().toString());
+        bundle.putString(Constants.ACTIVE_STATE, selectedCovidSnapshot.getStateActiveCount().toString());
+        bundle.putString(Constants.ACTIVE_COUNTRY, selectedCovidSnapshot.getCountryActiveCount().toString());
+        bundle.putString(Constants.TOTAL_COUNTY, selectedCovidSnapshot.getCountyTotalPopulation().toString());
+        bundle.putString(Constants.TOTAL_STATE, selectedCovidSnapshot.getStateTotalPopulation().toString());
+        bundle.putString(Constants.TOTAL_COUNTRY, selectedCovidSnapshot.getCountryTotalPopulation().toString());
+        bundle.putSerializable(Constants.RISK_MAP,riskMap);
+        riskDetailPageFragment.setArguments(bundle);
+        transaction.replace(R.id.fragContainer, riskDetailPageFragment, Constants.FRAGMENT_RDPF);
+        transaction.addToBackStack(null);
 
-        // observe state spinner selection
-        mutableSelectedState.observe(getActivity(), selectedState -> {
-            if (selectedState != null) {
-                mutableCovidSnapshot.setValue(new CovidSnapshot());
-                Log.i(TAG, "onCreateView - mutableSelectedState: STATE SELECTED " + selectedState);
-                countyLocations= mapOfLocationsByState.get(selectedState);
-                List<String> countyNamesInner = countyLocations.stream().map(Location::getCounty).sorted().collect(Collectors.toList());
-                countyNamesInner.add(0, Constants.SELECT_COUNTY);
-                ArrayAdapter<String> countyAdapterInner = new ArrayAdapter<>(
-                        getActivity(), android.R.layout.simple_spinner_item, countyNamesInner);
-                countyAdapterInner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                county_spinner.setSelection(0, false);
-                county_spinner.setAdapter(countyAdapterInner);
-                county_spinner.setOnItemSelectedListener(this);
-            }
-        });
-
-        // observe county spinner selection
-        mutableSelectedCounty.observe(getActivity(), selectedCounty -> {
-            if (selectedCounty != null) {
-                mutableCovidSnapshot.setValue(new CovidSnapshot());
-                Log.i(TAG, "onCreateView - mutableSelectedCounty: COUNTY SELECTED " + selectedCounty);
-                for (int i = 0; i < countyLocations.size(); i++) {
-                    Location location = countyLocations.get(i);
-                    if (location.getCounty().equals(selectedCounty)) {
-                        Log.i(TAG, "onCreateView - mutableSelectedCounty: COUNTY FOUND, MAKING API CALLS" + selectedCounty);
-                        selectedLocation = location;
-                        selectedCovidSnapshot.setLocationId(selectedLocation.getLocationId());
-                        makeApiCalls(selectedLocation);
-                    }
-                }
-            }
-        });
+        // Commit the transaction
+        transaction.commit();
+        mutableCovidSnapshot.setValue(new CovidSnapshot());
+        //  selectedLocation = new Location();
+        //  selectedCovidSnapshot = new CovidSnapshot();
     }
 
     public void saveSnapshotToRoom(CovidSnapshot currentCovidSnapshot, Location currentLocation) {
@@ -266,14 +213,39 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        String stateSelected;
         if (position > 0 && view != null) {
             if (parent.getId()==R.id.state_spinner) {
-                String stateSelected = (String) parent.getItemAtPosition(position);
-                mutableSelectedState.setValue(stateSelected);
+                // state spinner selected
+                stateSelected = (String) parent.getItemAtPosition(position);
+                Log.i(TAG, "onCreateView - mutableSelectedState: STATE SELECTED " + stateSelected);
+
+                // get counties
+                countyLocations = mapOfLocationsByState.get(stateSelected);
+                List<String> countyNamesInner = countyLocations.stream().map(Location::getCounty).sorted().collect(Collectors.toList());
+                countyNamesInner.add(0, Constants.SELECT_COUNTY);
+
+                // set county spinner
+                ArrayAdapter<String> countyAdapterInner = new ArrayAdapter<>(
+                        getActivity(), android.R.layout.simple_spinner_item, countyNamesInner);
+                countyAdapterInner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                county_spinner.setSelection(0, false);
+                county_spinner.setAdapter(countyAdapterInner);
+                county_spinner.setOnItemSelectedListener(this);
             } else if (parent.getId() == R.id.county_spinner) {
+                // county spinner selected
                 String countySelected = (String) parent.getItemAtPosition(position);
                 Log.i(TAG, "onItemSelected: in county... " + countySelected);
-                mutableSelectedCounty.setValue(countySelected);
+                mutableCovidSnapshot.setValue(new CovidSnapshot());
+                Log.i(TAG, "onCreateView - mutableSelectedCounty: COUNTY SELECTED " + countySelected);
+                for (int i = 0; i < countyLocations.size(); i++) {
+                    Location location = countyLocations.get(i);
+                    if (location.getCounty().equals(countySelected)) {
+                        Log.i(TAG, "onCreateView - mutableSelectedCounty: COUNTY FOUND" + countySelected);
+                        selectedLocation = location;
+                        selectedCovidSnapshot.setLocationId(selectedLocation.getLocationId());
+                    }
+                }
             }
         }
     }
@@ -281,6 +253,31 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
         // Required method
+    }
+
+    public void setInitialSpinners(View v) {
+        List<String> stateNames = new ArrayList<>(mapOfLocationsByState.keySet());
+        Collections.sort(stateNames);
+        stateNames.add(0, Constants.SELECT_STATE);
+
+        // State spinner
+        state_spinner = v.findViewById(R.id.state_spinner);
+        ArrayAdapter<String> state_adapter = new ArrayAdapter<>(
+                getActivity(), android.R.layout.simple_spinner_item, stateNames);
+        state_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        state_spinner.setSelection(0, false);
+        state_spinner.setAdapter(state_adapter);
+        state_spinner.setOnItemSelectedListener(this);
+
+        // County spinner placeholder
+        county_spinner = v.findViewById(R.id.county_spinner);
+        List<String> countyNames = new ArrayList<>();
+        countyNames.add(0, Constants.SELECT_COUNTY);
+        ArrayAdapter<String> county_adapter = new ArrayAdapter<>(
+                getActivity(), android.R.layout.simple_spinner_item, countyNames);
+        county_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        county_spinner.setAdapter(county_adapter);
+        county_spinner.setOnItemSelectedListener(this);
     }
 
     private void makeApiCalls(Location location) {
