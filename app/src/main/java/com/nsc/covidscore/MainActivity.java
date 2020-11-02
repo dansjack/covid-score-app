@@ -1,16 +1,11 @@
 package com.nsc.covidscore;
 
+import android.content.Context;
+import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.TextView;
-
-import android.app.FragmentManager;
-import android.content.Context;
-import android.content.res.AssetManager;
-import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,27 +14,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
-import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.RequestQueue;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.material.navigation.NavigationView;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
-
-import com.android.volley.RequestQueue;
 import com.nsc.covidscore.api.RequestSingleton;
 import com.nsc.covidscore.room.CovidSnapshot;
 import com.nsc.covidscore.room.CovidSnapshotWithLocationViewModel;
@@ -55,7 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private HashMap<String, List<Location>> mapOfLocationsByState = new HashMap<>();
     private HashMap<Integer, Location> mapOfLocationsById = new HashMap<>();
@@ -67,10 +46,6 @@ public class MainActivity extends FragmentActivity {
     private RequestQueue queue;
     private RequestSingleton requestManager;
 
-    private FragmentAdapter mFragmentAdapter;
-    private Fragment mFragment;
-    private ViewPager mViewPager;
-    private FragmentAdapter pagerAdapter;
     private Context context;
 
     private DrawerLayout mDrawer;
@@ -102,25 +77,30 @@ public class MainActivity extends FragmentActivity {
 
         nvDrawer = (NavigationView) findViewById(R.id.nvView);
         setupDrawerContent(nvDrawer);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         context = this;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         // Access to Room Database
         vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel.class);
@@ -169,7 +149,6 @@ public class MainActivity extends FragmentActivity {
                 openRiskDetailPageFragment();
             }
         }
-
     }
 
     public void openRiskDetailPageFragment() {
@@ -231,6 +210,13 @@ public class MainActivity extends FragmentActivity {
 
 
 
+
+
+
+
+
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // The action bar home/up action should open or close the drawer.
@@ -272,8 +258,8 @@ public class MainActivity extends FragmentActivity {
         }
 
         // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
 
         // Highlight the selected item has been done by NavigationView
         menuItem.setChecked(true);
@@ -284,9 +270,28 @@ public class MainActivity extends FragmentActivity {
     }
     private ActionBarDrawerToggle setupDrawerToggle() {
         // NOTE: Make sure you pass in a valid toolbar reference.  ActionBarDrawToggle() does not require it
-        // and will not render the hamburger icon without it.
-        return new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open,  R.string.drawer_close);
+        // but won't render the hamburger icon without it.
+        return new ActionBarDrawerToggle(this, mDrawer, toolbar,
+                R.string.drawer_open,  R.string.drawer_close);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // `onPostCreate` called when activity start-up is complete after `onStart()`
     // NOTE 1: Make sure to override the method with only a single `Bundle` argument
@@ -304,33 +309,6 @@ public class MainActivity extends FragmentActivity {
         super.onConfigurationChanged(newConfig);
         // Pass any configuration change to the drawer toggles
         drawerToggle.onConfigurationChanged(newConfig);
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    private void setupViewPager(ViewPager viewPager){
-        FragmentAdapter adapter = new FragmentAdapter(getSupportFragmentManager());
-        adapter.addFragment(new WelcomePageFragment(), "WelcomePageFragment");
-//        adapter.addFragment(new LocationSelectionPageFragment(), "LocationSelectionPageFragment");
-        adapter.addFragment(new RiskDetailPageFragment(), "RiskDetailPageFragment");
-        viewPager.setAdapter(adapter);
-    }
-
-    public void setViewPager(int fragmentNumber){
-        mViewPager.setCurrentItem(fragmentNumber);
     }
 
     @Override
