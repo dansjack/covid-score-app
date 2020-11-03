@@ -126,7 +126,6 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
         bundle.putString(Constants.TOTAL_STATE, lastSavedCovidSnapshot.getStateTotalPopulation().toString());
         bundle.putString(Constants.TOTAL_COUNTRY, lastSavedCovidSnapshot.getCountryTotalPopulation().toString());
         bundle.putSerializable(Constants.RISK_MAP,riskMap);
-        bundle.putSerializable(Constants.LOCATIONS_MAP_BY_STATE, mapOfLocationsByState);
 
         // TODO: Save current CovidSnapshot and Location to this bundle
 
