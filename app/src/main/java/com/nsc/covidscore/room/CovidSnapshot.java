@@ -95,13 +95,13 @@ public class CovidSnapshot extends Observable {
     @Ignore
     protected PropertyChangeSupport propertyChangeSupport;
 
-    public void setListener(PropertyChangeListener listener) {
-        propertyChangeSupport.addPropertyChangeListener(listener);
-    }
-
-    public void removeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.removePropertyChangeListener(listener);
-    }
+//    public void setListener(PropertyChangeListener listener) {
+//        propertyChangeSupport.addPropertyChangeListener(listener);
+//    }
+//
+//    public void removeListener(PropertyChangeListener listener) {
+//        propertyChangeSupport.removePropertyChangeListener(listener);
+//    }
 
     // CONSTRUCTOR
 

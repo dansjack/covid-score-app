@@ -1,21 +1,13 @@
 package com.nsc.covidscore;
 
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.RequestQueue;
 import com.nsc.covidscore.api.RequestSingleton;
@@ -45,10 +37,6 @@ public class MainActivity extends FragmentActivity {
     private RequestQueue queue;
     private RequestSingleton requestManager;
 
-    private FragmentAdapter mFragmentAdapter;
-    private Fragment mFragment;
-    private ViewPager mViewPager;
-    private FragmentAdapter pagerAdapter;
     private Context context;
 
     @Override
@@ -61,19 +49,16 @@ public class MainActivity extends FragmentActivity {
         vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel.class);
 
         // This variable will hold latest copy of Covid Snapshot
-        vm.getLatestCovidSnapshot().observe(this, new Observer<CovidSnapshot>() {
-            @Override
-            public void onChanged(@Nullable final CovidSnapshot covidSnapshotFromDb) {
-                if (covidSnapshotFromDb != null) {
-                    lastSavedCovidSnapshot = covidSnapshotFromDb;
-                    lastSavedLocation = mapOfLocationsById.get(covidSnapshotFromDb.getLocationId());
-                    Log.e(TAG, "Most recently saved Snapshot: " + covidSnapshotFromDb.toString());
+        vm.getLatestCovidSnapshot().observe(this, covidSnapshotFromDb -> {
+            if (covidSnapshotFromDb != null) {
+                lastSavedCovidSnapshot = covidSnapshotFromDb;
+                lastSavedLocation = mapOfLocationsById.get(covidSnapshotFromDb.getLocationId());
+                Log.e(TAG, "Most recently saved Snapshot: " + covidSnapshotFromDb.toString());
 
-                } else {
-                    Log.d(TAG, "Observer returned null CovidSnapshot");
-                }
-                loadFragments(savedInstanceState);
+            } else {
+                Log.d(TAG, "Observer returned null CovidSnapshot");
             }
+            loadFragments(savedInstanceState);
         });
 
         fillLocationsMap();
@@ -117,16 +102,16 @@ public class MainActivity extends FragmentActivity {
                 Constants.GROUP_SIZES);
 
         Bundle bundle = new Bundle();
-        bundle.putString("currentLocation", lastSavedLocation.getCounty() + ", " + lastSavedLocation.getState());
-        bundle.putString("activeCounty", lastSavedCovidSnapshot.getCountyActiveCount().toString());
-        bundle.putString("activeState", lastSavedCovidSnapshot.getStateActiveCount().toString());
-        bundle.putString("activeCountry", lastSavedCovidSnapshot.getCountryActiveCount().toString());
-        bundle.putString("totalCounty", lastSavedCovidSnapshot.getCountyTotalPopulation().toString());
-        bundle.putString("totalState", lastSavedCovidSnapshot.getStateTotalPopulation().toString());
-        bundle.putString("totalCountry", lastSavedCovidSnapshot.getCountyTotalPopulation().toString());
-        bundle.putSerializable("riskMap",riskMap);
-        bundle.putSerializable("allLocationsMapByState", mapOfLocationsByState);
-        bundle.putSerializable("allLocationsMapById", mapOfLocationsById);
+        bundle.putString(Constants.CURRENT_LOCATION, lastSavedLocation.getCounty() + ", " + lastSavedLocation.getState());
+        bundle.putString(Constants.ACTIVE_COUNTY, lastSavedCovidSnapshot.getCountyActiveCount().toString());
+        bundle.putString(Constants.ACTIVE_STATE, lastSavedCovidSnapshot.getStateActiveCount().toString());
+        bundle.putString(Constants.ACTIVE_COUNTRY, lastSavedCovidSnapshot.getCountryActiveCount().toString());
+        bundle.putString(Constants.TOTAL_COUNTY, lastSavedCovidSnapshot.getCountyTotalPopulation().toString());
+        bundle.putString(Constants.TOTAL_STATE, lastSavedCovidSnapshot.getStateTotalPopulation().toString());
+        bundle.putString(Constants.TOTAL_COUNTRY, lastSavedCovidSnapshot.getCountryTotalPopulation().toString());
+        bundle.putSerializable(Constants.RISK_MAP,riskMap);
+        bundle.putSerializable(Constants.LOCATIONS_MAP_BY_STATE, mapOfLocationsByState);
+        bundle.putSerializable(Constants.LOCATIONS_MAP_BY_ID, mapOfLocationsById);
 
         // TODO: Save current CovidSnapshot and Location to this bundle
 
@@ -136,15 +121,15 @@ public class MainActivity extends FragmentActivity {
 
         // Add the fragment to the "Fragment_container" FrameLayout
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragContainer, riskDetailPageFragment, "rdpf").commit();
+                .add(R.id.fragContainer, riskDetailPageFragment, Constants.FRAGMENT_RDPF).commit();
     }
 
     public void openLocationSelectionFragment() {
         // Create a new Location Selection Fragment to be placed in the activity layout
         LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable("allLocationsMapByState", mapOfLocationsByState);
-        bundle.putSerializable("allLocationsMapById", mapOfLocationsById);
+        bundle.putSerializable(Constants.LOCATIONS_MAP_BY_STATE, mapOfLocationsByState);
+        bundle.putSerializable(Constants.LOCATIONS_MAP_BY_ID, mapOfLocationsById);
 
         // In case this activity was started with special instructions from an
         // Intent, pass the Intent's extras to the fragment as arguments
@@ -152,11 +137,7 @@ public class MainActivity extends FragmentActivity {
 
         // Add the fragment to the 'fragment_container' FrameLayout
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragContainer, locationManualSelectionFragment, "lmsf").commit();
-    }
-
-    public void setViewPager(int fragmentNumber){
-        mViewPager.setCurrentItem(fragmentNumber);
+                .add(R.id.fragContainer, locationManualSelectionFragment, Constants.FRAGMENT_LMSF).commit();
     }
 
     @Override
@@ -191,11 +172,13 @@ public class MainActivity extends FragmentActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        LocationManualSelectionFragment tLmsf = (LocationManualSelectionFragment) getSupportFragmentManager().findFragmentByTag("lmsf");
+        LocationManualSelectionFragment tLmsf = (LocationManualSelectionFragment)
+                getSupportFragmentManager().findFragmentByTag(Constants.FRAGMENT_LMSF);
         if (tLmsf != null && tLmsf.isVisible()) {
             LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
             Bundle bundle = new Bundle();
-            bundle.putSerializable("allLocationsMap", mapOfLocationsByState);
+            bundle.putSerializable(Constants.LOCATIONS_MAP_BY_STATE, mapOfLocationsByState);
+            bundle.putSerializable(Constants.LOCATIONS_MAP_BY_ID, mapOfLocationsById);
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
@@ -203,7 +186,7 @@ public class MainActivity extends FragmentActivity {
 
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragContainer, locationManualSelectionFragment, "lmsf").commit();
+                    .replace(R.id.fragContainer, locationManualSelectionFragment, Constants.FRAGMENT_LMSF).commit();
         }
     }
 
@@ -227,7 +210,7 @@ public class MainActivity extends FragmentActivity {
         JSONArray jsonArray;
         AssetManager assetManager = this.context.getAssets();
         try {
-            InputStream inputStream = assetManager.open("county_fips.json");
+            InputStream inputStream = assetManager.open(Constants.LOCATION_FILENAME);
             byte[] buffer = new byte[inputStream.available()];
             int read = inputStream.read(buffer);
             if (read == -1) {
@@ -239,21 +222,19 @@ public class MainActivity extends FragmentActivity {
                 JSONArray currentArray = jsonArray.getJSONArray(i);
                 Integer locationId = currentArray.getInt(0);
                 // split county and state names
-                String[] nameArray = currentArray.getString(1).split(",");
+                String[] nameArray = currentArray.getString(1).split(Constants.COMMA);
                 String countyName = nameArray[0].trim();
                 String stateName = nameArray[1].trim();
                 String stateFips = currentArray.getString(2);
                 String countyFips = currentArray.getString(3);
-                Location countyInState = new Location(locationId, countyName, stateName, stateFips, countyFips);
+                Location countyInState = new Location(locationId, countyName, stateName, countyFips, stateFips);
 
                 mapOfLocationsById.put(locationId, countyInState);
                 if (mapOfLocationsByState.get(stateName) == null) {
-                    Log.i(TAG, "fillLocationsMap: " + stateName);
+//                    Log.i(TAG, "fillLocationsMap: " + stateName);
                     mapOfLocationsByState.put(stateName, new ArrayList<>());
-                    mapOfLocationsByState.get(stateName).add(countyInState);
-                } else {
-                    mapOfLocationsByState.get(stateName).add(countyInState);
                 }
+                mapOfLocationsByState.get(stateName).add(countyInState);
             }
 
         } catch (IOException | JSONException exception) {
