@@ -34,6 +34,10 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
         return repo.getLatestLocations();
     }
 
+    public LiveData<CovidSnapshot> getLatestCovidSnapshotByLocationId(int locationId) {
+        return repo.getLatestCovidSnapshotByLocationId(locationId);
+    }
+
 
 }
 

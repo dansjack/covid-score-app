@@ -54,4 +54,8 @@ public class CovidSnapshotWithLocationRepository {
         return covidSnapshotDao.getLatestLocations();
     }
 
+    LiveData<CovidSnapshot> getLatestCovidSnapshotByLocationId(int locationId) {
+        return covidSnapshotDao.findLatestByLocationId(locationId);
+    }
+
 }
