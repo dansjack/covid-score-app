@@ -11,16 +11,12 @@ import com.nsc.covidscore.Constants;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
 
-@Entity(tableName = "location",
-    indices = {@Index(value = {"county", "state"}, unique = true)})
-public class Location {
+public class Location implements Serializable {
 
-    @NonNull
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "location_id")
     private Integer locationId;
     public Integer getLocationId() { return locationId; }
     public void setLocationId(Integer locationId) {
@@ -28,8 +24,6 @@ public class Location {
         this.locationId = locationId;
     }
 
-    @NonNull
-    @ColumnInfo(name = "county")
     private String county;
     public String getCounty() { return county; }
     public void setCounty(String county) {
@@ -37,8 +31,6 @@ public class Location {
         this.county = county.toLowerCase();
     }
 
-    @NonNull
-    @ColumnInfo(name = "state")
     private String state;
     public String getState() { return state; }
     public void setState(String state) {
@@ -46,40 +38,86 @@ public class Location {
         this.state = state.toLowerCase();
     }
 
-    @ColumnInfo(name = "last_updated")
+    private String countyFips;
+    public String getCountyFips() { return countyFips; }
+    public void setCountyFips(String countyFips) {
+        this.countyFips = countyFips;
+    }
+
+    private String stateFips;
+    public String getStateFips() { return stateFips; }
+    public void setStateFips(String stateFips) {
+        this.stateFips = stateFips;
+    }
+
     private Calendar lastUpdated;
     public Calendar getLastUpdated() { return lastUpdated; }
     public void setLastUpdated(Calendar lastUpdated) {
-//        propertyChangeSupport.firePropertyChange(Constants.LAST_UPDATED_LOCATION, this.lastUpdated, lastUpdated);
+        propertyChangeSupport.firePropertyChange(Constants.LAST_UPDATED_LOCATION, this.lastUpdated, lastUpdated);
         this.lastUpdated = lastUpdated;
     }
 
     // For Observer
 
-    @Ignore
     protected PropertyChangeSupport propertyChangeSupport;
 
-    public void setListener(PropertyChangeListener listener) {
-        propertyChangeSupport.addPropertyChangeListener(listener);
-    }
-
-    public void removeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.removePropertyChangeListener(listener);
-    }
+//    public void setListener(PropertyChangeListener listener) {
+//        propertyChangeSupport.addPropertyChangeListener(listener);
+//    }
+//
+//    public void removeListener(PropertyChangeListener listener) {
+//        propertyChangeSupport.removePropertyChangeListener(listener);
+//    }
 
     // CONSTRUCTOR
 
-    public Location(String county, String state) {
+    public Location() {}
+
+    public Location(Integer locationId, String county, String state, String countyFips, String stateFips) {
         propertyChangeSupport = new PropertyChangeSupport(this);
+        this.locationId = locationId;
         this.county = county.toLowerCase();
         this.state = state.toLowerCase();
+        this.countyFips = countyFips;
+        this.stateFips = stateFips;
         Calendar calendar = Calendar.getInstance();
         this.lastUpdated = calendar;
     }
 
-    public String toApiFormat() { return county + "," + state; }
+    public Location(String county, String state, String countyFips, String stateFips) {
+        propertyChangeSupport = new PropertyChangeSupport(this);
+        this.county = county.toLowerCase();
+        this.state = state.toLowerCase();
+        this.countyFips = countyFips;
+        this.stateFips = stateFips;
+        Calendar calendar = Calendar.getInstance();
+        this.lastUpdated = calendar;
+    }
 
-    public boolean hasFieldsSet() { return this.county != null && this.state != null; }
+    @Ignore
+    public Location(String county, String state) {
+        propertyChangeSupport = new PropertyChangeSupport(this);
+        this.county = county.toLowerCase();
+        this.state = state.toLowerCase();
+    }
+
+    public void setAllState(Location other) {
+        this.locationId = other.locationId;
+        this.setCounty(other.county);
+        this.setState(other.state);
+        this.countyFips = other.countyFips;
+        this.stateFips = other.stateFips;
+    }
+
+    public String toApiFormat() {
+        return county + "," + state;
+    }
+
+    public boolean hasFieldsSet() {
+        boolean notNull = (this.county != null && this.state != null) && (this.countyFips != null && this.stateFips != null);
+        boolean notEmpty = (!this.county.isEmpty() && !this.state.isEmpty()) && (!this.countyFips.isEmpty() && !this.stateFips.isEmpty());
+        return notNull && notEmpty;
+    }
 
     public boolean equals(Location other) {
         return this.hasSameData(other) && this.locationId.equals(other.locationId);
@@ -89,13 +127,14 @@ public class Location {
         return this.state.equals(other.state) && this.county.equals(other.county);
     }
 
-    public static boolean alreadyInRoom(Location location, List<Location> allLocations) {
-        for (Location savedLocation : allLocations) {
-            if (savedLocation.hasSameData(location)) {
-                return true;
-            }
-        }
-        return false;
+    @Override
+    public String toString() {
+        return "Location{" +
+                "locationId=" + locationId +
+                ", county='" + county + '\'' +
+                ", state='" + state + '\'' +
+                ", countyFips='" + countyFips + '\'' +
+                ", stateFips='" + stateFips + '\'' +
+                '}';
     }
-
 }
