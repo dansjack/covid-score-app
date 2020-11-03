@@ -41,7 +41,6 @@ import java.util.stream.Collectors;
 public class LocationManualSelectionFragment extends Fragment implements AdapterView.OnItemSelectedListener {
     private static final String TAG = LocationManualSelectionFragment.class.getSimpleName();
     private Location selectedLocation = new Location();
-    private CovidSnapshot selectedCovidSnapshot = new CovidSnapshot();
     private MutableLiveData<CovidSnapshot> mutableCovidSnapshot = new MutableLiveData<>(new CovidSnapshot());
 
     private CovidSnapshotWithLocationViewModel vm;
@@ -110,7 +109,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             // user selected a state and county, call APIs
             if (selectedLocation.getCounty() != null) {
                 // API data retrieved for selected state and county
-                if (selectedCovidSnapshot.hasFieldsSet()) {
+                if (mutableCovidSnapshot.getValue() != null && mutableCovidSnapshot.getValue().hasFieldsSet()) {
                     transitionToRDPFragment();
                 } else {
                     // wait for API data to be retrieved before proceeding
@@ -132,14 +131,15 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     public void transitionToRDPFragment() {
         Log.i(TAG, "onViewCreated - btnNavRiskDetail - selectedLocation filled: " + selectedLocation.toString());
         // TODO: Save to Room, set Location ID on snapshot
-        saveSnapshotToRoom(selectedCovidSnapshot, selectedLocation);
+        saveSnapshotToRoom(mutableCovidSnapshot.getValue(), selectedLocation);
 
         FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
         RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
+        CovidSnapshot snapshot = mutableCovidSnapshot.getValue();
 
         HashMap<Integer, Double> riskMap = RiskCalculation.getRiskCalculationsMap(
-                selectedCovidSnapshot.getCountyActiveCount(),
-                selectedCovidSnapshot.getCountyTotalPopulation(),
+                snapshot.getCountyActiveCount(),
+                snapshot.getCountyTotalPopulation(),
                 Constants.GROUP_SIZES);
         Log.i(TAG, "onViewCreated: riskMap" + riskMap.toString());
 
@@ -147,12 +147,12 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
         StringBuilder currentLocationSB = new StringBuilder(selectedLocation.getCounty())
                 .append(Constants.COMMA_SPACE).append(selectedLocation.getState());
         bundle.putString(Constants.CURRENT_LOCATION, String.valueOf(currentLocationSB));
-        bundle.putString(Constants.ACTIVE_COUNTY, selectedCovidSnapshot.getCountyActiveCount().toString());
-        bundle.putString(Constants.ACTIVE_STATE, selectedCovidSnapshot.getStateActiveCount().toString());
-        bundle.putString(Constants.ACTIVE_COUNTRY, selectedCovidSnapshot.getCountryActiveCount().toString());
-        bundle.putString(Constants.TOTAL_COUNTY, selectedCovidSnapshot.getCountyTotalPopulation().toString());
-        bundle.putString(Constants.TOTAL_STATE, selectedCovidSnapshot.getStateTotalPopulation().toString());
-        bundle.putString(Constants.TOTAL_COUNTRY, selectedCovidSnapshot.getCountryTotalPopulation().toString());
+        bundle.putString(Constants.ACTIVE_COUNTY, snapshot.getCountyActiveCount().toString());
+        bundle.putString(Constants.ACTIVE_STATE, snapshot.getStateActiveCount().toString());
+        bundle.putString(Constants.ACTIVE_COUNTRY, snapshot.getCountryActiveCount().toString());
+        bundle.putString(Constants.TOTAL_COUNTY, snapshot.getCountyTotalPopulation().toString());
+        bundle.putString(Constants.TOTAL_STATE, snapshot.getStateTotalPopulation().toString());
+        bundle.putString(Constants.TOTAL_COUNTRY, snapshot.getCountryTotalPopulation().toString());
         bundle.putSerializable(Constants.RISK_MAP,riskMap);
         riskDetailPageFragment.setArguments(bundle);
         transaction.replace(R.id.fragContainer, riskDetailPageFragment, Constants.FRAGMENT_RDPF);
@@ -162,7 +162,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
         transaction.commit();
         mutableCovidSnapshot.setValue(new CovidSnapshot());
         //  selectedLocation = new Location();
-        //  selectedCovidSnapshot = new CovidSnapshot();
     }
 
     public void saveSnapshotToRoom(CovidSnapshot currentCovidSnapshot, Location currentLocation) {
@@ -243,7 +242,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                     if (location.getCounty().equals(countySelected)) {
                         Log.i(TAG, "onCreateView - mutableSelectedCounty: COUNTY FOUND" + countySelected);
                         selectedLocation = location;
-                        selectedCovidSnapshot.setLocationId(selectedLocation.getLocationId());
+                        mutableCovidSnapshot.getValue().setLocationId(selectedLocation.getLocationId());
                     }
                 }
             }
@@ -296,7 +295,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                 covidSnapshot.setCountyActiveCount(activeCounty);
                 mutableCovidSnapshot.getValue().setCountyActiveCount(activeCounty);
                 if (covidSnapshot.hasFieldsSet()) {
-                    selectedCovidSnapshot = covidSnapshot;
                     mutableCovidSnapshot.setValue(covidSnapshot);
                 }
                 Log.d(TAG, "req: getActiveCounty " + activeCounty);
@@ -313,7 +311,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                 covidSnapshot.setStateActiveCount(activeState);
                 mutableCovidSnapshot.getValue().setStateActiveCount(activeState);
                 if (covidSnapshot.hasFieldsSet()) {
-//                    selectedCovidSnapshot = covidSnapshot;
                     mutableCovidSnapshot.setValue(covidSnapshot);
                 }
                 Log.d(TAG, "req: getActiveState " + activeState);
@@ -359,7 +356,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                 Integer countryActiveCount = totalCountry - deathCountry - recoveredCountry;
                 covidSnapshot.setCountryActiveCount(countryActiveCount);
                 if (covidSnapshot.hasFieldsSet()) {
-                    selectedCovidSnapshot = covidSnapshot;
+                    mutableCovidSnapshot.setValue(covidSnapshot);
                 }
                 Log.i(TAG, "req: getCountryHistorical " + response);
             }
@@ -373,7 +370,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             covidSnapshot.setCountyTotalPopulation(Integer.parseInt(response));
             mutableCovidSnapshot.getValue().setCountyTotalPopulation(Integer.parseInt(response));
             if (covidSnapshot.hasFieldsSet()) {
-                selectedCovidSnapshot = covidSnapshot;
                 mutableCovidSnapshot.setValue(covidSnapshot);
             }
               Log.d(TAG, "req: getCountyPopulation  " + response);
@@ -382,7 +378,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             covidSnapshot.setStateTotalPopulation(Integer.parseInt(response));
             mutableCovidSnapshot.getValue().setStateTotalPopulation(Integer.parseInt(response));
             if (covidSnapshot.hasFieldsSet()) {
-                selectedCovidSnapshot = covidSnapshot;
                 mutableCovidSnapshot.setValue(covidSnapshot);
             }
               Log.d(TAG, "req: getStatePopulation  " + response);
@@ -391,7 +386,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             covidSnapshot.setCountryTotalPopulation(Integer.parseInt(response));
             mutableCovidSnapshot.getValue().setCountryTotalPopulation(Integer.parseInt(response));
             if (covidSnapshot.hasFieldsSet()) {
-                selectedCovidSnapshot = covidSnapshot;
                 mutableCovidSnapshot.setValue(covidSnapshot);
             }
               Log.d(TAG, "req: getCountryPopulation " + response);
