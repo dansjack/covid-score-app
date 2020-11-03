@@ -5,10 +5,6 @@ import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.nsc.covidscore.room.CovidSnapshot;
-import com.nsc.covidscore.room.CovidSnapshotWithLocationRepository;
-import com.nsc.covidscore.room.Location;
-
 import java.util.List;
 
 public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
@@ -27,8 +23,17 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
         }
     }
 
-    public LiveData<CovidSnapshot> getLatestCovidSnapshotByLocation(Location location) { return repo.getLatestCovidSnapshotByLocation(location); }
+    public LiveData<CovidSnapshot> getLatestCovidSnapshotByLocation(Location location) {
+        return repo.getLatestCovidSnapshotByLocation(location); }
 
     public LiveData<CovidSnapshot> getLatestCovidSnapshot() { return repo.getLatestSnapshot(); }
+
+    // Returns a list of up to 3 LiveData objects (locationIDs)
+    // directly from AppDatabase via CovidSnapshotDao.
+    public LiveData<List<CovidSnapshot>> getLatestLocations() {
+        return repo.getLatestLocations();
+    }
+
+
 }
 

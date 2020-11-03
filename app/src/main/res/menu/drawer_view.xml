@@ -3,9 +3,17 @@
 <!--    //TODO: change android:title={locationValue} to fill with stored locations-->
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_location_fragment"
+            android:id="@+id/nav_location_fragment_1"
             android:icon="@drawable/ic_outline_push_pin_24"
             android:title="King County, Washington" />
+        <item
+            android:id="@+id/nav_location_fragment_2"
+            android:icon="@drawable/ic_outline_push_pin_24"
+            android:title="TODO" />
+        <item
+            android:id="@+id/nav_location_fragment_3"
+            android:icon="@drawable/ic_outline_push_pin_24"
+            android:title="TODO" />
 
     </group>
 

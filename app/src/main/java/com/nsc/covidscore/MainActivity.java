@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -213,9 +214,14 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-
-
+//TODO: write method which takes getLatestLocations and prints them as drawerItems
+//TODO: write method which takes a getLatestLocations drawerItem selection and
+// spins up new RiskDetailFragment given location using vm.getLatestCovidSnapshotByLocation from repository
+    public void updateDrawerItems() {
+        LiveData<List<CovidSnapshot>> locationsList = vm.getLatestLocations();
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nvView);
+        navigationView.getMenu().findItem(R.id.nav_location_fragment_1).setTitle("savedlocation1");
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -236,20 +242,26 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
-//TODO: after merge, first and default fragment should be RiskDetailPage.class
+//TODO: RiskDetail fragment should open with location state
     public void selectDrawerItem(MenuItem menuItem) {
         // Create a new fragment and specify the fragment to show based on nav item clicked
         Fragment fragment = null;
         Class fragmentClass;
         switch(menuItem.getItemId()) {
-            case R.id.nav_location_fragment:
-                fragmentClass = LocationSettingsPageFragment.class;
+            case R.id.nav_location_fragment_1:
+                fragmentClass = RiskDetailPageFragment.class;
+                break;
+            case R.id.nav_location_fragment_2:
+                fragmentClass = RiskDetailPageFragment.class;
+                break;
+            case R.id.nav_location_fragment_3:
+                fragmentClass = RiskDetailPageFragment.class;
                 break;
             case R.id.nav_location_settings_fragment:
                 fragmentClass = LocationSettingsPageFragment.class;
                 break;
             default:
-                fragmentClass = LocationSettingsPageFragment.class;
+                fragmentClass = RiskDetailPageFragment.class;
         }
         try {
             fragment = (Fragment) fragmentClass.newInstance();
@@ -258,8 +270,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Insert the fragment by replacing any existing fragment
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragContainer, fragment).commit();
 
         // Highlight the selected item has been done by NavigationView
         menuItem.setChecked(true);
@@ -269,8 +280,8 @@ public class MainActivity extends AppCompatActivity {
         mDrawer.closeDrawers();
     }
     private ActionBarDrawerToggle setupDrawerToggle() {
-        // NOTE: Make sure you pass in a valid toolbar reference.  ActionBarDrawToggle() does not require it
-        // but won't render the hamburger icon without it.
+        // NOTE: Make sure you pass in a valid toolbar reference.  ActionBarDrawToggle() does not
+        // require it but won't render the hamburger icon without it.
         return new ActionBarDrawerToggle(this, mDrawer, toolbar,
                 R.string.drawer_open,  R.string.drawer_close);
     }
@@ -304,6 +315,7 @@ public class MainActivity extends AppCompatActivity {
         drawerToggle.syncState();
     }
 
+    // Synchronize state when screen is restored or rotated
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
