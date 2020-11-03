@@ -8,6 +8,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.android.volley.RequestQueue;
@@ -26,7 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends FragmentActivity implements RiskDetailPageFragment.OnSelectLocationButtonListener {
+public class MainActivity extends FragmentActivity implements RiskDetailPageFragment.OnSelectLocationButtonListener, LocationManualSelectionFragment.OnSubmitButtonListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private HashMap<String, List<Location>> mapOfLocationsByState = new HashMap<>();
     private HashMap<Integer, Location> mapOfLocationsById = new HashMap<>();
@@ -44,8 +46,12 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
     public void onAttachFragment(@NonNull Fragment fragment) {
         super.onAttachFragment(fragment);
         if (fragment instanceof  RiskDetailPageFragment) {
-            RiskDetailPageFragment riskDetailPageFragment = (RiskDetailPageFragment) fragment;
-            riskDetailPageFragment.setOnSelectLocationButtonListener(this);
+            RiskDetailPageFragment rdpFragment = (RiskDetailPageFragment) fragment;
+            rdpFragment.setOnSelectLocationButtonListener(this);
+        }
+        if (fragment instanceof LocationManualSelectionFragment) {
+            LocationManualSelectionFragment lmsFragment = (LocationManualSelectionFragment) fragment;
+            lmsFragment.setOnSubmitButtonListener(this);
         }
     }
 
@@ -121,7 +127,6 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
         bundle.putString(Constants.TOTAL_COUNTRY, lastSavedCovidSnapshot.getCountryTotalPopulation().toString());
         bundle.putSerializable(Constants.RISK_MAP,riskMap);
         bundle.putSerializable(Constants.LOCATIONS_MAP_BY_STATE, mapOfLocationsByState);
-        bundle.putSerializable(Constants.LOCATIONS_MAP_BY_ID, mapOfLocationsById);
 
         // TODO: Save current CovidSnapshot and Location to this bundle
 
@@ -134,12 +139,50 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
                 .add(R.id.fragContainer, riskDetailPageFragment, Constants.FRAGMENT_RDPF).commit();
     }
 
+    public void openNewRiskDetailPageFragment(MutableLiveData<CovidSnapshot> mcs, Location selectedLocation) {
+        Log.i(TAG, "onViewCreated - btnNavRiskDetail - selectedLocation filled: " + selectedLocation.toString());
+        // TODO: Save to Room, set Location ID on snapshot
+        LocationManualSelectionFragment lmsFragment = (LocationManualSelectionFragment) getSupportFragmentManager().findFragmentByTag(Constants.FRAGMENT_LMSF);
+        if (lmsFragment != null) {
+            lmsFragment.saveSnapshotToRoom(mcs.getValue(), selectedLocation);
+        }
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
+        CovidSnapshot snapshot = mcs.getValue();
+
+        HashMap<Integer, Double> riskMap = RiskCalculation.getRiskCalculationsMap(
+                snapshot.getCountyActiveCount(),
+                snapshot.getCountyTotalPopulation(),
+                Constants.GROUP_SIZES);
+        Log.i(TAG, "onViewCreated: riskMap" + riskMap.toString());
+
+        Bundle bundle = new Bundle();
+        StringBuilder currentLocationSB = new StringBuilder(selectedLocation.getCounty())
+                .append(Constants.COMMA_SPACE).append(selectedLocation.getState());
+        bundle.putString(Constants.CURRENT_LOCATION, String.valueOf(currentLocationSB));
+        bundle.putString(Constants.ACTIVE_COUNTY, snapshot.getCountyActiveCount().toString());
+        bundle.putString(Constants.ACTIVE_STATE, snapshot.getStateActiveCount().toString());
+        bundle.putString(Constants.ACTIVE_COUNTRY, snapshot.getCountryActiveCount().toString());
+        bundle.putString(Constants.TOTAL_COUNTY, snapshot.getCountyTotalPopulation().toString());
+        bundle.putString(Constants.TOTAL_STATE, snapshot.getStateTotalPopulation().toString());
+        bundle.putString(Constants.TOTAL_COUNTRY, snapshot.getCountryTotalPopulation().toString());
+        bundle.putSerializable(Constants.RISK_MAP,riskMap);
+        riskDetailPageFragment.setArguments(bundle);
+        transaction.replace(R.id.fragContainer, riskDetailPageFragment, Constants.FRAGMENT_RDPF);
+        transaction.addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
+        mcs.setValue(new CovidSnapshot());
+        //  selectedLocation = new Location();
+    }
+
     public void openLocationSelectionFragment() {
         // Create a new Location Selection Fragment to be placed in the activity layout
         LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(Constants.LOCATIONS_MAP_BY_STATE, mapOfLocationsByState);
-        bundle.putSerializable(Constants.LOCATIONS_MAP_BY_ID, mapOfLocationsById);
 
         // In case this activity was started with special instructions from an
         // Intent, pass the Intent's extras to the fragment as arguments
@@ -190,7 +233,6 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
             LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
             Bundle bundle = new Bundle();
             bundle.putSerializable(Constants.LOCATIONS_MAP_BY_STATE, mapOfLocationsByState);
-            bundle.putSerializable(Constants.LOCATIONS_MAP_BY_ID, mapOfLocationsById);
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
@@ -243,7 +285,6 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
 
                 mapOfLocationsById.put(locationId, countyInState);
                 if (mapOfLocationsByState.get(stateName) == null) {
-//                    Log.i(TAG, "fillLocationsMap: " + stateName);
                     mapOfLocationsByState.put(stateName, new ArrayList<>());
                 }
                 mapOfLocationsByState.get(stateName).add(countyInState);
@@ -258,5 +299,10 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
     @Override
     public void onLocationButtonClicked() {
         openLocationSelectionFragment();
+    }
+
+    @Override
+    public void onSubmitButtonClicked(MutableLiveData<CovidSnapshot> mcs, Location selectedLocation) {
+        openNewRiskDetailPageFragment(mcs, selectedLocation);
     }
 }

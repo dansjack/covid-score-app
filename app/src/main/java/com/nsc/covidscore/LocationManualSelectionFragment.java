@@ -15,7 +15,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -47,10 +46,11 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     private TextView loadingTextView;
 
     private HashMap<String, List<Location>> mapOfLocationsByState = new HashMap<>();
-    private HashMap<Integer, List<Location>> mapOfLocationsById = new HashMap<>();
     private List<Location> countyLocations = new ArrayList<>();
     private Spinner state_spinner;
     private Spinner county_spinner;
+
+    LocationManualSelectionFragment.OnSubmitButtonListener callback;
 
     public LocationManualSelectionFragment() {
         // Required empty public constructor
@@ -87,7 +87,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
         if (bundle != null) {
             // noinspection unchecked
             mapOfLocationsByState = (HashMap<String, List<Location>>) bundle.getSerializable(Constants.LOCATIONS_MAP_BY_STATE);
-            mapOfLocationsById = (HashMap<Integer, List<Location>>) bundle.getSerializable(Constants.LOCATIONS_MAP_BY_ID);
             Log.i(TAG, "onCreateView: Bundle received from MainActivity");
         }
 
@@ -110,14 +109,14 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             if (selectedLocation.getCounty() != null) {
                 // API data retrieved for selected state and county
                 if (mutableCovidSnapshot.getValue() != null && mutableCovidSnapshot.getValue().hasFieldsSet()) {
-                    transitionToRDPFragment();
+                    callback.onSubmitButtonClicked(mutableCovidSnapshot, selectedLocation);
                 } else {
                     // wait for API data to be retrieved before proceeding
                     loadingTextView.setText(R.string.loading_data);
                     makeApiCalls(selectedLocation);
                     mutableCovidSnapshot.observe(getViewLifecycleOwner(), covidSnapshot -> {
                         if (covidSnapshot != null && covidSnapshot.hasFieldsSet()) {
-                            transitionToRDPFragment();
+                            callback.onSubmitButtonClicked(mutableCovidSnapshot, selectedLocation);
                         }
                     });
                 }
@@ -126,42 +125,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                 Log.i(TAG, "onViewCreated - btnNavRiskDetail - selectedLocation not filled: " + selectedLocation.toString());
             }
         });
-    }
-
-    public void transitionToRDPFragment() {
-        Log.i(TAG, "onViewCreated - btnNavRiskDetail - selectedLocation filled: " + selectedLocation.toString());
-        // TODO: Save to Room, set Location ID on snapshot
-        saveSnapshotToRoom(mutableCovidSnapshot.getValue(), selectedLocation);
-
-        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-        RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
-        CovidSnapshot snapshot = mutableCovidSnapshot.getValue();
-
-        HashMap<Integer, Double> riskMap = RiskCalculation.getRiskCalculationsMap(
-                snapshot.getCountyActiveCount(),
-                snapshot.getCountyTotalPopulation(),
-                Constants.GROUP_SIZES);
-        Log.i(TAG, "onViewCreated: riskMap" + riskMap.toString());
-
-        Bundle bundle = new Bundle();
-        StringBuilder currentLocationSB = new StringBuilder(selectedLocation.getCounty())
-                .append(Constants.COMMA_SPACE).append(selectedLocation.getState());
-        bundle.putString(Constants.CURRENT_LOCATION, String.valueOf(currentLocationSB));
-        bundle.putString(Constants.ACTIVE_COUNTY, snapshot.getCountyActiveCount().toString());
-        bundle.putString(Constants.ACTIVE_STATE, snapshot.getStateActiveCount().toString());
-        bundle.putString(Constants.ACTIVE_COUNTRY, snapshot.getCountryActiveCount().toString());
-        bundle.putString(Constants.TOTAL_COUNTY, snapshot.getCountyTotalPopulation().toString());
-        bundle.putString(Constants.TOTAL_STATE, snapshot.getStateTotalPopulation().toString());
-        bundle.putString(Constants.TOTAL_COUNTRY, snapshot.getCountryTotalPopulation().toString());
-        bundle.putSerializable(Constants.RISK_MAP,riskMap);
-        riskDetailPageFragment.setArguments(bundle);
-        transaction.replace(R.id.fragContainer, riskDetailPageFragment, Constants.FRAGMENT_RDPF);
-        transaction.addToBackStack(null);
-
-        // Commit the transaction
-        transaction.commit();
-        mutableCovidSnapshot.setValue(new CovidSnapshot());
-        //  selectedLocation = new Location();
     }
 
     public void saveSnapshotToRoom(CovidSnapshot currentCovidSnapshot, Location currentLocation) {
@@ -279,6 +242,14 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
         county_spinner.setOnItemSelectedListener(this);
     }
 
+    public void setOnSubmitButtonListener(LocationManualSelectionFragment.OnSubmitButtonListener callback) {
+        this.callback = callback;
+    }
+
+    public interface OnSubmitButtonListener {
+        public void onSubmitButtonClicked(MutableLiveData<CovidSnapshot> mcs, Location selectedLocation);
+    }
+
     private void makeApiCalls(Location location) {
         Log.i(TAG, "makeApiCalls: CALLED " + location.toString());
         CovidSnapshot covidSnapshot = new CovidSnapshot();
@@ -372,7 +343,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             if (covidSnapshot.hasFieldsSet()) {
                 mutableCovidSnapshot.setValue(covidSnapshot);
             }
-              Log.d(TAG, "req: getCountyPopulation  " + response);
+            Log.d(TAG, "req: getCountyPopulation  " + response);
         });
         Requests.getStatePopulation(getActivity(), location, response -> {
             covidSnapshot.setStateTotalPopulation(Integer.parseInt(response));
@@ -380,7 +351,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             if (covidSnapshot.hasFieldsSet()) {
                 mutableCovidSnapshot.setValue(covidSnapshot);
             }
-              Log.d(TAG, "req: getStatePopulation  " + response);
+            Log.d(TAG, "req: getStatePopulation  " + response);
         });
         Requests.getCountryPopulation(getActivity(), response -> {
             covidSnapshot.setCountryTotalPopulation(Integer.parseInt(response));
@@ -388,7 +359,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             if (covidSnapshot.hasFieldsSet()) {
                 mutableCovidSnapshot.setValue(covidSnapshot);
             }
-              Log.d(TAG, "req: getCountryPopulation " + response);
+            Log.d(TAG, "req: getCountryPopulation " + response);
         });
     }
 
