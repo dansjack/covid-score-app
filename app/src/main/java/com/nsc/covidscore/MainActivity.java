@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements RiskDetailPageFragment.OnSelectLocationButtonListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private HashMap<String, List<Location>> mapOfLocationsByState = new HashMap<>();
     private HashMap<Integer, Location> mapOfLocationsById = new HashMap<>();
@@ -38,6 +39,15 @@ public class MainActivity extends FragmentActivity {
     private RequestSingleton requestManager;
 
     private Context context;
+
+    @Override
+    public void onAttachFragment(@NonNull Fragment fragment) {
+        super.onAttachFragment(fragment);
+        if (fragment instanceof  RiskDetailPageFragment) {
+            RiskDetailPageFragment riskDetailPageFragment = (RiskDetailPageFragment) fragment;
+            riskDetailPageFragment.setOnSelectLocationButtonListener(this);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,8 +146,10 @@ public class MainActivity extends FragmentActivity {
         locationManualSelectionFragment.setArguments(bundle);
 
         // Add the fragment to the 'fragment_container' FrameLayout
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragContainer, locationManualSelectionFragment, Constants.FRAGMENT_LMSF).commit();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragContainer, locationManualSelectionFragment, Constants.FRAGMENT_LMSF)
+                .addToBackStack(null).commit();
     }
 
     @Override
@@ -242,4 +254,9 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+
+    @Override
+    public void onLocationButtonClicked() {
+        openLocationSelectionFragment();
+    }
 }

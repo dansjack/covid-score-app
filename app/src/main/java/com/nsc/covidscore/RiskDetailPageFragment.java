@@ -12,19 +12,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
-import com.nsc.covidscore.room.Location;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
 
 public class RiskDetailPageFragment extends Fragment {
     private static final String TAG = RiskDetailPageFragment.class.getSimpleName();
-    private HashMap<String, List<Location>> mapOfLocationsByState = new HashMap<>();
-    private HashMap<Integer, List<Location>> mapOfLocationsById = new HashMap<>();
     private String currentLocation;
     private String activeCounty;
     private String activeState;
@@ -56,6 +50,8 @@ public class RiskDetailPageFragment extends Fragment {
     private String[] groupSizesArray;
     Resources res;
 
+    OnSelectLocationButtonListener callback;
+
     public RiskDetailPageFragment() {
         // Required empty public constructor
     }
@@ -75,13 +71,6 @@ public class RiskDetailPageFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_risk_detail, container, false);
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
-
-        if (bundle != null) {
-            // noinspection unchecked
-            mapOfLocationsByState = (HashMap<String, List<Location>>) bundle.getSerializable(Constants.LOCATIONS_MAP_BY_STATE);
-            mapOfLocationsById = (HashMap<Integer, List<Location>>) bundle.getSerializable(Constants.LOCATIONS_MAP_BY_ID);
-            Log.i(TAG, "onCreateView: Bundle received from MainActivity");
-        }
 
         Log.d(TAG, "onCreateView invoked");
         return v;
@@ -117,22 +106,7 @@ public class RiskDetailPageFragment extends Fragment {
 
 
         Button btnSelectNewLocation = v.findViewById(R.id.select_location_btn);
-        btnSelectNewLocation.setOnClickListener(v1 -> {
-            FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-            LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
-
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("allLocationsMapByState", mapOfLocationsByState);
-            bundle.putSerializable("allLocationsMapById", mapOfLocationsById);
-
-            locationManualSelectionFragment.setArguments(bundle);
-
-            transaction.replace(R.id.fragContainer, locationManualSelectionFragment, Constants.FRAGMENT_LMSF);
-            transaction.addToBackStack(null);
-
-            // Commit the transaction
-            transaction.commit();
-        });
+        btnSelectNewLocation.setOnClickListener(v1 -> callback.onLocationButtonClicked());
 
         Bundle bundle = getArguments();
 
@@ -189,5 +163,13 @@ public class RiskDetailPageFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    public void setOnSelectLocationButtonListener(OnSelectLocationButtonListener callback) {
+        this.callback = callback;
+    }
+
+    public interface OnSelectLocationButtonListener {
+        public void onLocationButtonClicked();
     }
 }
