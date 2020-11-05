@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 public class CovidSnapshotWithLocationRepository {

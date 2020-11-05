@@ -1,6 +1,7 @@
 package com.nsc.covidscore;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,10 +26,13 @@ import com.nsc.covidscore.room.CovidSnapshot;
 import com.nsc.covidscore.room.CovidSnapshotWithLocationViewModel;
 import com.nsc.covidscore.room.Location;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -45,7 +49,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     private CovidSnapshotWithLocationViewModel vm;
     private TextView loadingTextView;
 
-    private HashMap<String, List<Location>> mapOfLocationsByState = new HashMap<>();
     private List<Location> countyLocations = new ArrayList<>();
     private Spinner state_spinner;
     private Spinner county_spinner;
@@ -86,7 +89,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
 
         if (bundle != null) {
             // noinspection unchecked
-            mapOfLocationsByState = (HashMap<String, List<Location>>) bundle.getSerializable(Constants.LOCATIONS_MAP_BY_STATE);
+//            mapOfLocationsByState = (HashMap<String, List<Location>>) bundle.getSerializable(Constants.LOCATIONS_MAP_BY_STATE);
             Log.i(TAG, "onCreateView: Bundle received from MainActivity");
         }
 
@@ -183,7 +186,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                 Log.i(TAG, "onCreateView - mutableSelectedState: STATE SELECTED " + stateSelected);
 
                 // get counties
-                countyLocations = mapOfLocationsByState.get(stateSelected);
+                countyLocations = vm.getMapOfLocationsByState().get(stateSelected);
                 List<String> countyNamesInner = countyLocations.stream().map(Location::getCounty).sorted().collect(Collectors.toList());
                 countyNamesInner.add(0, Constants.SELECT_COUNTY);
 
@@ -218,7 +221,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     }
 
     public void setInitialSpinners(View v) {
-        List<String> stateNames = new ArrayList<>(mapOfLocationsByState.keySet());
+        List<String> stateNames = new ArrayList<>(vm.getMapOfLocationsByState().keySet());
         Collections.sort(stateNames);
         stateNames.add(0, Constants.SELECT_STATE);
 
@@ -362,5 +365,4 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             Log.d(TAG, "req: getCountryPopulation " + response);
         });
     }
-
 }

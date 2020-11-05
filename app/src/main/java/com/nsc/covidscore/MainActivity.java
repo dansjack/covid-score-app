@@ -30,8 +30,6 @@ import java.util.List;
 
 public class MainActivity extends FragmentActivity implements RiskDetailPageFragment.OnSelectLocationButtonListener, LocationManualSelectionFragment.OnSubmitButtonListener {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private HashMap<String, List<Location>> mapOfLocationsByState = new HashMap<>();
-    private HashMap<Integer, Location> mapOfLocationsById = new HashMap<>();
 
     private Location lastSavedLocation;
     private CovidSnapshot lastSavedCovidSnapshot = new CovidSnapshot();
@@ -68,7 +66,7 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
         vm.getLatestCovidSnapshot().observe(this, covidSnapshotFromDb -> {
             if (covidSnapshotFromDb != null) {
                 lastSavedCovidSnapshot = covidSnapshotFromDb;
-                lastSavedLocation = mapOfLocationsById.get(covidSnapshotFromDb.getLocationId());
+                lastSavedLocation = vm.getMapOfLocationsById().get(covidSnapshotFromDb.getLocationId());
                 Log.e(TAG, "Most recently saved Snapshot: " + covidSnapshotFromDb.toString());
 
             } else {
@@ -76,8 +74,6 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
             }
             loadFragments(savedInstanceState);
         });
-
-        fillLocationsMap();
 
         requestManager = RequestSingleton.getInstance(this.getApplicationContext());
         queue = requestManager.getRequestQueue();
@@ -180,12 +176,6 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
     public void openLocationSelectionFragment() {
         // Create a new Location Selection Fragment to be placed in the activity layout
         LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(Constants.LOCATIONS_MAP_BY_STATE, mapOfLocationsByState);
-
-        // In case this activity was started with special instructions from an
-        // Intent, pass the Intent's extras to the fragment as arguments
-        locationManualSelectionFragment.setArguments(bundle);
 
         // Add the fragment to the 'fragment_container' FrameLayout
         getSupportFragmentManager()
@@ -231,7 +221,7 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
         if (tLmsf != null && tLmsf.isVisible()) {
             LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
             Bundle bundle = new Bundle();
-            bundle.putSerializable(Constants.LOCATIONS_MAP_BY_STATE, mapOfLocationsByState);
+//            bundle.putSerializable(Constants.LOCATIONS_MAP_BY_STATE, mapOfLocationsByState);
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
@@ -257,43 +247,6 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
         }
         Log.d(TAG, "onStop invoked");
     }
-
-    private void fillLocationsMap() {
-        String jsonString;
-        JSONArray jsonArray;
-        AssetManager assetManager = this.context.getAssets();
-        try {
-            InputStream inputStream = assetManager.open(Constants.LOCATION_FILENAME);
-            byte[] buffer = new byte[inputStream.available()];
-            int read = inputStream.read(buffer);
-            if (read == -1) {
-                inputStream.close();
-            }
-            jsonString = new String(buffer, StandardCharsets.UTF_8);
-            jsonArray = new JSONArray(jsonString);
-            for (int i = 1; i < jsonArray.length(); i++) {
-                JSONArray currentArray = jsonArray.getJSONArray(i);
-                Integer locationId = currentArray.getInt(0);
-                // split county and state names
-                String[] nameArray = currentArray.getString(1).split(Constants.COMMA);
-                String countyName = nameArray[0].trim();
-                String stateName = nameArray[1].trim();
-                String stateFips = currentArray.getString(2);
-                String countyFips = currentArray.getString(3);
-                Location countyInState = new Location(locationId, countyName, stateName, countyFips, stateFips);
-
-                mapOfLocationsById.put(locationId, countyInState);
-                if (mapOfLocationsByState.get(stateName) == null) {
-                    mapOfLocationsByState.put(stateName, new ArrayList<>());
-                }
-                mapOfLocationsByState.get(stateName).add(countyInState);
-            }
-
-        } catch (IOException | JSONException exception) {
-            exception.printStackTrace();
-        }
-    }
-
 
     @Override
     public void onLocationButtonClicked() {
