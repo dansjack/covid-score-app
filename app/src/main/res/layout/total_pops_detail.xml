@@ -10,7 +10,6 @@
         android:id="@+id/populations"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
         android:textSize="@dimen/std_text_size"
         android:text="@string/populations"
         android:textStyle="bold"

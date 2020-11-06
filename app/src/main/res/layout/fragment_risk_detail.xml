@@ -78,6 +78,7 @@
                 android:text="@string/select_location"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
                 app:layout_constraintTop_toBottomOf="@id/riskDisplayCardView" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

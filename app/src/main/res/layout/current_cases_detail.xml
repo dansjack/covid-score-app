@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="20dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@android:color/transparent">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
         android:id="@+id/labelCurrentLocation"
@@ -13,6 +12,7 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/std_text_size"
         android:text="@string/current_location"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -22,7 +22,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:textSize="@dimen/std_text_size"
-        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@id/labelCurrentLocation"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -30,7 +29,7 @@
         android:id="@+id/labelActiveCounty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="24dp"
         android:textSize="@dimen/std_text_size"
         android:text="@string/active_county"
         app:layout_constraintStart_toStartOf="parent"
