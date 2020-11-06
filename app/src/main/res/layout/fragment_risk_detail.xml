@@ -18,286 +18,67 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="10dp">
+            android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/labelActiveState"
-                android:layout_width="wrap_content"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/currentCasesCardView"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textSize="@dimen/std_text_size"
-                android:text="@string/active_state"
+                android:minHeight="40dp"
+                app:cardBackgroundColor="@color/cardBackground"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="4dp"
+                app:barrierMargin="@dimen/text_margin"
+                android:layout_margin="10dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/labelActiveCounty" />
+                app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/labelActiveCountry"
-                android:layout_width="wrap_content"
+                <include layout="@layout/current_cases_detail"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/totalPopsCardView"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textSize="@dimen/std_text_size"
-                android:text="@string/active_country"
+                android:minHeight="40dp"
+                android:layout_margin="10dp"
+                app:cardBackgroundColor="@color/cardBackground"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="4dp"
+                app:barrierMargin="@dimen/text_margin"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/labelActiveState" />
+                app:layout_constraintTop_toBottomOf="@id/currentCasesCardView">
 
-            <TextView
-                android:id="@+id/labelCurrentLocation"
-                android:layout_width="wrap_content"
+                <include layout="@layout/total_pops_detail"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/riskDisplayCardView"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/std_text_size"
-                android:text="@string/current_location"
+                android:minHeight="40dp"
+                android:layout_margin="10dp"
+                app:cardBackgroundColor="@color/cardBackground"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="4dp"
+                app:barrierMargin="@dimen/text_margin"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/totalPopsCardView">
 
-            <TextView
-                android:id="@+id/labelActiveCounty"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textSize="@dimen/std_text_size"
-                android:text="@string/active_county"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/labelCurrentLocation" />
+                <include layout="@layout/risk_detail"/>
 
-            <TextView
-                android:id="@+id/activeCounty"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:textSize="@dimen/std_text_size"
-                app:layout_constraintStart_toEndOf="@+id/labelActiveCounty"
-                app:layout_constraintTop_toTopOf="@+id/labelActiveCounty" />
-
-            <TextView
-                android:id="@+id/activeState"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:textSize="@dimen/std_text_size"
-                app:layout_constraintStart_toEndOf="@+id/labelActiveState"
-                app:layout_constraintTop_toTopOf="@+id/labelActiveState" />
-
-            <TextView
-                android:id="@+id/activeUS"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:textSize="@dimen/std_text_size"
-                app:layout_constraintStart_toEndOf="@+id/labelActiveCountry"
-                app:layout_constraintTop_toTopOf="@+id/labelActiveCountry" />
-
-            <TextView
-                android:id="@+id/currentLocation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/labelCurrentLocation"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/labelTotalCounty"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:textSize="@dimen/std_text_size"
-                android:text="@string/total_county"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/populations" />
-
-            <TextView
-                android:id="@+id/totalCounty"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                app:layout_constraintStart_toEndOf="@+id/labelTotalCounty"
-                app:layout_constraintTop_toTopOf="@+id/labelTotalCounty" />
-
-            <TextView
-                android:id="@+id/labelTotalCountry"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/total_country"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/labelTotalState" />
-
-            <TextView
-                android:id="@+id/totalState"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                app:layout_constraintStart_toEndOf="@+id/labelTotalState"
-                app:layout_constraintTop_toTopOf="@+id/labelTotalState" />
-
-            <TextView
-                android:id="@+id/labelTotalState"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/total_state"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/labelTotalCounty" />
-
-            <TextView
-                android:id="@+id/totalCountry"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                app:layout_constraintStart_toEndOf="@+id/labelTotalCountry"
-                app:layout_constraintTop_toTopOf="@+id/labelTotalCountry" />
-
-            <TextView
-                android:id="@+id/populations"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:textSize="@dimen/std_text_size"
-                android:text="@string/populations"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/labelActiveCountry" />
-
-            <TextView
-                android:id="@+id/labelRiskDisplay"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:textSize="@dimen/std_text_size"
-                android:text="@string/risk_assessment"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/labelTotalCountry" />
-
-            <TextView
-                android:id="@+id/labelGroupSize"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textSize="@dimen/std_text_size"
-                android:text="@string/group_size"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/labelRiskDisplay" />
-
-            <TextView
-                android:id="@+id/labelRiskAmount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/std_text_size"
-                android:text="@string/risk_of_being_exposed_to_covid"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/labelGroupSize" />
-
-            <TextView
-                android:id="@+id/labelFirstGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/group"
-                android:textSize="@dimen/std_text_size"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/labelGroupSize" />
-
-            <TextView
-                android:id="@+id/labelSecondGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/group"
-                android:textSize="@dimen/std_text_size"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/labelFirstGroup" />
-
-            <TextView
-                android:id="@+id/labelThirdGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/group"
-                android:textSize="@dimen/std_text_size"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/labelSecondGroup" />
-
-            <TextView
-                android:id="@+id/labelFourthGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/group"
-                android:textSize="@dimen/std_text_size"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/labelThirdGroup" />
-
-            <TextView
-                android:id="@+id/labelFifthGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/group"
-                android:textSize="@dimen/std_text_size"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/labelFourthGroup" />
-
-            <TextView
-                android:id="@+id/firstGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/risk"
-                android:textSize="@dimen/std_text_size"
-                app:layout_constraintEnd_toEndOf="@+id/labelRiskAmount"
-                app:layout_constraintStart_toStartOf="@+id/labelRiskAmount"
-                app:layout_constraintTop_toTopOf="@+id/labelFirstGroup" />
-
-            <TextView
-                android:id="@+id/secondGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/std_text_size"
-                android:text="@string/risk"
-                app:layout_constraintEnd_toEndOf="@+id/labelRiskAmount"
-                app:layout_constraintStart_toStartOf="@+id/labelRiskAmount"
-                app:layout_constraintTop_toTopOf="@+id/labelSecondGroup" />
-
-            <TextView
-                android:id="@+id/thirdGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/std_text_size"
-                android:text="@string/risk"
-                app:layout_constraintEnd_toEndOf="@+id/labelRiskAmount"
-                app:layout_constraintStart_toStartOf="@+id/labelRiskAmount"
-                app:layout_constraintTop_toTopOf="@+id/labelThirdGroup" />
-
-            <TextView
-                android:id="@+id/fourthGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/std_text_size"
-                android:text="@string/risk"
-                app:layout_constraintEnd_toEndOf="@+id/labelRiskAmount"
-                app:layout_constraintStart_toStartOf="@+id/labelRiskAmount"
-                app:layout_constraintTop_toTopOf="@+id/labelFourthGroup" />
-
-            <TextView
-                android:id="@+id/fifthGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/std_text_size"
-                android:text="@string/risk"
-                app:layout_constraintEnd_toEndOf="@+id/labelRiskAmount"
-                app:layout_constraintStart_toStartOf="@+id/labelRiskAmount"
-                app:layout_constraintTop_toTopOf="@+id/labelFifthGroup" />
+            </androidx.cardview.widget.CardView>
 
             <Button
                 android:id="@+id/select_location_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="44dp"
                 android:text="@string/select_location"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:gravity="center"
-                app:layout_constraintTop_toBottomOf="@+id/fifthGroup" />
+                android:layout_marginTop="20dp"
+                app:layout_constraintTop_toBottomOf="@id/riskDisplayCardView" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

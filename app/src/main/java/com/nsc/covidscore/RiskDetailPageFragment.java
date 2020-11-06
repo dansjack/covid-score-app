@@ -79,6 +79,7 @@ public class RiskDetailPageFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
+
         currentLocationV = v.findViewById(R.id.currentLocation);
 
         activeCountyV = v.findViewById(R.id.activeCounty);

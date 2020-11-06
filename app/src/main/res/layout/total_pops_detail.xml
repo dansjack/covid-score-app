@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/populations"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:textSize="@dimen/std_text_size"
+        android:text="@string/populations"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/labelTotalCounty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:textSize="@dimen/std_text_size"
+        android:text="@string/total_county"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/populations" />
+
+    <TextView
+        android:id="@+id/totalCounty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textSize="@dimen/std_text_size"
+        app:layout_constraintStart_toEndOf="@id/labelTotalCounty"
+        app:layout_constraintTop_toTopOf="@id/labelTotalCounty" />
+
+    <TextView
+        android:id="@+id/labelTotalState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/total_state"
+        android:textSize="@dimen/std_text_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/labelTotalCounty" />
+
+    <TextView
+        android:id="@+id/totalState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textSize="@dimen/std_text_size"
+        app:layout_constraintStart_toEndOf="@id/labelTotalState"
+        app:layout_constraintTop_toTopOf="@id/labelTotalState" />
+
+    <TextView
+        android:id="@+id/labelTotalCountry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/total_country"
+        android:textSize="@dimen/std_text_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/labelTotalState" />
+
+    <TextView
+        android:id="@+id/totalCountry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textSize="@dimen/std_text_size"
+        app:layout_constraintStart_toEndOf="@id/labelTotalCountry"
+        app:layout_constraintTop_toTopOf="@id/labelTotalCountry" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
