@@ -24,6 +24,7 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -123,7 +124,8 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
         bundle.putString(Constants.TOTAL_COUNTRY, lastSavedCovidSnapshot.getCountryTotalPopulation().toString());
         bundle.putSerializable(Constants.RISK_MAP,riskMap);
 
-        // TODO: Save current CovidSnapshot and Location to this bundle
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        bundle.putString(Constants.LAST_UPDATED, sdf.format(lastSavedCovidSnapshot.getLastUpdated().getTime()));
 
         // In case this activity was started with special instructions from an
         // Intent, pass the Intent's extras to the fragment as arguments
@@ -136,7 +138,7 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
 
     public void openNewRiskDetailPageFragment(MutableLiveData<CovidSnapshot> mcs, Location selectedLocation) {
         Log.i(TAG, "onViewCreated - btnNavRiskDetail - selectedLocation filled: " + selectedLocation.toString());
-        // TODO: Save to Room, set Location ID on snapshot
+
         LocationManualSelectionFragment lmsFragment = (LocationManualSelectionFragment) getSupportFragmentManager().findFragmentByTag(Constants.FRAGMENT_LMSF);
         if (lmsFragment != null) {
             lmsFragment.saveSnapshotToRoom(mcs.getValue(), selectedLocation);
@@ -163,6 +165,8 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
         bundle.putString(Constants.TOTAL_STATE, snapshot.getStateTotalPopulation().toString());
         bundle.putString(Constants.TOTAL_COUNTRY, snapshot.getCountryTotalPopulation().toString());
         bundle.putSerializable(Constants.RISK_MAP,riskMap);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        bundle.putString(Constants.LAST_UPDATED, sdf.format(lastSavedCovidSnapshot.getLastUpdated().getTime()));
         riskDetailPageFragment.setArguments(bundle);
         transaction.replace(R.id.fragContainer, riskDetailPageFragment, Constants.FRAGMENT_RDPF);
         transaction.addToBackStack(null);

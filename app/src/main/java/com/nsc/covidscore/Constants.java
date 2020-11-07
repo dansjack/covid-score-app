@@ -11,6 +11,7 @@ public class Constants {
     public static final String DISTRICT_OF_COLUMBIA = "district of columbia";
     public static final String LOCATION_FIPS_COUNTY_STRING = " county, ";
     public static final String POPULATION = "population";
+    public static final String UPDATED = "Updated at ";
     public static final String PROVINCE = "province";
     public static final String STATE = "state";
     public static final String STATE_POPULATION = "statePopulation";
@@ -21,12 +22,9 @@ public class Constants {
     public static final String COVID_SNAPSHOT_ID = "covidSnapshotId";
     public static final String CURRENT_LOCATION = "currentLocation";
     public static final String ERROR_STATE_COUNTY = "The State/County combination couldn't be found";
-    public static final String LAST_UPDATED_LOCATION = "lastUpdatedLocation";
-    public static final String LAST_UPDATED_SNAPSHOT = "lastUpdatedSnapshot";
+    public static final String LAST_UPDATED = "lastUpdated";
     public static final String LOCATION_ID_FK = "locationIdFK";
     public static final String LOCATION_ID_PK = "locationIdPK";
-    public static final String LOCATIONS_MAP_BY_STATE = "allLocationsMapByState";
-    public static final String LOCATIONS_MAP_BY_ID = "allLocationsMapById";
     public static final String RISK_MAP = "riskMap";
     public static final String TOTAL_COUNTY = "totalCounty";
     public static final String TOTAL_COUNTRY = "totalCountry";

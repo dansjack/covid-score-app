@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,6 +28,7 @@ public class RiskDetailPageFragment extends Fragment {
     private String totalState;
     private String totalCountry;
     private HashMap<Integer, Double> riskMap;
+    private String lastUpdated;
 
     private TextView currentLocationV;
     private TextView activeCountyV;
@@ -46,6 +48,8 @@ public class RiskDetailPageFragment extends Fragment {
     private TextView riskGroup3;
     private TextView riskGroup4;
     private TextView riskGroup5;
+
+    private TextView lastUpdatedV;
 
     private String[] groupSizesArray;
     Resources res;
@@ -102,11 +106,13 @@ public class RiskDetailPageFragment extends Fragment {
         riskGroup4 = v.findViewById(R.id.fourthGroup);
         riskGroup5 = v.findViewById(R.id.fifthGroup);
 
+        lastUpdatedV = v.findViewById(R.id.lastUpdatedTextView);
+
         res = Objects.requireNonNull(getActivity()).getResources();
         groupSizesArray = res.getStringArray(R.array.group_sizes);
 
 
-        Button btnSelectNewLocation = v.findViewById(R.id.select_location_btn);
+        ImageButton btnSelectNewLocation = v.findViewById(R.id.select_location_btn);
         btnSelectNewLocation.setOnClickListener(v1 -> callback.onLocationButtonClicked());
 
         Bundle bundle = getArguments();
@@ -123,6 +129,10 @@ public class RiskDetailPageFragment extends Fragment {
             totalCountry = bundle.getString(Constants.TOTAL_COUNTRY);
 
             riskMap = (HashMap<Integer, Double>) bundle.getSerializable(Constants.RISK_MAP);
+
+            StringBuilder lastUpdatedSB = new StringBuilder(Constants.UPDATED)
+                    .append(bundle.getString(Constants.LAST_UPDATED));
+            lastUpdated = lastUpdatedSB.toString();
 
             currentLocationV.setText(currentLocation);
 
@@ -145,6 +155,8 @@ public class RiskDetailPageFragment extends Fragment {
             riskGroup3.setText(String.format(res.getString(R.string.risk), riskMap.get(Constants.GROUP_SIZES[2])));
             riskGroup4.setText(String.format(res.getString(R.string.risk), riskMap.get(Constants.GROUP_SIZES[3])));
             riskGroup5.setText(String.format(res.getString(R.string.risk), riskMap.get(Constants.GROUP_SIZES[4])));
+
+            lastUpdatedV.setText(lastUpdated);
 
             Log.i(TAG, "onCreateView: Bundle received from LocationManualSelectionFragment");
         }
