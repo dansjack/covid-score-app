@@ -1,5 +1,6 @@
 package com.nsc.covidscore;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,10 +18,9 @@ import com.nsc.covidscore.room.Location;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
-/**
- * A full-screen fragment.
- */
+
 public class RiskDetailPageFragment extends Fragment {
     private static final String TAG = RiskDetailPageFragment.class.getSimpleName();
     private HashMap<String, List<Location>> mapOfLocationsByState = new HashMap<>();
@@ -53,6 +53,9 @@ public class RiskDetailPageFragment extends Fragment {
     private TextView riskGroup4;
     private TextView riskGroup5;
 
+    private String[] groupSizesArray;
+    Resources res;
+
     public RiskDetailPageFragment() {
         // Required empty public constructor
     }
@@ -75,8 +78,8 @@ public class RiskDetailPageFragment extends Fragment {
 
         if (bundle != null) {
             // noinspection unchecked
-            mapOfLocationsByState = (HashMap<String, List<Location>>) bundle.getSerializable("allLocationsMapByState");
-            mapOfLocationsById = (HashMap<Integer, List<Location>>) bundle.getSerializable("allLocationsMapById");
+            mapOfLocationsByState = (HashMap<String, List<Location>>) bundle.getSerializable(Constants.LOCATIONS_MAP_BY_STATE);
+            mapOfLocationsById = (HashMap<Integer, List<Location>>) bundle.getSerializable(Constants.LOCATIONS_MAP_BY_ID);
             Log.i(TAG, "onCreateView: Bundle received from MainActivity");
         }
 
@@ -109,6 +112,10 @@ public class RiskDetailPageFragment extends Fragment {
         riskGroup4 = v.findViewById(R.id.fourthGroup);
         riskGroup5 = v.findViewById(R.id.fifthGroup);
 
+        res = Objects.requireNonNull(getActivity()).getResources();
+        groupSizesArray = res.getStringArray(R.array.group_sizes);
+
+
         Button btnSelectNewLocation = v.findViewById(R.id.select_location_btn);
         btnSelectNewLocation.setOnClickListener(v1 -> {
             FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
@@ -120,27 +127,27 @@ public class RiskDetailPageFragment extends Fragment {
 
             locationManualSelectionFragment.setArguments(bundle);
 
-            transaction.replace(R.id.fragContainer, locationManualSelectionFragment, "lmsf");
+            transaction.replace(R.id.fragContainer, locationManualSelectionFragment, Constants.FRAGMENT_LMSF);
             transaction.addToBackStack(null);
 
             // Commit the transaction
             transaction.commit();
-                });
+        });
 
         Bundle bundle = getArguments();
 
         if (bundle != null) {
-            currentLocation = bundle.getString("currentLocation");
+            currentLocation = bundle.getString(Constants.CURRENT_LOCATION);
 
-            activeCounty = bundle.getString("activeCounty");
-            activeState = bundle.getString("activeState");
-            activeCountry = bundle.getString("activeCountry");
+            activeCounty = bundle.getString(Constants.ACTIVE_COUNTY);
+            activeState = bundle.getString(Constants.ACTIVE_STATE);
+            activeCountry = bundle.getString(Constants.ACTIVE_COUNTRY);
 
-            totalCounty = bundle.getString("totalCounty");
-            totalState = bundle.getString("totalState");
-            totalCountry = bundle.getString("totalCountry");
+            totalCounty = bundle.getString(Constants.TOTAL_COUNTY);
+            totalState = bundle.getString(Constants.TOTAL_STATE);
+            totalCountry = bundle.getString(Constants.TOTAL_COUNTRY);
 
-            riskMap = (HashMap<Integer, Double>) bundle.getSerializable("riskMap");
+            riskMap = (HashMap<Integer, Double>) bundle.getSerializable(Constants.RISK_MAP);
 
             currentLocationV.setText(currentLocation);
 
@@ -152,17 +159,17 @@ public class RiskDetailPageFragment extends Fragment {
             totalStateV.setText(totalState);
             totalCountryV.setText(totalCountry);
 
-            labelRiskGroup1.setText("- " + Constants.GROUP_SIZES[0]);
-            labelRiskGroup2.setText("- " + Constants.GROUP_SIZES[1]);
-            labelRiskGroup3.setText("- " + Constants.GROUP_SIZES[2]);
-            labelRiskGroup4.setText("- " + Constants.GROUP_SIZES[3]);
-            labelRiskGroup5.setText("- " + Constants.GROUP_SIZES[4]);
+            labelRiskGroup1.setText(String.format(res.getString(R.string.group), groupSizesArray[0]));
+            labelRiskGroup2.setText(String.format(res.getString(R.string.group), groupSizesArray[1]));
+            labelRiskGroup3.setText(String.format(res.getString(R.string.group), groupSizesArray[2]));
+            labelRiskGroup4.setText(String.format(res.getString(R.string.group), groupSizesArray[3]));
+            labelRiskGroup5.setText(String.format(res.getString(R.string.group), groupSizesArray[4]));
 
-            riskGroup1.setText(riskMap.get(Constants.GROUP_SIZES[0]).toString() + "%");
-            riskGroup2.setText(riskMap.get(Constants.GROUP_SIZES[1]).toString() + "%");
-            riskGroup3.setText(riskMap.get(Constants.GROUP_SIZES[2]).toString() + "%");
-            riskGroup4.setText(riskMap.get(Constants.GROUP_SIZES[3]).toString() + "%");
-            riskGroup5.setText(riskMap.get(Constants.GROUP_SIZES[4]).toString() + "%");
+            riskGroup1.setText(String.format(res.getString(R.string.risk), riskMap.get(Constants.GROUP_SIZES[0])));
+            riskGroup2.setText(String.format(res.getString(R.string.risk), riskMap.get(Constants.GROUP_SIZES[1])));
+            riskGroup3.setText(String.format(res.getString(R.string.risk), riskMap.get(Constants.GROUP_SIZES[2])));
+            riskGroup4.setText(String.format(res.getString(R.string.risk), riskMap.get(Constants.GROUP_SIZES[3])));
+            riskGroup5.setText(String.format(res.getString(R.string.risk), riskMap.get(Constants.GROUP_SIZES[4])));
 
             Log.i(TAG, "onCreateView: Bundle received from LocationManualSelectionFragment");
         }
@@ -176,7 +183,7 @@ public class RiskDetailPageFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.d(TAG, String.valueOf(outState));
+//        Log.d(TAG, String.valueOf(outState));
     }
 
     @Override

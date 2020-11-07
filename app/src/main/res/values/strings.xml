@@ -17,8 +17,27 @@
     <string name="active_county">Active Cases in County:</string>
     <string name="active_state">Active Cases in State:</string>
     <string name="active_country">Active Cases in US:</string>
+    <string name="pick_state_county">Please pick a state and county</string>
+    <string name="loading_data">Loading COVID data…</string>
     <string name="select_location">Select Location</string>
+    <string name="group">- %s</string>
+    <string name="risk">%.2f%%</string>
+    <string name="total_county">Total County:</string>
+    <string name="total_country">Total Country:</string>
+    <string name="total_state">Total State:</string>
+    <string name="populations">Populations</string>
+    <string name="risk_assessment">Risk Assessment</string>
+    <string name="group_size">Group Size</string>
+    <string name="risk_of_being_exposed_to_covid">Risk of being exposed to COVID</string>
 
     <string name="store_location">Store A Location</string>
 
+</resources>
+    <string-array name="group_sizes">
+        <item>10</item>
+        <item>20</item>
+        <item>50</item>
+        <item>100</item>
+        <item>200</item>
+    </string-array>
 </resources>

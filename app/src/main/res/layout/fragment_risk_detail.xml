@@ -102,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:textSize="@dimen/std_text_size"
-                android:text="Total County:"
+                android:text="@string/total_county"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/populations" />
 
@@ -119,7 +119,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Total Country:"
+                android:text="@string/total_country"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/labelTotalState" />
 
@@ -136,7 +136,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Total State:"
+                android:text="@string/total_state"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/labelTotalCounty" />
 
@@ -154,7 +154,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:textSize="@dimen/std_text_size"
-                android:text="Populations"
+                android:text="@string/populations"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/labelActiveCountry" />
@@ -165,7 +165,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:textSize="@dimen/std_text_size"
-                android:text="Risk Assessment"
+                android:text="@string/risk_assessment"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/labelTotalCountry" />
@@ -176,7 +176,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:textSize="@dimen/std_text_size"
-                android:text="Group Size"
+                android:text="@string/group_size"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/labelRiskDisplay" />
 
@@ -185,7 +185,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/std_text_size"
-                android:text="Risk of being exposed to COVID"
+                android:text="@string/risk_of_being_exposed_to_covid"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/labelGroupSize" />
 
@@ -194,8 +194,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:text="@string/group"
                 android:textSize="@dimen/std_text_size"
-                android:text="- "
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/labelGroupSize" />
 
@@ -204,8 +204,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:text="@string/group"
                 android:textSize="@dimen/std_text_size"
-                android:text="- "
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/labelFirstGroup" />
 
@@ -214,8 +214,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:text="@string/group"
                 android:textSize="@dimen/std_text_size"
-                android:text="- "
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/labelSecondGroup" />
 
@@ -224,8 +224,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:text="@string/group"
                 android:textSize="@dimen/std_text_size"
-                android:text="- "
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/labelThirdGroup" />
 
@@ -234,8 +234,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:text="@string/group"
                 android:textSize="@dimen/std_text_size"
-                android:text="- "
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/labelFourthGroup" />
 
@@ -243,8 +243,8 @@
                 android:id="@+id/firstGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/risk"
                 android:textSize="@dimen/std_text_size"
-                android:text="TextView"
                 app:layout_constraintEnd_toEndOf="@+id/labelRiskAmount"
                 app:layout_constraintStart_toStartOf="@+id/labelRiskAmount"
                 app:layout_constraintTop_toTopOf="@+id/labelFirstGroup" />
@@ -254,7 +254,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/std_text_size"
-                android:text="TextView"
+                android:text="@string/risk"
                 app:layout_constraintEnd_toEndOf="@+id/labelRiskAmount"
                 app:layout_constraintStart_toStartOf="@+id/labelRiskAmount"
                 app:layout_constraintTop_toTopOf="@+id/labelSecondGroup" />
@@ -264,7 +264,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/std_text_size"
-                android:text="TextView"
+                android:text="@string/risk"
                 app:layout_constraintEnd_toEndOf="@+id/labelRiskAmount"
                 app:layout_constraintStart_toStartOf="@+id/labelRiskAmount"
                 app:layout_constraintTop_toTopOf="@+id/labelThirdGroup" />
@@ -274,7 +274,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/std_text_size"
-                android:text="TextView"
+                android:text="@string/risk"
                 app:layout_constraintEnd_toEndOf="@+id/labelRiskAmount"
                 app:layout_constraintStart_toStartOf="@+id/labelRiskAmount"
                 app:layout_constraintTop_toTopOf="@+id/labelFourthGroup" />
@@ -284,7 +284,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/std_text_size"
-                android:text="TextView"
+                android:text="@string/risk"
                 app:layout_constraintEnd_toEndOf="@+id/labelRiskAmount"
                 app:layout_constraintStart_toStartOf="@+id/labelRiskAmount"
                 app:layout_constraintTop_toTopOf="@+id/labelFifthGroup" />
