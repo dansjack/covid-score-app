@@ -14,6 +14,7 @@ import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.*;
 import static org.hamcrest.Matchers.allOf;
@@ -61,6 +62,7 @@ public class MainActivityTest {
     @Test
     public void t3_canSelectNewLocation() throws InterruptedException {
         Thread.sleep(1000);
+        onView(withId(R.id.select_location_btn)).perform(scrollTo());
         onView(withId(R.id.select_location_btn)).perform(click());
 
         // click submit
