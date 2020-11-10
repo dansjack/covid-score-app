@@ -105,6 +105,14 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
 
     }
 
+    public void openAboutFragment() {
+        AboutFragment aboutFragment = new AboutFragment();
+
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragContainer, aboutFragment, Constants.FRAGMENT_ABOUT).commit();
+
+    }
+
     public void openRiskDetailPageFragment() {
         // Create a new Risk Detail Fragment to be placed in the activity layout
         RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();

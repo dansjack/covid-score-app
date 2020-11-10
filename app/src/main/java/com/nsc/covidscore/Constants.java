@@ -44,6 +44,7 @@ public class Constants {
 
     public static final String FRAGMENT_LMSF = "locationManualSelectionFragment";
     public static final String FRAGMENT_RDPF = "riskDetailPageFragment";
+    public static final String FRAGMENT_ABOUT = "aboutFragment";
 
     public static final String LOCATION_FILENAME = "county_fips.json";
 
