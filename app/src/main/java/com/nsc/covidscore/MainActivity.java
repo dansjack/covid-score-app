@@ -16,7 +16,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.android.volley.RequestQueue;
@@ -32,11 +35,12 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements RiskDetailPageFragment.OnSelectLocationButtonListener, LocationManualSelectionFragment.OnSubmitButtonListener{
+public class MainActivity extends FragmentActivity implements RiskDetailPageFragment.OnSelectLocationButtonListener, LocationManualSelectionFragment.OnSubmitButtonListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private Location lastSavedLocation;
@@ -53,6 +57,19 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
     private NavigationView nvDrawer;
     // Make sure to be using androidx.appcompat.app.ActionBarDrawerToggle version.
     private ActionBarDrawerToggle drawerToggle;
+
+    @Override
+    public void onAttachFragment(@NonNull Fragment fragment) {
+        super.onAttachFragment(fragment);
+        if (fragment instanceof  RiskDetailPageFragment) {
+            RiskDetailPageFragment rdpFragment = (RiskDetailPageFragment) fragment;
+            rdpFragment.setOnSelectLocationButtonListener(this);
+        }
+        if (fragment instanceof LocationManualSelectionFragment) {
+            LocationManualSelectionFragment lmsFragment = (LocationManualSelectionFragment) fragment;
+            lmsFragment.setOnSubmitButtonListener(this);
+        }
+    }
 
     @Override
     public void onAttachFragment(@NonNull Fragment fragment) {
@@ -99,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
         vm.getLatestCovidSnapshot().observe(this, covidSnapshotFromDb -> {
             if (covidSnapshotFromDb != null) {
                 lastSavedCovidSnapshot = covidSnapshotFromDb;
-                lastSavedLocation = mapOfLocationsById.get(covidSnapshotFromDb.getLocationId());
+                lastSavedLocation = vm.getMapOfLocationsById().get(covidSnapshotFromDb.getLocationId());
                 Log.e(TAG, "Most recently saved Snapshot: " + covidSnapshotFromDb.toString());
 
             } else {
@@ -134,6 +151,51 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
                 openRiskDetailPageFragment();
             }
         }
+    }
+
+    public void openNewRiskDetailPageFragment(MutableLiveData<CovidSnapshot> mcs, Location selectedLocation) {
+        Log.i(TAG, "onViewCreated - btnNavRiskDetail - selectedLocation filled: " + selectedLocation.toString());
+
+        LocationManualSelectionFragment lmsFragment = (LocationManualSelectionFragment) getSupportFragmentManager().findFragmentByTag(Constants.FRAGMENT_LMSF);
+        if (lmsFragment != null) {
+            lmsFragment.saveSnapshotToRoom(mcs.getValue(), selectedLocation);
+        }
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
+        CovidSnapshot snapshot = mcs.getValue();
+
+        HashMap<Integer, Double> riskMap = RiskCalculation.getRiskCalculationsMap(
+                snapshot.getCountyActiveCount(),
+                snapshot.getCountyTotalPopulation(),
+                Constants.GROUP_SIZES);
+        Log.i(TAG, "onViewCreated: riskMap" + riskMap.toString());
+
+        Bundle bundle = new Bundle();
+        StringBuilder currentLocationSB = new StringBuilder(selectedLocation.getCounty())
+                .append(Constants.COMMA_SPACE).append(selectedLocation.getState());
+        bundle.putString(Constants.CURRENT_LOCATION, String.valueOf(currentLocationSB));
+        bundle.putString(Constants.ACTIVE_COUNTY, snapshot.getCountyActiveCount().toString());
+        bundle.putString(Constants.ACTIVE_STATE, snapshot.getStateActiveCount().toString());
+        bundle.putString(Constants.ACTIVE_COUNTRY, snapshot.getCountryActiveCount().toString());
+        bundle.putString(Constants.TOTAL_COUNTY, snapshot.getCountyTotalPopulation().toString());
+        bundle.putString(Constants.TOTAL_STATE, snapshot.getStateTotalPopulation().toString());
+        bundle.putString(Constants.TOTAL_COUNTRY, snapshot.getCountryTotalPopulation().toString());
+        bundle.putSerializable(Constants.RISK_MAP,riskMap);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        bundle.putString(Constants.LAST_UPDATED, sdf.format(lastSavedCovidSnapshot.getLastUpdated().getTime()));
+
+        // In case this activity was started with special instructions from an
+        // Intent, pass the Intent's extras to the fragment as arguments
+        riskDetailPageFragment.setArguments(bundle);
+        transaction.replace(R.id.fragContainer, riskDetailPageFragment, Constants.FRAGMENT_RDPF);
+        transaction.addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
+        mcs.setValue(new CovidSnapshot());
+        //  selectedLocation = new Location();
     }
 
     public void openNewRiskDetailPageFragment(MutableLiveData<CovidSnapshot> mcs, Location selectedLocation) {
@@ -384,5 +446,4 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
     public void onSubmitButtonClicked(MutableLiveData<CovidSnapshot> mcs, Location selectedLocation) {
         openNewRiskDetailPageFragment(mcs, selectedLocation);
     }
-
 }
