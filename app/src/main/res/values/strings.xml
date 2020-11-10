@@ -32,7 +32,6 @@
 
     <string name="store_location">Store A Location</string>
 
-</resources>
     <string-array name="group_sizes">
         <item>10</item>
         <item>20</item>
