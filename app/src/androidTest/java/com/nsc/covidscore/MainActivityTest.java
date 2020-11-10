@@ -4,6 +4,7 @@ import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.espresso.PerformException;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
@@ -43,6 +44,7 @@ public class MainActivityTest {
                 onData(allOf(is(instanceOf(String.class)), is("California"))).perform(click());
             } catch (NoMatchingViewException | PerformException ex) {
                 // We are in RiskDetailFragment - click select new
+                onView(withId(R.id.activeCounty)).check(matches(not(withText(""))));
                 onView(withId(R.id.select_location_btn)).perform(click());
             }
 
@@ -68,12 +70,6 @@ public class MainActivityTest {
         }
     }
 
-//    @Test
-//    public void t2_canViewCovidStats() {
-//        // inside the RiskDetailPageFragment
-//        onView(withId(R.id.activeCounty)).check(matches(not(withText(""))));
-//    }
-
     @Test
     public void t2_canSelectNewLocation() throws InterruptedException {
         try {
@@ -95,6 +91,7 @@ public class MainActivityTest {
                 onView(withId(R.layout.fragment_location_selection)).check(matches(isDisplayed()));
             } catch (NoMatchingViewException | PerformException ex) {
                 // We are in RiskDetailFragment - click select new
+                onView(withId(R.id.activeCounty)).check(matches(not(withText(""))));
                 onView(withId(R.id.select_location_btn)).perform(click());
             }
             // In New LocationManualSelectionFragment
@@ -142,5 +139,43 @@ public class MainActivityTest {
 //        pressBack();
 //    }
 
+    @Test
+    public void t3_checksInternet() throws InterruptedException {
+        Thread.sleep(8000); // Time for app to load
+        try { // Are we in the LocationManualSelectionFragment?
+            // select state
+            onView(withId(R.id.state_spinner)).perform(click());
+            onData(allOf(is(instanceOf(String.class)), is("California"))).perform(click());
+        } catch (NoMatchingViewException | PerformException ex) {
+            // We are in RiskDetailFragment - click select new
+            onView(withId(R.id.select_location_btn)).perform(click());
+        }
+        // In LocationManualSelectionFragment
 
+        // disable wifi & data
+        InstrumentationRegistry.getInstrumentation().getUiAutomation().executeShellCommand("svc wifi disable");
+        InstrumentationRegistry.getInstrumentation().getUiAutomation().executeShellCommand("svc data disable");
+
+        // select state
+        onView(withId(R.id.state_spinner)).perform(click());
+        onData(allOf(is(instanceOf(String.class)), is("Washington"))).perform(click());
+
+        // select county
+        onView(withId(R.id.county_spinner)).perform(click());
+        onData(allOf(is(instanceOf(String.class)), is("king"))).perform(click());
+
+        // submit
+        onView(withId(R.id.submit_btn)).perform(click());
+        onView(withId(R.id.loadingTextView)).check(matches(withText(R.string.no_internet)));
+
+        // enable wifi & data
+        InstrumentationRegistry.getInstrumentation().getUiAutomation().executeShellCommand("svc wifi enable");
+        InstrumentationRegistry.getInstrumentation().getUiAutomation().executeShellCommand("svc data enable");
+
+        Thread.sleep(2000);
+
+        // submit
+        onView(withId(R.id.submit_btn)).perform(click());
+        onView(withId(R.id.loadingTextView)).check(matches(withText(R.string.loading_data)));
+    }
 }

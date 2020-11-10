@@ -24,6 +24,7 @@ public class TestUtils {
 
     public static CovidSnapshot createCovidSnapshot() {
         Calendar calendar = Calendar.getInstance();
+        calendar.roll(Calendar.DAY_OF_YEAR, -2);
         return new CovidSnapshot(resourceId1, 200, 300, 400, calendar);
     }
 
