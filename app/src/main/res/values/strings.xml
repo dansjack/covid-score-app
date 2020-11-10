@@ -22,6 +22,7 @@
     <string name="risk_assessment">Risk Assessment</string>
     <string name="group_size">Group Size</string>
     <string name="risk_of_being_exposed_to_covid">Risk of COVID exposure</string>
+    <string name="no_internet">No Internet Connection Available</string>
 
     <string-array name="group_sizes">
         <item>10</item>

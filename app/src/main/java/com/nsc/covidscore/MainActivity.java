@@ -22,6 +22,7 @@ import com.nsc.covidscore.room.CovidSnapshotWithLocationViewModel;
 import com.nsc.covidscore.room.Location;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 
 public class MainActivity extends FragmentActivity implements RiskDetailPageFragment.OnSelectLocationButtonListener, LocationManualSelectionFragment.OnSubmitButtonListener {
@@ -29,6 +30,8 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
 
     private Location lastSavedLocation;
     private CovidSnapshot lastSavedCovidSnapshot = new CovidSnapshot();
+    private boolean firstOpen = true;
+    public boolean isConnected = false;
 
     private CovidSnapshotWithLocationViewModel vm;
     private RequestQueue queue;
@@ -70,7 +73,10 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
             } else {
                 Log.d(TAG, "Observer returned null CovidSnapshot");
             }
-            loadFragments(savedInstanceState);
+            if (firstOpen) { // Don't do this every time Room is updated
+                loadFragments(savedInstanceState);
+                firstOpen = false;
+            }
         });
 
         // Check Internet Connectivity
@@ -80,11 +86,12 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
             @Override
             public void onAvailable(Network network) {
                 vm.setConnectionStatus(true);
+                isConnected = true;
             }
             @Override
             public void onLost(Network network) {
                 vm.setConnectionStatus(false);
-                Toast.makeText(context, "No Internet Connection Available", Toast.LENGTH_LONG);
+                isConnected = false;
             }
         });
 
@@ -109,14 +116,15 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
             if (!lastSavedCovidSnapshot.hasFieldsSet()) { // No saved CovidSnapshot
                 Log.e(TAG, "no saved CovidSnapshot");
                 openLocationSelectionFragment();
-            } else if (vm.getConnectionStatus() == true) { // CovidSnapshot saved, with Internet
+            } else if (vm.getConnectionStatus() == true && !hasBeenUpdatedThisHour()) { // CovidSnapshot saved, with Internet
                 Log.e(TAG, "saved CovidSnapshot exists, update w/ internet");
+                rerunApis(vm.getMapOfLocationsById().get(lastSavedCovidSnapshot.getLocationId()));
             } else { // CovidSnapshot saved, no internet
-                Log.e(TAG, "saved CovidSnapshot exists, no internet");
+                Log.e(TAG, "saved CovidSnapshot exists, no internet or saved this hour");
+                Toast.makeText(context, "No Internet Connection Available", Toast.LENGTH_LONG);
                 openRiskDetailPageFragment();
             }
         }
-
     }
 
     public void openRiskDetailPageFragment() {
@@ -189,6 +197,20 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
         transaction.commit();
         mcs.setValue(new CovidSnapshot());
         //  selectedLocation = new Location();
+    }
+
+    public void rerunApis(Location location) {
+        // Create a new Location Selection Fragment
+        LocationManualSelectionFragment lmsf = new LocationManualSelectionFragment();
+        Bundle bundle = new Bundle();
+        // If this exists in bundle, it will automatically run the APIs
+        bundle.putSerializable(Constants.API_LOCATION, location);
+        lmsf.setArguments(bundle);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.fragContainer, lmsf, Constants.FRAGMENT_LMSF)
+                .hide(lmsf)
+                .addToBackStack(null).commit();
     }
 
     public void openLocationSelectionFragment() {
@@ -274,5 +296,19 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
     @Override
     public void onSubmitButtonClicked(MutableLiveData<CovidSnapshot> mcs, Location selectedLocation) {
         openNewRiskDetailPageFragment(mcs, selectedLocation);
+    }
+
+    private boolean hasBeenUpdatedThisHour() {
+        Calendar lastSaved = lastSavedCovidSnapshot.getLastUpdated();
+        Calendar lastSavedHour = Calendar.getInstance();
+        lastSavedHour.clear();
+        lastSavedHour.set(lastSaved.get(Calendar.YEAR), lastSaved.get(Calendar.MONTH), lastSaved.get(Calendar.DAY_OF_MONTH));
+        lastSavedHour.set(Calendar.HOUR_OF_DAY, lastSaved.get(Calendar.HOUR_OF_DAY));
+        Calendar now = Calendar.getInstance();
+        Calendar nowHour = Calendar.getInstance();
+        nowHour.clear();
+        nowHour.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
+        nowHour.set(Calendar.HOUR_OF_DAY, now.get(Calendar.HOUR_OF_DAY));
+        return !nowHour.equals(lastSavedHour);
     }
 }
