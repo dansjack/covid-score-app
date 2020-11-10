@@ -7,14 +7,15 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.android.volley.RequestQueue;
@@ -45,6 +46,11 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
     private NavigationView nvDrawer;
     // Make sure to be using androidx.appcompat.app.ActionBarDrawerToggle version.
     private ActionBarDrawerToggle drawerToggle;
+
+    private MutableLiveData<List<CovidSnapshot>> lastSavedCovidLocationsListSnapshot = new MutableLiveData<List<CovidSnapshot>>();
+    private HashMap<Integer, Location> mapOfLocationsById = new HashMap<Integer, Location>();
+    private Location locationDrawerItem;
+    private int locationIdDrawerItem;
 
     @Override
     public void onAttachFragment(@NonNull Fragment fragment) {
@@ -84,9 +90,11 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
         nvDrawer = (NavigationView) findViewById(R.id.nvView);
         setupDrawerContent(nvDrawer);
 
-
-        // Access to Room Database
+        // Access to Room Database/ Get the ViewModel.
         vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel.class);
+
+        //TODO: get map of locations
+        mapOfLocationsById = vm.getMapOfLocationsById();
 
         // This variable will hold latest copy of Covid Snapshot
         vm.getLatestCovidSnapshot().observe(this, covidSnapshotFromDb -> {
@@ -100,6 +108,23 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
             }
             loadFragments(savedInstanceState);
         });
+
+        //TODO: access location list via vm; store in lastSavedCovidLocationsListSnapshot
+            vm.getLatestLocations().observe(this, covidLocationListSnapshotFromDb -> {
+                if (covidLocationListSnapshotFromDb != null) {
+                    lastSavedCovidLocationsListSnapshot =
+                            (MutableLiveData<List<CovidSnapshot>>) covidLocationListSnapshotFromDb;
+
+                    Log.e(TAG, "Most recently saved locations list snapshot: " +
+                            lastSavedCovidLocationsListSnapshot.toString());
+
+                } else {
+                    Log.d(TAG, "Observer returned null CovidSnapshot location list");
+                }
+            }
+        );
+
+
 
         requestManager = RequestSingleton.getInstance(this.getApplicationContext());
         queue = requestManager.getRequestQueue();
@@ -230,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
 //TODO: write method which takes a getLatestLocations drawerItem selection and
 // spins up new RiskDetailFragment given location using vm.getLatestCovidSnapshotByLocation from repository
     public void updateDrawerItems() {
-        LiveData<List<CovidSnapshot>> locationsList = vm.getLatestLocations();
+        locationsList = vm.getLatestLocations();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nvView);
         navigationView.getMenu().findItem(R.id.nav_location_fragment_1).setTitle("savedlocation1");
     }
@@ -254,6 +279,8 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
                     }
                 });
     }
+
+    //
 //TODO: RiskDetail fragment should open with location state
     public void selectDrawerItem(MenuItem menuItem) {
         // Create a new fragment and specify the fragment to show based on nav item clicked
@@ -261,19 +288,20 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
         Class fragmentClass;
         switch(menuItem.getItemId()) {
             case R.id.nav_location_fragment_1:
-                fragmentClass = RiskDetailPageFragment.class;
+                //TODO: if(list of
+                fragmentClass = LocationManualSelectionFragment.class;
                 break;
             case R.id.nav_location_fragment_2:
-                fragmentClass = RiskDetailPageFragment.class;
+                fragmentClass = LocationManualSelectionFragment.class;
                 break;
             case R.id.nav_location_fragment_3:
-                fragmentClass = RiskDetailPageFragment.class;
+                fragmentClass = LocationManualSelectionFragment.class;
                 break;
             case R.id.nav_location_settings_fragment:
                 fragmentClass = LocationSettingsPageFragment.class;
                 break;
             default:
-                fragmentClass = RiskDetailPageFragment.class;
+                fragmentClass = LocationManualSelectionFragment.class;
         }
         try {
             fragment = (Fragment) fragmentClass.newInstance();
