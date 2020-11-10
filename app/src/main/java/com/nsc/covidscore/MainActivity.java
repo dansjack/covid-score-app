@@ -1,9 +1,12 @@
 package com.nsc.covidscore;
 
 import android.content.Context;
-import android.content.res.AssetManager;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkRequest;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -18,16 +21,8 @@ import com.nsc.covidscore.room.CovidSnapshot;
 import com.nsc.covidscore.room.CovidSnapshotWithLocationViewModel;
 import com.nsc.covidscore.room.Location;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class MainActivity extends FragmentActivity implements RiskDetailPageFragment.OnSelectLocationButtonListener, LocationManualSelectionFragment.OnSubmitButtonListener {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -40,6 +35,8 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
     private RequestSingleton requestManager;
 
     private Context context;
+
+    private ConnectivityManager cm;
 
     @Override
     public void onAttachFragment(@NonNull Fragment fragment) {
@@ -76,6 +73,21 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
             loadFragments(savedInstanceState);
         });
 
+        // Check Internet Connectivity
+        cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        cm.registerDefaultNetworkCallback(new ConnectivityManager.NetworkCallback() {
+            @Override
+            public void onAvailable(Network network) {
+                vm.setConnectionStatus(true);
+            }
+            @Override
+            public void onLost(Network network) {
+                vm.setConnectionStatus(false);
+                Toast.makeText(context, "No Internet Connection Available", Toast.LENGTH_LONG);
+            }
+        });
+
         requestManager = RequestSingleton.getInstance(this.getApplicationContext());
         queue = requestManager.getRequestQueue();
 
@@ -94,11 +106,13 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
                 return;
             }
 
-            if (!lastSavedCovidSnapshot.hasFieldsSet()) {
+            if (!lastSavedCovidSnapshot.hasFieldsSet()) { // No saved CovidSnapshot
                 Log.e(TAG, "no saved CovidSnapshot");
                 openLocationSelectionFragment();
-            } else {
-                Log.e(TAG, "saved CovidSnapshot exists");
+            } else if (vm.getConnectionStatus() == true) { // CovidSnapshot saved, with Internet
+                Log.e(TAG, "saved CovidSnapshot exists, update w/ internet");
+            } else { // CovidSnapshot saved, no internet
+                Log.e(TAG, "saved CovidSnapshot exists, no internet");
                 openRiskDetailPageFragment();
             }
         }
@@ -140,7 +154,7 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
         Log.i(TAG, "onViewCreated - btnNavRiskDetail - selectedLocation filled: " + selectedLocation.toString());
 
         LocationManualSelectionFragment lmsFragment = (LocationManualSelectionFragment) getSupportFragmentManager().findFragmentByTag(Constants.FRAGMENT_LMSF);
-        if (lmsFragment != null) {
+        if (lmsFragment != null) { // User has manually selected location already
             lmsFragment.saveSnapshotToRoom(mcs.getValue(), selectedLocation);
         }
 

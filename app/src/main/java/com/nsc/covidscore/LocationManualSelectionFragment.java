@@ -1,7 +1,6 @@
 package com.nsc.covidscore;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,13 +25,10 @@ import com.nsc.covidscore.room.CovidSnapshot;
 import com.nsc.covidscore.room.CovidSnapshotWithLocationViewModel;
 import com.nsc.covidscore.room.Location;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -250,10 +246,10 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     }
 
     public interface OnSubmitButtonListener {
-        public void onSubmitButtonClicked(MutableLiveData<CovidSnapshot> mcs, Location selectedLocation);
+        void onSubmitButtonClicked(MutableLiveData<CovidSnapshot> mcs, Location selectedLocation);
     }
 
-    private void makeApiCalls(Location location) {
+    public void makeApiCalls(Location location) {
         Log.i(TAG, "makeApiCalls: CALLED " + location.toString());
         CovidSnapshot covidSnapshot = new CovidSnapshot();
         covidSnapshot.setLocationId(location.getLocationId());
@@ -364,5 +360,10 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             }
             Log.d(TAG, "req: getCountryPopulation " + response);
         });
+    }
+
+    public void clearCovidSnapshot() {
+        CovidSnapshot clear = new CovidSnapshot();
+        mutableCovidSnapshot.setValue(clear);
     }
 }
