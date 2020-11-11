@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
             if (!lastSavedCovidSnapshot.hasFieldsSet()) { // No saved CovidSnapshot
                 Log.e(TAG, "no saved CovidSnapshot");
                 openLocationSelectionFragment();
-            } else if (vm.getConnectionStatus() == true && !hasBeenUpdatedThisHour(covidSnapshotNavList.get(0))) { // CovidSnapshot saved, with Internet
+            } else if (vm.getConnectionStatus() == true && (covidSnapshotNavList.isEmpty() || !hasBeenUpdatedThisHour(covidSnapshotNavList.get(0)))) { // CovidSnapshot saved, with Internet
                 Log.e(TAG, "saved CovidSnapshot exists, update w/ internet");
                 rerunApis(vm.getMapOfLocationsById().get(lastSavedCovidSnapshot.getLocationId()));
             } else { // CovidSnapshot saved, no internet
