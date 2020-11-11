@@ -101,9 +101,6 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
         // Access to Room Database/ Get the ViewModel.
         vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel.class);
 
-        //TODO: get map of Locations -- done
-        mapOfLocationsById = vm.getMapOfLocationsById();
-
         // This variable will hold latest copy of Covid Snapshot
         vm.getLatestCovidSnapshot().observe(this, covidSnapshotFromDb -> {
             if (covidSnapshotFromDb != null) {
@@ -284,18 +281,7 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
     }
 
 
-
-
-
 //TODO: write method that takes list of locationIds and locationList snapshot and produces a Location and a Snapshot
-
-
-
-
-
-
-
-
 
 //TODO: write method which takes getLatestLocations and prints them as drawerItems
 //TODO: write method which takes a getLatestLocations drawerItem selection and
@@ -371,24 +357,6 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
         return new ActionBarDrawerToggle(this, mDrawer, toolbar,
                 R.string.drawer_open,  R.string.drawer_close);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     // `onPostCreate` called when activity start-up is complete after `onStart()`
     // NOTE 1: Make sure to override the method with only a single `Bundle` argument
