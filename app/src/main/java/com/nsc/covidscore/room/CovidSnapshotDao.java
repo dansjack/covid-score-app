@@ -26,6 +26,10 @@ public interface CovidSnapshotDao {
     @Query("SELECT DISTINCT location_id FROM covid_snapshot ORDER BY last_updated DESC LIMIT 3")
     LiveData<List<Integer>> getLastThreeLocationIds();
 
+    @Query("SELECT * FROM covid_snapshot WHERE covid_snapshot_id IN " +
+            "(SELECT max(covid_snapshot_id) FROM covid_snapshot GROUP BY location_id) LIMIT 3")
+    LiveData<List<CovidSnapshot>> getLastThreeLocationsLatestSnapshots();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(CovidSnapshot covidSnapshot);
 

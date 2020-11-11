@@ -46,6 +46,10 @@ public class CovidSnapshotWithLocationRepository {
         return covidSnapshotDao.getLastThreeLocationIds();
     }
 
+    LiveData<List<CovidSnapshot>> getLatestLocationsLatestSnapshots() {
+        return covidSnapshotDao.getLastThreeLocationsLatestSnapshots();
+    }
+
     LiveData<CovidSnapshot> getLatestCovidSnapshotByLocationId(int locationId) {
         return covidSnapshotDao.findLatestByLocationId(locationId);
     }
