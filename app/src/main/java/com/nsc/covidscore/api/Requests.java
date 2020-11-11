@@ -134,7 +134,7 @@ public class Requests {
      */
     public static void getStatePopulation(Context context, Location location, final VolleyStringCallback cb) {
         final String TAG = Constants.STATE_POPULATION;
-        Log.i(TAG, "getStatePopulation: FAILED LOCATION " + location);
+        Log.i(TAG, "getStatePopulation: FAILED LOCATION " + location); // TODO: Why does this say FAILED?
         StringBuilder url = new StringBuilder(
                 "https://api.census.gov/data/2019/pep/population?get=NAME,POP&for=state:")
                 .append(location.getStateFips()).append("&key=")
