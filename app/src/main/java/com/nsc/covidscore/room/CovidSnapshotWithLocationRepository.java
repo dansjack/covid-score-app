@@ -6,7 +6,6 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 
 public class CovidSnapshotWithLocationRepository {
@@ -51,8 +50,8 @@ public class CovidSnapshotWithLocationRepository {
 
     // Returns a list of up to 3 LiveData objects (locationIDs)
     // directly from AppDatabase via CovidSnapshotDao.
-    LiveData<List<CovidSnapshot>> getLatestLocations() {
-        return covidSnapshotDao.getLatestLocations();
+    LiveData<List<CovidSnapshot>> getLatestLocationsList() {
+        return covidSnapshotDao.getLatestLocationsList();
     }
 
     LiveData<CovidSnapshot> getLatestCovidSnapshotByLocationId(int locationId) {

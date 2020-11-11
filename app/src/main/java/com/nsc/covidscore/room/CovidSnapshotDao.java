@@ -27,6 +27,6 @@ public interface CovidSnapshotDao {
     void insert(CovidSnapshot covidSnapshot);
 
     @Query("SELECT DISTINCT location_id, covid_snapshot_id FROM covid_snapshot ORDER BY last_updated DESC LIMIT 3")
-    LiveData<List<CovidSnapshot>> getLatestLocations();
+    LiveData<List<CovidSnapshot>> getLatestLocationsList();
 
 }

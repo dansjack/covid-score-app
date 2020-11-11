@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -15,7 +14,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.android.volley.RequestQueue;
@@ -49,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
 
     private MutableLiveData<List<CovidSnapshot>> lastSavedCovidLocationsListSnapshot = new MutableLiveData<List<CovidSnapshot>>();
     private HashMap<Integer, Location> mapOfLocationsById = new HashMap<Integer, Location>();
+    private List<Location> locationIdsList;
     private Location locationDrawerItem;
     private int locationIdDrawerItem;
 
@@ -93,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
         // Access to Room Database/ Get the ViewModel.
         vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel.class);
 
-        //TODO: get map of locations
+        //TODO: get map of Locations -- done
         mapOfLocationsById = vm.getMapOfLocationsById();
 
         // This variable will hold latest copy of Covid Snapshot
@@ -109,11 +108,12 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
             loadFragments(savedInstanceState);
         });
 
-        //TODO: access location list via vm; store in lastSavedCovidLocationsListSnapshot
-            vm.getLatestLocations().observe(this, covidLocationListSnapshotFromDb -> {
+        //TODO: Set Observer; access location list via vm; store in lastSavedCovidLocationsListSnapshot --done
+            vm.getLatestLocationsList().observe(this, covidLocationListSnapshotFromDb -> {
                 if (covidLocationListSnapshotFromDb != null) {
                     lastSavedCovidLocationsListSnapshot =
                             (MutableLiveData<List<CovidSnapshot>>) covidLocationListSnapshotFromDb;
+                    //TODO: get list of (up to) 3 last saved locationIds; taken from covidLocationListSnapshotFromDb
 
                     Log.e(TAG, "Most recently saved locations list snapshot: " +
                             lastSavedCovidLocationsListSnapshot.toString());
@@ -241,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
 
 
 
-
+//TODO: write method that takes list of locationIds and locationList snapshot and produces a Location and a Snapshot
 
 
 
@@ -254,11 +254,11 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
 //TODO: write method which takes getLatestLocations and prints them as drawerItems
 //TODO: write method which takes a getLatestLocations drawerItem selection and
 // spins up new RiskDetailFragment given location using vm.getLatestCovidSnapshotByLocation from repository
-    public void updateDrawerItems() {
-        locationsList = vm.getLatestLocations();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nvView);
-        navigationView.getMenu().findItem(R.id.nav_location_fragment_1).setTitle("savedlocation1");
-    }
+//    public void updateDrawerItems() {
+//        locationsList = vm.getLatestLocations();
+//        NavigationView navigationView = (NavigationView) findViewById(R.id.nvView);
+//        navigationView.getMenu().findItem(R.id.nav_location_fragment_1).setTitle("savedlocation1");
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
