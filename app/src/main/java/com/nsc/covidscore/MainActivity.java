@@ -214,7 +214,10 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
 
         LocationManualSelectionFragment lmsFragment = (LocationManualSelectionFragment) getSupportFragmentManager().findFragmentByTag(Constants.FRAGMENT_LMSF);
         if (lmsFragment != null) { // User has manually selected location already
-            lmsFragment.saveSnapshotToRoom(mcs.getValue(), selectedLocation);
+            CovidSnapshot snapshot = mcs.getValue();
+            if (!hasBeenUpdatedThisHour(snapshot)) {
+                lmsFragment.saveSnapshotToRoom(snapshot, selectedLocation);
+            }
         }
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
