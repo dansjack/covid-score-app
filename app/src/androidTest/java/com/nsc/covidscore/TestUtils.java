@@ -1,14 +1,10 @@
 package com.nsc.covidscore;
 
 import com.nsc.covidscore.room.CovidSnapshot;
-import com.nsc.covidscore.room.Location;
-
 import java.util.Calendar;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class TestUtils {
@@ -48,4 +44,5 @@ public class TestUtils {
         assertTrue(riskMap.get((Integer) groupSizes[2]) == 87.53);
         assertTrue(riskMap.get((Integer) groupSizes[3]) == 98.38);
     }
+
 }
