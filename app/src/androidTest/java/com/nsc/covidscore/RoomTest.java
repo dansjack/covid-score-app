@@ -20,11 +20,18 @@ import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 @RunWith(AndroidJUnit4.class)
 public class RoomTest {
