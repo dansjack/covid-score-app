@@ -23,7 +23,7 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
 
     private CovidSnapshotWithLocationRepository repo;
     private Context context;
-
+    private boolean isConnected;
 
     private HashMap<String, List<Location>> mapOfLocationsByState = new HashMap<>();
     private HashMap<Integer, Location> mapOfLocationsById = new HashMap<>();
@@ -32,6 +32,7 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
         super(application);
         repo = new CovidSnapshotWithLocationRepository(application);
         context = application.getApplicationContext();
+        isConnected = false;
         fillLocationsMaps();
     }
 
@@ -99,6 +100,14 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
         } catch (IOException | JSONException exception) {
             exception.printStackTrace();
         }
+    }
+
+    public void setConnectionStatus(boolean connected) {
+        isConnected = connected;
+    }
+
+    public boolean getConnectionStatus() {
+        return isConnected;
     }
 }
 

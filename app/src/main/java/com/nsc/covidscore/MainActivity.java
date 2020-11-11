@@ -5,6 +5,12 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkRequest;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -24,14 +30,16 @@ import com.nsc.covidscore.room.CovidSnapshotWithLocationViewModel;
 import com.nsc.covidscore.room.Location;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements RiskDetailPageFragment.OnSelectLocationButtonListener, LocationManualSelectionFragment.OnSubmitButtonListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private Location lastSavedLocation;
     private CovidSnapshot lastSavedCovidSnapshot = new CovidSnapshot();
+    private boolean firstOpen = true;
+    public boolean isConnected = false;
 
     private CovidSnapshotWithLocationViewModel vm;
     private RequestQueue queue;
@@ -50,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
     private List<Location> locationIdsList;
     private Location locationDrawerItem;
     private int locationIdDrawerItem;
+    private ConnectivityManager cm;
 
     @Override
     public void onAttachFragment(@NonNull Fragment fragment) {
@@ -105,24 +114,43 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
             } else {
                 Log.d(TAG, "Observer returned null CovidSnapshot");
             }
-            loadFragments(savedInstanceState);
+            if (firstOpen) { // Don't do this every time Room is updated
+                loadFragments(savedInstanceState);
+                firstOpen = false;
+            }
         });
 
-        //TODO: Set Observer; access location list via vm; store in lastSavedCovidLocationsListSnapshot --done
-            vm.getLatestLocationsList().observe(this, covidLocationListSnapshotFromDb -> {
-                if (covidLocationListSnapshotFromDb != null) {
-                    lastSavedCovidLocationsListSnapshot =
-                            (MutableLiveData<List<CovidSnapshot>>) covidLocationListSnapshotFromDb;
-                    //TODO: get list of (up to) 3 last saved locationIds; taken from covidLocationListSnapshotFromDb
+        // Check Internet Connectivity
+        cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-                    Log.e(TAG, "Most recently saved locations list snapshot: " +
-                            lastSavedCovidLocationsListSnapshot.toString());
-
-                } else {
-                    Log.d(TAG, "Observer returned null CovidSnapshot location list");
-                }
+        cm.registerDefaultNetworkCallback(new ConnectivityManager.NetworkCallback() {
+            @Override
+            public void onAvailable(Network network) {
+                vm.setConnectionStatus(true);
+                isConnected = true;
             }
-        );
+            @Override
+            public void onLost(Network network) {
+                vm.setConnectionStatus(false);
+                isConnected = false;
+            }
+        });
+
+        // //TODO: Set Observer; access location list via vm; store in lastSavedCovidLocationsListSnapshot --done
+        //     vm.getLatestLocationsList().observe(this, covidLocationListSnapshotFromDb -> {
+        //         if (covidLocationListSnapshotFromDb != null) {
+        //             lastSavedCovidLocationsListSnapshot =
+        //                     (MutableLiveData<List<CovidSnapshot>>) covidLocationListSnapshotFromDb;
+        //             //TODO: get list of (up to) 3 last saved locationIds; taken from covidLocationListSnapshotFromDb
+
+        //             Log.e(TAG, "Most recently saved locations list snapshot: " +
+        //                     lastSavedCovidLocationsListSnapshot.toString());
+
+        //         } else {
+        //             Log.d(TAG, "Observer returned null CovidSnapshot location list");
+        //         }
+        //     }
+        // );
 
 
 
@@ -144,11 +172,15 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
                 return;
             }
 
-            if (!lastSavedCovidSnapshot.hasFieldsSet()) {
+            if (!lastSavedCovidSnapshot.hasFieldsSet()) { // No saved CovidSnapshot
                 Log.e(TAG, "no saved CovidSnapshot");
                 openLocationSelectionFragment();
-            } else {
-                Log.e(TAG, "saved CovidSnapshot exists");
+            } else if (vm.getConnectionStatus() == true && !hasBeenUpdatedThisHour()) { // CovidSnapshot saved, with Internet
+                Log.e(TAG, "saved CovidSnapshot exists, update w/ internet");
+                rerunApis(vm.getMapOfLocationsById().get(lastSavedCovidSnapshot.getLocationId()));
+            } else { // CovidSnapshot saved, no internet
+                Log.e(TAG, "saved CovidSnapshot exists, no internet or saved this hour");
+                Toast.makeText(context, "No Internet Connection Available", Toast.LENGTH_LONG);
                 openRiskDetailPageFragment();
             }
         }
@@ -189,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
         Log.i(TAG, "onViewCreated - btnNavRiskDetail - selectedLocation filled: " + selectedLocation.toString());
 
         LocationManualSelectionFragment lmsFragment = (LocationManualSelectionFragment) getSupportFragmentManager().findFragmentByTag(Constants.FRAGMENT_LMSF);
-        if (lmsFragment != null) {
+        if (lmsFragment != null) { // User has manually selected location already
             lmsFragment.saveSnapshotToRoom(mcs.getValue(), selectedLocation);
         }
 
@@ -224,6 +256,20 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
         transaction.commit();
         mcs.setValue(new CovidSnapshot());
         //  selectedLocation = new Location();
+    }
+
+    public void rerunApis(Location location) {
+        // Create a new Location Selection Fragment
+        LocationManualSelectionFragment lmsf = new LocationManualSelectionFragment();
+        Bundle bundle = new Bundle();
+        // If this exists in bundle, it will automatically run the APIs
+        bundle.putSerializable(Constants.API_LOCATION, location);
+        lmsf.setArguments(bundle);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.fragContainer, lmsf, Constants.FRAGMENT_LMSF)
+                .hide(lmsf)
+                .addToBackStack(null).commit();
     }
 
     public void openLocationSelectionFragment() {
@@ -435,5 +481,19 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
     @Override
     public void onSubmitButtonClicked(MutableLiveData<CovidSnapshot> mcs, Location selectedLocation) {
         openNewRiskDetailPageFragment(mcs, selectedLocation);
+    }
+
+    private boolean hasBeenUpdatedThisHour() {
+        Calendar lastSaved = lastSavedCovidSnapshot.getLastUpdated();
+        Calendar lastSavedHour = Calendar.getInstance();
+        lastSavedHour.clear();
+        lastSavedHour.set(lastSaved.get(Calendar.YEAR), lastSaved.get(Calendar.MONTH), lastSaved.get(Calendar.DAY_OF_MONTH));
+        lastSavedHour.set(Calendar.HOUR_OF_DAY, lastSaved.get(Calendar.HOUR_OF_DAY));
+        Calendar now = Calendar.getInstance();
+        Calendar nowHour = Calendar.getInstance();
+        nowHour.clear();
+        nowHour.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
+        nowHour.set(Calendar.HOUR_OF_DAY, now.get(Calendar.HOUR_OF_DAY));
+        return !nowHour.equals(lastSavedHour);
     }
 }
