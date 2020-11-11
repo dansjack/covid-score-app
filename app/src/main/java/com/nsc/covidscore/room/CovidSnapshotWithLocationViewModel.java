@@ -45,28 +45,17 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
     }
 
     public void insertCovidSnapshot(CovidSnapshot covidSnapshot) {
-        // TODO: fix the timing issue in Main so we can add this back
         if (covidSnapshot.getLocationId() != null) {
             repo.insertCovidSnapshot(covidSnapshot);
         }
     }
 
-//    public LiveData<CovidSnapshot> getLatestCovidSnapshotByLocation(Location location) { return repo.getLatestCovidSnapshotByLocation(location); }
-
     public LiveData<CovidSnapshot> getLatestCovidSnapshot() { return repo.getLatestSnapshot(); }
 
-    // Returns a list of up to 3 LiveData objects (locationIDs)
+    // Returns a list of up to 3 LiveData objects (CovidSnapshots)
     // directly from AppDatabase via CovidSnapshotDao.
-    public LiveData<List<Integer>> getLatestLocationIds() {
-        return repo.getLatestLocationIds();
-    }
-
     public LiveData<List<CovidSnapshot>> getLatestLocationsLatestCovidSnapshots() {
         return repo.getLatestLocationsLatestSnapshots();
-    }
-
-    public LiveData<CovidSnapshot> getLatestCovidSnapshotByLocationId(int locationId) {
-        return repo.getLatestCovidSnapshotByLocationId(locationId);
     }
 
     private void fillLocationsMaps() {
