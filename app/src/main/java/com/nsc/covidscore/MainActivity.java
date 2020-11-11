@@ -30,8 +30,10 @@ import com.nsc.covidscore.room.CovidSnapshotWithLocationViewModel;
 import com.nsc.covidscore.room.Location;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements RiskDetailPageFragment.OnSelectLocationButtonListener, LocationManualSelectionFragment.OnSubmitButtonListener {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -53,9 +55,7 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
     // Make sure to be using androidx.appcompat.app.ActionBarDrawerToggle version.
     private ActionBarDrawerToggle drawerToggle;
 
-    private MutableLiveData<List<CovidSnapshot>> lastSavedCovidLocationsListSnapshot = new MutableLiveData<List<CovidSnapshot>>();
-    private HashMap<Integer, Location> mapOfLocationsById = new HashMap<Integer, Location>();
-    private List<Location> locationIdsList;
+    private List<Location> locationsList = new ArrayList<>();
     private Location locationDrawerItem;
     private int locationIdDrawerItem;
     private ConnectivityManager cm;
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
         // Access to Room Database/ Get the ViewModel.
         vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel.class);
 
-        // This variable will hold latest copy of Covid Snapshot
+        // This will hold latest copy of Covid Snapshot
         vm.getLatestCovidSnapshot().observe(this, covidSnapshotFromDb -> {
             if (covidSnapshotFromDb != null) {
                 lastSavedCovidSnapshot = covidSnapshotFromDb;
@@ -114,6 +114,19 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
             if (firstOpen) { // Don't do this every time Room is updated
                 loadFragments(savedInstanceState);
                 firstOpen = false;
+            }
+        });
+
+        // This will hold latest copy of last 3 locationIds
+        vm.getLatestLocationIds().observe(this, idListFromDb -> {
+            if (idListFromDb != null && idListFromDb.size() <= 3) {
+                locationsList.clear();
+                for (int i = 0; i < idListFromDb.size(); i++) {
+                    Location recentLocation = vm.getMapOfLocationsById().get(idListFromDb.get(i));
+                    locationsList.add(recentLocation);
+                    nvDrawer.getMenu().getItem(i).setVisible(true);
+                    nvDrawer.getMenu().getItem(i).setTitle(recentLocation.toApiFormat());
+                }
             }
         });
 
@@ -132,24 +145,6 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
                 isConnected = false;
             }
         });
-
-        // //TODO: Set Observer; access location list via vm; store in lastSavedCovidLocationsListSnapshot --done
-        //     vm.getLatestLocationsList().observe(this, covidLocationListSnapshotFromDb -> {
-        //         if (covidLocationListSnapshotFromDb != null) {
-        //             lastSavedCovidLocationsListSnapshot =
-        //                     (MutableLiveData<List<CovidSnapshot>>) covidLocationListSnapshotFromDb;
-        //             //TODO: get list of (up to) 3 last saved locationIds; taken from covidLocationListSnapshotFromDb
-
-        //             Log.e(TAG, "Most recently saved locations list snapshot: " +
-        //                     lastSavedCovidLocationsListSnapshot.toString());
-
-        //         } else {
-        //             Log.d(TAG, "Observer returned null CovidSnapshot location list");
-        //         }
-        //     }
-        // );
-
-
 
         requestManager = RequestSingleton.getInstance(this.getApplicationContext());
         queue = requestManager.getRequestQueue();
@@ -414,7 +409,6 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
         if (tLmsf != null && tLmsf.isVisible()) {
             LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
             Bundle bundle = new Bundle();
-//            bundle.putSerializable(Constants.LOCATIONS_MAP_BY_STATE, mapOfLocationsByState);
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
@@ -451,6 +445,11 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
         openNewRiskDetailPageFragment(mcs, selectedLocation);
     }
 
+    /**
+     * Compare most recently saved CovidSnapshot to current time - if the snapshot is more than an hour old, and
+     * the phone has connectivity, we change behavior
+     * @return true if the CovidSnapshot is recent within the hour, false otherwise
+     */
     private boolean hasBeenUpdatedThisHour() {
         Calendar lastSaved = lastSavedCovidSnapshot.getLastUpdated();
         Calendar lastSavedHour = Calendar.getInstance();

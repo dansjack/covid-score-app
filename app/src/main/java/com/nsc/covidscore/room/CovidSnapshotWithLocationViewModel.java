@@ -57,14 +57,13 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
 
     // Returns a list of up to 3 LiveData objects (locationIDs)
     // directly from AppDatabase via CovidSnapshotDao.
-    public LiveData<List<CovidSnapshot>> getLatestLocationsList() {
-        return repo.getLatestLocationsList();
+    public LiveData<List<Integer>> getLatestLocationIds() {
+        return repo.getLatestLocationIds();
     }
 
     public LiveData<CovidSnapshot> getLatestCovidSnapshotByLocationId(int locationId) {
         return repo.getLatestCovidSnapshotByLocationId(locationId);
     }
-
 
     private void fillLocationsMaps() {
         String jsonString;
