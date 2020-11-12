@@ -55,19 +55,6 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
     }
 
     @Override
-    public void onAttachFragment(@NonNull Fragment fragment) {
-        super.onAttachFragment(fragment);
-        if (fragment instanceof  RiskDetailPageFragment) {
-            RiskDetailPageFragment rdpFragment = (RiskDetailPageFragment) fragment;
-            rdpFragment.setOnSelectLocationButtonListener(this);
-        }
-        if (fragment instanceof LocationManualSelectionFragment) {
-            LocationManualSelectionFragment lmsFragment = (LocationManualSelectionFragment) fragment;
-            lmsFragment.setOnSubmitButtonListener(this);
-        }
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
