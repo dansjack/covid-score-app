@@ -15,6 +15,7 @@ public class Constants {
     public static final String PROVINCE = "province";
     public static final String STATE = "state";
     public static final String STATE_POPULATION = "statePopulation";
+    public static final String API_LOCATION = "apiLocation";
 
     public static final String ACTIVE_COUNTY = "activeCounty";
     public static final String ACTIVE_COUNTRY = "activeCountry";

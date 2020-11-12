@@ -37,6 +37,7 @@
     <string name="linkApp">Link to app GitHub</string>
     <string name="linkCensus">Link to U.S. Census Bureau</string>
     <string name="linkDisease">Link to Disease.sh\'s GitHub</string>
+    <string name="no_internet">No Internet Connection Available</string>
 
     <string-array name="group_sizes">
         <item>10</item>

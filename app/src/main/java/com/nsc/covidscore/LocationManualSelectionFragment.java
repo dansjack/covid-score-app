@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,7 +45,8 @@ import java.util.stream.Collectors;
 public class LocationManualSelectionFragment extends Fragment implements AdapterView.OnItemSelectedListener {
     private static final String TAG = LocationManualSelectionFragment.class.getSimpleName();
     private Location selectedLocation = new Location();
-    private MutableLiveData<CovidSnapshot> mutableCovidSnapshot = new MutableLiveData<>(new CovidSnapshot());
+    public MutableLiveData<CovidSnapshot> mutableCovidSnapshot = new MutableLiveData<>(new CovidSnapshot());
+    private boolean justForApiCalls = false;
 
     private CovidSnapshotWithLocationViewModel vm;
     private TextView loadingTextView;
@@ -85,13 +87,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_location_selection, container, false);
-        Bundle bundle = getArguments();
-
-        if (bundle != null) {
-            // noinspection unchecked
-//            mapOfLocationsByState = (HashMap<String, List<Location>>) bundle.getSerializable(Constants.LOCATIONS_MAP_BY_STATE);
-            Log.i(TAG, "onCreateView: Bundle received from MainActivity");
-        }
 
         setInitialSpinners(v);
         Log.d(TAG, "onCreateView invoked");
@@ -104,30 +99,56 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     @Override
     public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
+
+        // If this is just to rerun APIs, do that immediately
+        Bundle bundle = getArguments();
+
+        if (bundle != null) {
+            Log.i(TAG, "onViewCreated: Bundle received from MainActivity");
+            if (bundle.containsKey(Constants.API_LOCATION)) {
+                Location locationFromRoom = (Location) bundle.get(Constants.API_LOCATION);
+                justForApiCalls = true;
+                selectedLocation = locationFromRoom;
+                mutableCovidSnapshot.observe(getViewLifecycleOwner(), covidSnapshot -> {
+                    if (covidSnapshot != null && covidSnapshot.hasFieldsSet()) {
+                        callback.onSubmitButtonClicked(mutableCovidSnapshot, locationFromRoom);
+                    }
+                });
+                makeApiCalls(locationFromRoom);
+            }
+        }
+
+        MainActivity main = (MainActivity) getActivity();
+
         loadingTextView = v.findViewById(R.id.loadingTextView);
 
         Button btnNavRiskDetail = v.findViewById(R.id.submit_btn);
         btnNavRiskDetail.setOnClickListener(v1 -> {
-            // user selected a state and county, call APIs
-            if (selectedLocation.getCounty() != null) {
-                // API data retrieved for selected state and county
-                if (mutableCovidSnapshot.getValue() != null && mutableCovidSnapshot.getValue().hasFieldsSet()) {
-                    callback.onSubmitButtonClicked(mutableCovidSnapshot, selectedLocation);
+            if (main.isConnected == true) {
+                // user selected a state and county, call APIs
+                if (selectedLocation.getCounty() != null) {
+                    // API data retrieved for selected state and county
+                    if (mutableCovidSnapshot.getValue() != null && mutableCovidSnapshot.getValue().hasFieldsSet()) {
+                        callback.onSubmitButtonClicked(mutableCovidSnapshot, selectedLocation);
+                    } else {
+                        // wait for API data to be retrieved before proceeding
+                        loadingTextView.setText(R.string.loading_data);
+                        makeApiCalls(selectedLocation);
+                        mutableCovidSnapshot.observe(getViewLifecycleOwner(), covidSnapshot -> {
+                            if (!justForApiCalls && (covidSnapshot != null && covidSnapshot.hasFieldsSet())) {
+                                callback.onSubmitButtonClicked(mutableCovidSnapshot, selectedLocation);
+                            }
+                        });
+                    }
                 } else {
-                    // wait for API data to be retrieved before proceeding
-                    loadingTextView.setText(R.string.loading_data);
-                    makeApiCalls(selectedLocation);
-                    mutableCovidSnapshot.observe(getViewLifecycleOwner(), covidSnapshot -> {
-                        if (covidSnapshot != null && covidSnapshot.hasFieldsSet()) {
-                            callback.onSubmitButtonClicked(mutableCovidSnapshot, selectedLocation);
-                        }
-                    });
+                    loadingTextView.setText(R.string.pick_state_county);
+                    Log.i(TAG, "onViewCreated - btnNavRiskDetail - selectedLocation not filled: " + selectedLocation.toString());
                 }
-            } else {
-                loadingTextView.setText(R.string.pick_state_county);
-                Log.i(TAG, "onViewCreated - btnNavRiskDetail - selectedLocation not filled: " + selectedLocation.toString());
+            } else { // No Internet Access
+                loadingTextView.setText(R.string.no_internet);
             }
         });
+        Log.d(TAG, "onViewCreated invoked");
     }
 
     public void saveSnapshotToRoom(CovidSnapshot currentCovidSnapshot, Location currentLocation) {
@@ -250,10 +271,10 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     }
 
     public interface OnSubmitButtonListener {
-        public void onSubmitButtonClicked(MutableLiveData<CovidSnapshot> mcs, Location selectedLocation);
+        void onSubmitButtonClicked(MutableLiveData<CovidSnapshot> mcs, Location selectedLocation);
     }
 
-    private void makeApiCalls(Location location) {
+    public void makeApiCalls(Location location) {
         Log.i(TAG, "makeApiCalls: CALLED " + location.toString());
         CovidSnapshot covidSnapshot = new CovidSnapshot();
         covidSnapshot.setLocationId(location.getLocationId());
@@ -364,5 +385,10 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             }
             Log.d(TAG, "req: getCountryPopulation " + response);
         });
+    }
+
+    public void clearCovidSnapshot() {
+        CovidSnapshot clear = new CovidSnapshot();
+        mutableCovidSnapshot.setValue(clear);
     }
 }
