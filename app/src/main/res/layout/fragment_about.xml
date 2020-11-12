@@ -2,19 +2,18 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF">
 
     <TextView
         android:id="@+id/appTitleText"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/dp0"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="@dimen/dp24"
         android:gravity="center"
         android:text="@string/appTitle"
-        android:textSize="36sp"
+        android:textSize="@dimen/sp36"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,29 +23,28 @@
         android:id="@+id/versionLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="12dp"
+        android:padding="@dimen/dp12"
         android:text="@string/versionLabel"
-        android:textSize="24sp"
+        android:textSize="@dimen/sp24"
         app:layout_constraintBottom_toTopOf="@+id/div2"
         app:layout_constraintStart_toStartOf="@+id/githubLabel" />
 
     <TextView
         android:id="@+id/versionText"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/dp0"
         android:gravity="center"
-        android:padding="12dp"
-        android:paddingStart="0dp"
+        android:padding="@dimen/dp12"
         android:text="@string/versionText"
-        android:textSize="24sp"
+        android:textSize="@dimen/sp24"
         app:layout_constraintBottom_toTopOf="@+id/div2"
         app:layout_constraintStart_toEndOf="@+id/githubLabel"
         app:layout_constraintTop_toBottomOf="@+id/aboutAppHeading" />
 
     <View
         android:id="@+id/div1"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
+        android:layout_width="@dimen/dp0"
+        android:layout_height="@dimen/dp1"
         android:background="?android:attr/listDivider"
         app:layout_constraintBottom_toTopOf="@+id/versionLabel"
         app:layout_constraintEnd_toEndOf="parent"
@@ -55,16 +53,16 @@
 
     <View
         android:id="@+id/div2"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
+        android:layout_width="@dimen/dp0"
+        android:layout_height="@dimen/dp1"
         android:background="?android:attr/listDivider"
         app:layout_constraintBottom_toTopOf="@+id/githubLabel"
         app:layout_constraintStart_toStartOf="parent" />
 
     <View
         android:id="@+id/div3"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
+        android:layout_width="@dimen/dp0"
+        android:layout_height="@dimen/dp1"
         android:background="?android:attr/listDivider"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -74,10 +72,9 @@
         android:id="@+id/githubLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:paddingEnd="24dp"
+        android:padding="@dimen/dp12"
         android:text="@string/githubLabel"
-        android:textSize="24sp"
+        android:textSize="@dimen/sp24"
         app:layout_constraintBottom_toTopOf="@+id/div3"
         app:layout_constraintEnd_toStartOf="@+id/appGithubLink"
         app:layout_constraintHorizontal_bias="0.0"
@@ -88,13 +85,13 @@
 
     <TextView
         android:id="@+id/aboutText"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/dp0"
         android:layout_height="wrap_content"
         android:ems="10"
         android:gravity="start|top"
-        android:padding="12dp"
+        android:padding="@dimen/dp12"
         android:text="@string/aboutText"
-        android:textSize="18sp"
+        android:textSize="@dimen/sp18"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appTitleText" />
@@ -103,9 +100,9 @@
         android:id="@+id/aboutDataHeading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="12dp"
+        android:padding="@dimen/dp12"
         android:text="@string/aboutDataHeading"
-        android:textSize="30sp"
+        android:textSize="@dimen/sp30"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -115,9 +112,9 @@
         android:id="@+id/aboutAppHeading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="12dp"
+        android:padding="@dimen/dp12"
         android:text="@string/aboutAppHeading"
-        android:textSize="30sp"
+        android:textSize="@dimen/sp30"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/div1"
         app:layout_constraintEnd_toEndOf="parent"
@@ -127,9 +124,9 @@
         android:id="@+id/censusAttributionText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="12dp"
+        android:padding="@dimen/dp12"
         android:text="@string/censusAttributionText"
-        android:textSize="14sp"
+        android:textSize="@dimen/sp14"
         android:textStyle="italic"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/div6" />
@@ -138,9 +135,9 @@
         android:id="@+id/aboutPopulationLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="12dp"
+        android:padding="@dimen/dp12"
         android:text="@string/aboutPopulationLabel"
-        android:textSize="18sp"
+        android:textSize="@dimen/sp18"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/aboutDataHeading" />
 
@@ -148,16 +145,16 @@
         android:id="@+id/aboutCovidLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="12dp"
+        android:padding="@dimen/dp12"
         android:text="@string/covid19Label"
-        android:textSize="18sp"
+        android:textSize="@dimen/sp18"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/aboutPopulationLabel" />
 
     <View
         android:id="@+id/div4"
-        android:layout_width="409dp"
-        android:layout_height="1dp"
+        android:layout_width="@dimen/dp0"
+        android:layout_height="@dimen/dp1"
         android:background="?android:attr/listDivider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -165,8 +162,8 @@
 
     <View
         android:id="@+id/div5"
-        android:layout_width="409dp"
-        android:layout_height="1dp"
+        android:layout_width="@dimen/dp0"
+        android:layout_height="@dimen/dp1"
         android:background="?android:attr/listDivider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -175,11 +172,10 @@
     <TextView
         android:id="@+id/censusText"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/dp0"
         android:gravity="center"
-        android:paddingEnd="12dp"
         android:text="@string/censusText"
-        android:textSize="18sp"
+        android:textSize="@dimen/sp18"
         app:layout_constraintBottom_toTopOf="@+id/diseaseText"
         app:layout_constraintEnd_toStartOf="@+id/censusLink"
         app:layout_constraintHorizontal_bias="0.5"
@@ -189,8 +185,8 @@
 
     <View
         android:id="@+id/div6"
-        android:layout_width="409dp"
-        android:layout_height="1dp"
+        android:layout_width="@dimen/dp0"
+        android:layout_height="@dimen/dp1"
         android:background="?android:attr/listDivider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -199,12 +195,11 @@
     <TextView
         android:id="@+id/diseaseText"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/dp0"
         android:foregroundGravity="center"
         android:gravity="center"
-        android:paddingEnd="12dp"
         android:text="@string/diseaseText"
-        android:textSize="18sp"
+        android:textSize="@dimen/sp18"
         app:layout_constraintBottom_toTopOf="@+id/censusAttributionText"
         app:layout_constraintStart_toStartOf="@+id/censusText"
         app:layout_constraintTop_toBottomOf="@+id/div5"
@@ -213,42 +208,45 @@
     <ImageButton
         android:id="@+id/appGithubLink"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/dp0"
         android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/linkApp"
+        android:paddingHorizontal="@dimen/dp12"
         android:scaleType="centerInside"
+        android:src="@drawable/ic_gh"
         app:layout_constraintBottom_toTopOf="@+id/div3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/githubLabel"
         app:layout_constraintTop_toBottomOf="@+id/div2"
         app:layout_constraintVertical_chainStyle="packed"
-        app:layout_optimizationLevel="chains"
-        android:src="@drawable/ic_gh"
-        android:contentDescription="@string/linkApp" />
+        app:layout_optimizationLevel="chains" />
 
     <ImageButton
         android:id="@+id/censusLink"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/dp0"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:backgroundTint="@android:color/black"
+        android:contentDescription="@string/linkCensus"
+        android:paddingHorizontal="@dimen/dp12"
+        android:src="@drawable/ic_link"
         app:layout_constraintBottom_toTopOf="@+id/diseaseText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/censusText"
-        app:layout_constraintTop_toBottomOf="@+id/aboutDataHeading"
-        android:src="@drawable/ic_link"
-        android:contentDescription="@string/linkCensus" />
+        app:layout_constraintTop_toBottomOf="@+id/aboutDataHeading" />
 
     <ImageButton
         android:id="@+id/diseaseGithubLink"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/dp0"
         android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/linkDisease"
+        android:paddingHorizontal="@dimen/dp12"
+        android:src="@drawable/ic_gh"
         app:layout_constraintBottom_toTopOf="@+id/censusAttributionText"
         app:layout_constraintStart_toEndOf="@+id/diseaseText"
-        app:layout_constraintTop_toTopOf="@+id/diseaseText"
-        android:src="@drawable/ic_gh"
-        android:contentDescription="@string/linkDisease" />
+        app:layout_constraintTop_toTopOf="@+id/diseaseText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
