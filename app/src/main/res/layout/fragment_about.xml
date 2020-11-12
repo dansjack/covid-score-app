@@ -144,10 +144,12 @@
     <TextView
         android:id="@+id/aboutCovidLabel"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/dp0"
+        android:gravity="center"
         android:padding="@dimen/dp12"
         android:text="@string/covid19Label"
         android:textSize="@dimen/sp18"
+        app:layout_constraintBottom_toTopOf="@+id/div6"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/aboutPopulationLabel" />
 
@@ -178,10 +180,11 @@
         android:textSize="@dimen/sp18"
         app:layout_constraintBottom_toTopOf="@+id/diseaseText"
         app:layout_constraintEnd_toStartOf="@+id/censusLink"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toEndOf="@+id/aboutPopulationLabel"
-        app:layout_constraintTop_toBottomOf="@+id/aboutDataHeading" />
+        app:layout_constraintTop_toBottomOf="@+id/aboutDataHeading"
+        app:layout_constraintVertical_bias="0.0" />
 
     <View
         android:id="@+id/div6"
@@ -189,26 +192,27 @@
         android:layout_height="@dimen/dp1"
         android:background="?android:attr/listDivider"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/aboutCovidLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/diseaseList" />
 
     <TextView
         android:id="@+id/diseaseText"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/dp0"
         android:foregroundGravity="center"
-        android:gravity="center"
+        android:gravity="center_vertical"
+        android:paddingVertical="@dimen/dp12"
         android:text="@string/diseaseText"
         android:textSize="@dimen/sp18"
-        app:layout_constraintBottom_toTopOf="@+id/censusAttributionText"
         app:layout_constraintStart_toStartOf="@+id/censusText"
-        app:layout_constraintTop_toBottomOf="@+id/div5"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/div5" />
 
     <ImageButton
         android:id="@+id/appGithubLink"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/dp0"
+        android:layout_marginVertical="@dimen/dp12"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/linkApp"
         android:paddingHorizontal="@dimen/dp12"
@@ -226,6 +230,7 @@
         android:id="@+id/censusLink"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/dp0"
+        android:layout_marginVertical="@dimen/dp12"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:backgroundTint="@android:color/black"
         android:contentDescription="@string/linkCensus"
@@ -240,13 +245,25 @@
     <ImageButton
         android:id="@+id/diseaseGithubLink"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/dp0"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/dp12"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/linkDisease"
         android:paddingHorizontal="@dimen/dp12"
         android:src="@drawable/ic_gh"
-        app:layout_constraintBottom_toTopOf="@+id/censusAttributionText"
+        app:layout_constraintBottom_toTopOf="@id/diseaseList"
         app:layout_constraintStart_toEndOf="@+id/diseaseText"
         app:layout_constraintTop_toTopOf="@+id/diseaseText" />
+
+    <TextView
+        android:id="@+id/diseaseList"
+        android:layout_width="@dimen/dp0"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/dp12"
+        android:paddingBottom="12dp"
+        android:text="@string/aboutList"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/diseaseText"
+        app:layout_constraintTop_toBottomOf="@+id/diseaseText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
