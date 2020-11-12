@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:gravity="center"
-        android:text="CovidScore"
+        android:text="@string/appTitle"
         android:textSize="36sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="12dp"
-        android:text="Version"
+        android:text="@string/versionLabel"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/div2"
         app:layout_constraintStart_toStartOf="@+id/githubLabel" />
@@ -37,7 +37,7 @@
         android:gravity="center"
         android:padding="12dp"
         android:paddingStart="0dp"
-        android:text="0.2.0"
+        android:text="@string/versionText"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/div2"
         app:layout_constraintStart_toEndOf="@+id/githubLabel"
@@ -76,7 +76,7 @@
         android:layout_height="wrap_content"
         android:padding="12dp"
         android:paddingEnd="24dp"
-        android:text="Check us out on GitHub"
+        android:text="@string/githubLabel"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/div3"
         app:layout_constraintEnd_toStartOf="@+id/appGithubLink"
@@ -93,7 +93,7 @@
         android:ems="10"
         android:gravity="start|top"
         android:padding="12dp"
-        android:text="CovidScore calculates your risk of getting COVID within a U.S. county.\n\nRisk is determined by..."
+        android:text="@string/aboutText"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -104,7 +104,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="12dp"
-        android:text="Data Sources"
+        android:text="@string/aboutDataHeading"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -116,7 +116,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="12dp"
-        android:text="About The App"
+        android:text="@string/aboutAppHeading"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/div1"
@@ -128,7 +128,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="12dp"
-        android:text="Note: This app uses the Census Bureau Data API but is not endorsed or certified by the Census Bureau."
+        android:text="@string/censusAttributionText"
         android:textSize="14sp"
         android:textStyle="italic"
         app:layout_constraintStart_toStartOf="parent"
@@ -139,7 +139,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="12dp"
-        android:text="Population"
+        android:text="@string/aboutPopulationLabel"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/aboutDataHeading" />
@@ -149,7 +149,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="12dp"
-        android:text="COVID19"
+        android:text="@string/covid19Label"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/aboutPopulationLabel" />
@@ -178,7 +178,7 @@
         android:layout_height="0dp"
         android:gravity="center"
         android:paddingEnd="12dp"
-        android:text="U.S. Census Bureau"
+        android:text="@string/censusText"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/diseaseText"
         app:layout_constraintEnd_toStartOf="@+id/censusLink"
@@ -203,7 +203,7 @@
         android:foregroundGravity="center"
         android:gravity="center"
         android:paddingEnd="12dp"
-        android:text="Disease.sh"
+        android:text="@string/diseaseText"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/censusAttributionText"
         app:layout_constraintStart_toStartOf="@+id/censusText"
@@ -223,7 +223,8 @@
         app:layout_constraintTop_toBottomOf="@+id/div2"
         app:layout_constraintVertical_chainStyle="packed"
         app:layout_optimizationLevel="chains"
-        android:src="@drawable/ic_gh" />
+        android:src="@drawable/ic_gh"
+        android:contentDescription="@string/linkApp" />
 
     <ImageButton
         android:id="@+id/censusLink"
@@ -236,7 +237,8 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/censusText"
         app:layout_constraintTop_toBottomOf="@+id/aboutDataHeading"
-        android:src="@drawable/ic_link" />
+        android:src="@drawable/ic_link"
+        android:contentDescription="@string/linkCensus" />
 
     <ImageButton
         android:id="@+id/diseaseGithubLink"
@@ -246,6 +248,7 @@
         app:layout_constraintBottom_toTopOf="@+id/censusAttributionText"
         app:layout_constraintStart_toEndOf="@+id/diseaseText"
         app:layout_constraintTop_toTopOf="@+id/diseaseText"
-        android:src="@drawable/ic_gh" />
+        android:src="@drawable/ic_gh"
+        android:contentDescription="@string/linkDisease" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

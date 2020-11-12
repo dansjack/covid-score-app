@@ -22,6 +22,21 @@
     <string name="risk_assessment">Risk Assessment</string>
     <string name="group_size">Group Size</string>
     <string name="risk_of_being_exposed_to_covid">Risk of COVID exposure</string>
+    <string name="aboutText">CovidScore calculates your risk of being exposed to COVID-19 within a U.S. county.\n\nRisk is determined by...</string>
+    <string name="aboutDataHeading">Data Sources</string>
+    <string name="githubLabel">Check us out on GitHub</string>
+    <string name="versionText">0.3.0</string>
+    <string name="versionLabel">Version</string>
+    <string name="appTitle">CovidScore</string>
+    <string name="censusAttributionText">Note: This app uses the Census Bureau Data API but is not endorsed or certified by the Census Bureau.</string>
+    <string name="aboutAppHeading">About The App</string>
+    <string name="aboutPopulationLabel">Population</string>
+    <string name="covid19Label">COVID19</string>
+    <string name="censusText">U.S. Census Bureau</string>
+    <string name="diseaseText">Disease.sh</string>
+    <string name="linkApp">Link to app GitHub</string>
+    <string name="linkCensus">Link to U.S. Census Bureau</string>
+    <string name="linkDisease">Link to Disease.sh\'s GitHub</string>
 
     <string-array name="group_sizes">
         <item>10</item>
