@@ -203,6 +203,7 @@
                 android:id="@+id/aboutAppHeading"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:padding="@dimen/dp12"
                 android:text="@string/aboutAppHeading"
                 android:textSize="@dimen/sp30"
