@@ -39,6 +39,7 @@
     <string name="linkDisease">Link to Disease.sh\'s GitHub</string>
     <string name="no_internet">No Internet Connection Available</string>
     <string name="aboutList">&#8226; State data from Worldometer\n&#8226; All other data from Johns Hokpkins &#160;&#160;University</string>
+    <string name="no_internet">No Internet Connection Available</string>
 
     <string-array name="group_sizes">
         <item>10</item>
