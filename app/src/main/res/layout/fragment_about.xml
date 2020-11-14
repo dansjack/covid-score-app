@@ -141,26 +141,26 @@
             <ImageButton
                 android:id="@+id/censusLink"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/dp0"
-                android:layout_marginVertical="@dimen/dp12"
+                android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:backgroundTint="@android:color/black"
                 android:contentDescription="@string/linkCensus"
                 android:paddingHorizontal="@dimen/dp12"
                 android:src="@drawable/ic_link"
+                app:layout_constraintBottom_toTopOf="@+id/div5"
                 app:layout_constraintStart_toEndOf="@+id/censusText"
                 app:layout_constraintTop_toBottomOf="@+id/aboutDataHeading" />
 
             <ImageButton
                 android:id="@+id/appGithubLink"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/dp0"
-                android:layout_marginVertical="@dimen/dp12"
+                android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/linkApp"
                 android:paddingHorizontal="@dimen/dp12"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_gh"
+                app:layout_constraintBottom_toTopOf="@+id/div3"
                 app:layout_constraintStart_toEndOf="@+id/githubLabel"
                 app:layout_constraintTop_toBottomOf="@+id/div2"
                 app:layout_optimizationLevel="chains" />
@@ -170,11 +170,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/dp12"
-                android:layout_marginTop="36dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/linkDisease"
                 android:paddingHorizontal="@dimen/dp12"
                 android:src="@drawable/ic_gh"
+                app:layout_constraintBottom_toTopOf="@+id/diseaseList"
                 app:layout_constraintStart_toEndOf="@+id/diseaseText"
                 app:layout_constraintTop_toTopOf="@+id/diseaseText" />
 
