@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 public class LocationManualSelectionFragment extends Fragment implements AdapterView.OnItemSelectedListener {
     private static final String TAG = LocationManualSelectionFragment.class.getSimpleName();
     private Location selectedLocation = new Location();
-    public MutableLiveData<CovidSnapshot> mutableCovidSnapshot = new MutableLiveData<>(new CovidSnapshot());
+    private MutableLiveData<CovidSnapshot> mutableCovidSnapshot;
     private boolean justForApiCalls = false;
 
     private CovidSnapshotWithLocationViewModel vm;
@@ -74,6 +74,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
         super.onCreate(savedInstanceState);
         // Access to Room Database
         vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel.class);
+        mutableCovidSnapshot = vm.getMutableCovidSnapshot();
         Log.d(TAG, "onCreate invoked");
     }
 
@@ -110,7 +111,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                         callback.onSubmitButtonClicked(mutableCovidSnapshot, locationFromRoom);
                     }
                 });
-                makeApiCalls(locationFromRoom);
+                vm.makeApiCalls(locationFromRoom);
             }
         }
 
@@ -129,7 +130,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                     } else {
                         // wait for API data to be retrieved before proceeding
                         loadingTextView.setText(R.string.loading_data);
-                        makeApiCalls(selectedLocation);
+                        vm.makeApiCalls(selectedLocation);
                         mutableCovidSnapshot.observe(getViewLifecycleOwner(), covidSnapshot -> {
                             if (!justForApiCalls && (covidSnapshot != null && covidSnapshot.hasFieldsSet())) {
                                 callback.onSubmitButtonClicked(mutableCovidSnapshot, selectedLocation);
@@ -218,7 +219,7 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                 // county spinner selected
                 String countySelected = (String) parent.getItemAtPosition(position);
                 Log.i(TAG, "onItemSelected: in county... " + countySelected);
-                mutableCovidSnapshot.setValue(new CovidSnapshot());
+                vm.setMutableCovidSnapshot(new CovidSnapshot());
                 Log.i(TAG, "onCreateView - mutableSelectedCounty: COUNTY SELECTED " + countySelected);
                 for (int i = 0; i < countyLocations.size(); i++) {
                     Location location = countyLocations.get(i);
@@ -270,121 +271,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
         void onSubmitButtonClicked(MutableLiveData<CovidSnapshot> mcs, Location selectedLocation);
     }
 
-    public void makeApiCalls(Location location) {
-        Log.i(TAG, "makeApiCalls: CALLED " + location.toString());
-        CovidSnapshot covidSnapshot = new CovidSnapshot();
-        covidSnapshot.setLocationId(location.getLocationId());
-        mutableCovidSnapshot.getValue().setLocationId(location.getLocationId());
-        Requests.getCounty(getActivity(), location.toApiFormat(), new VolleyJsonCallback() {
-            @Override
-            public void getJsonData(JSONObject response) throws JSONException {
-                JSONObject stats = (JSONObject) response.get(Constants.RESPONSE_STATS);
-                Integer confirmed = (Integer) stats.get(Constants.RESPONSE_CONFIRMED);
-                Integer deaths = (Integer) stats.get(Constants.RESPONSE_DEATHS);
-                // TODO: calculate better estimate of active cases
-                Integer activeCounty = confirmed - deaths;
-                covidSnapshot.setCountyActiveCount(activeCounty);
-                mutableCovidSnapshot.getValue().setCountyActiveCount(activeCounty);
-                if (covidSnapshot.hasFieldsSet()) {
-                    mutableCovidSnapshot.setValue(covidSnapshot);
-                }
-                Log.d(TAG, "req: getActiveCounty " + activeCounty);
-            }
-
-            @Override
-            public void getJsonException(Exception exception) {
-                Log.e(TAG, exception.getMessage());}
-        });
-        Requests.getState(getContext(), location.toApiFormat(), new VolleyJsonCallback() {
-            @Override
-            public void getJsonData(JSONObject response) throws JSONException {
-                Integer activeState = (Integer) response.get(Constants.RESPONSE_ACTIVE);
-                covidSnapshot.setStateActiveCount(activeState);
-                mutableCovidSnapshot.getValue().setStateActiveCount(activeState);
-                if (covidSnapshot.hasFieldsSet()) {
-                    mutableCovidSnapshot.setValue(covidSnapshot);
-                }
-                Log.d(TAG, "req: getActiveState " + activeState);
-
-            }
-
-            @Override
-            public void getJsonException(Exception exception) {
-                Log.e(TAG, exception.getMessage());
-            }
-        });
-        Requests.getCountyHistorical(getContext(), location.toApiFormat(), Constants.DAYS_30, new VolleyJsonCallback() {
-            @Override
-            public void getJsonData(JSONObject response) {
-                Log.d(TAG, "req: getCountyHistorical " + response);
-            }
-
-            @Override
-            public void getJsonException(Exception exception) {
-                Log.e(TAG, exception.getMessage());}
-        });
-        Requests.getUSHistorical(getContext(), Constants.DAYS_01, new VolleyJsonCallback() {
-            @Override
-            public void getJsonData(JSONObject response) throws JSONException, IOException {
-                JSONObject timeline = response.getJSONObject(Constants.RESPONSE_TIMELINE);
-                HashMap<String, Integer> totalMap = new ObjectMapper().readValue((timeline.get(Constants.RESPONSE_CASES)).toString(), HashMap.class);
-
-                Integer totalCountry = 0;
-                for (Object value : totalMap.values()) {
-                    totalCountry = (Integer) value;
-                }
-                Integer deathCountry = 0;
-                HashMap<String, Integer> deathMap = new ObjectMapper().readValue((timeline.get(Constants.RESPONSE_DEATHS)).toString(), HashMap.class);
-                for (Object value : deathMap.values()) {
-                    deathCountry = (Integer) value;
-                }
-                Integer recoveredCountry = 0;
-                HashMap<String, Integer> recoveredMap = new ObjectMapper().readValue((timeline.get(Constants.RESPONSE_RECOVERED)).toString(), HashMap.class);
-                for (Object value : recoveredMap.values()) {
-                    recoveredCountry = (Integer) value;
-                }
-
-                Integer countryActiveCount = totalCountry - deathCountry - recoveredCountry;
-                covidSnapshot.setCountryActiveCount(countryActiveCount);
-                if (covidSnapshot.hasFieldsSet()) {
-                    mutableCovidSnapshot.setValue(covidSnapshot);
-                }
-                Log.i(TAG, "req: getCountryHistorical " + response);
-            }
-
-            @Override
-            public void getJsonException(Exception exception) {
-                Log.e(TAG, exception.getMessage());
-            }
-        });
-        Requests.getCountyPopulation(getActivity(), location, response -> {
-            covidSnapshot.setCountyTotalPopulation(Integer.parseInt(response));
-            mutableCovidSnapshot.getValue().setCountyTotalPopulation(Integer.parseInt(response));
-            if (covidSnapshot.hasFieldsSet()) {
-                mutableCovidSnapshot.setValue(covidSnapshot);
-            }
-            Log.d(TAG, "req: getCountyPopulation  " + response);
-        });
-        Requests.getStatePopulation(getActivity(), location, response -> {
-            covidSnapshot.setStateTotalPopulation(Integer.parseInt(response));
-            mutableCovidSnapshot.getValue().setStateTotalPopulation(Integer.parseInt(response));
-            if (covidSnapshot.hasFieldsSet()) {
-                mutableCovidSnapshot.setValue(covidSnapshot);
-            }
-            Log.d(TAG, "req: getStatePopulation  " + response);
-        });
-        Requests.getCountryPopulation(getActivity(), response -> {
-            covidSnapshot.setCountryTotalPopulation(Integer.parseInt(response));
-            mutableCovidSnapshot.getValue().setCountryTotalPopulation(Integer.parseInt(response));
-            if (covidSnapshot.hasFieldsSet()) {
-                mutableCovidSnapshot.setValue(covidSnapshot);
-            }
-            Log.d(TAG, "req: getCountryPopulation " + response);
-        });
-    }
-
     public void clearCovidSnapshot() {
         CovidSnapshot clear = new CovidSnapshot();
-        mutableCovidSnapshot.setValue(clear);
+        vm.setMutableCovidSnapshot(clear);
     }
 }
