@@ -66,7 +66,7 @@ public class Requests {
         location = location.toLowerCase();
         final String county = location.split(",")[0];
         final String state = location.split(",")[1];
-        String url = "https://corona.lmao.ninja/v2/historical/usacounties/" +
+        String url = "https://disease.sh/v3/covid-19/historical/usacounties/" +
                 state + "?lastdays=" + days;
         final String TAG = Constants.COUNTY_HISTORICAL;
 
@@ -134,7 +134,6 @@ public class Requests {
      */
     public static void getStatePopulation(Context context, Location location, final VolleyStringCallback cb) {
         final String TAG = Constants.STATE_POPULATION;
-        Log.i(TAG, "getStatePopulation: FAILED LOCATION " + location); // TODO: Why does this say FAILED?
         StringBuilder url = new StringBuilder(
                 "https://api.census.gov/data/2019/pep/population?get=NAME,POP&for=state:")
                 .append(location.getStateFips()).append("&key=")
