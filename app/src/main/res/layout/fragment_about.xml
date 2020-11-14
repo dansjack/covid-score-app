@@ -191,17 +191,18 @@
 
             <TextView
                 android:id="@+id/versionLabel"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/dp12"
                 android:text="@string/versionLabel"
                 android:textSize="@dimen/sp24"
+                app:layout_constraintEnd_toStartOf="@+id/versionText"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/div1" />
 
             <TextView
                 android:id="@+id/aboutAppHeading"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/dp12"
                 android:text="@string/aboutAppHeading"
@@ -264,12 +265,13 @@
 
             <TextView
                 android:id="@+id/versionText"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="@dimen/dp0"
-                android:gravity="center"
                 android:padding="@dimen/dp12"
                 android:text="@string/versionText"
                 android:textSize="@dimen/sp24"
+                app:layout_constraintBottom_toTopOf="@+id/div2"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/appGithubLink"
                 app:layout_constraintTop_toBottomOf="@+id/aboutAppHeading" />
 
