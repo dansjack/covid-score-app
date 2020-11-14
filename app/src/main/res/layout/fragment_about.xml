@@ -28,13 +28,12 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <com.nsc.covidscore.ExpandableTextView
-                android:id="@+id/expand_tv"
+                android:id="@+id/riskExplanationTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@android:color/background_light"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:maxLines="3"
-                android:padding="8dp"
+                android:padding="@dimen/dp12"
                 android:text="@string/riskExplanationText"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -81,7 +80,7 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/expand_tv" />
+                app:layout_constraintTop_toBottomOf="@+id/riskExplanationTextView" />
 
             <TextView
                 android:id="@+id/censusText"
