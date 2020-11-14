@@ -102,12 +102,3 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
         return isConnected;
     }
 }
-
-    public void setConnectionStatus(boolean connected) {
-        isConnected = connected;
-    }
-
-    public boolean getConnectionStatus() {
-        return isConnected;
-    }
-}

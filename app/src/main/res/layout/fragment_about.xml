@@ -2,268 +2,289 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF">
 
-    <TextView
-        android:id="@+id/appTitleText"
-        android:layout_width="@dimen/dp0"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp24"
-        android:gravity="center"
-        android:text="@string/appTitle"
-        android:textSize="@dimen/sp36"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/versionLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/dp12"
-        android:text="@string/versionLabel"
-        android:textSize="@dimen/sp24"
-        app:layout_constraintBottom_toTopOf="@+id/div2"
-        app:layout_constraintStart_toStartOf="@+id/githubLabel" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/versionText"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/dp0"
-        android:gravity="center"
-        android:padding="@dimen/dp12"
-        android:text="@string/versionText"
-        android:textSize="@dimen/sp24"
-        app:layout_constraintBottom_toTopOf="@+id/div2"
-        app:layout_constraintStart_toEndOf="@+id/githubLabel"
-        app:layout_constraintTop_toBottomOf="@+id/aboutAppHeading" />
+            <TextView
+                android:id="@+id/appTitleText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/appTitle"
+                android:textSize="@dimen/sp36"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <View
-        android:id="@+id/div1"
-        android:layout_width="@dimen/dp0"
-        android:layout_height="@dimen/dp1"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintBottom_toTopOf="@+id/versionLabel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+            <com.nsc.covidscore.ExpandableTextView
+                android:id="@+id/expand_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@android:color/background_light"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:maxLines="3"
+                android:padding="8dp"
+                android:text="@string/riskExplanationText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/determineRiskHeading" />
 
-    <View
-        android:id="@+id/div2"
-        android:layout_width="@dimen/dp0"
-        android:layout_height="@dimen/dp1"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintBottom_toTopOf="@+id/githubLabel"
-        app:layout_constraintStart_toStartOf="parent" />
+            <TextView
+                android:id="@+id/censusAttributionText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dp12"
+                android:text="@string/censusAttributionText"
+                android:textSize="@dimen/sp14"
+                android:textStyle="italic"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/div6" />
 
-    <View
-        android:id="@+id/div3"
-        android:layout_width="@dimen/dp0"
-        android:layout_height="@dimen/dp1"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+            <View
+                android:id="@+id/div5"
+                android:layout_width="@dimen/dp0"
+                android:layout_height="@dimen/dp1"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/aboutPopulationLabel" />
 
-    <TextView
-        android:id="@+id/githubLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/dp12"
-        android:text="@string/githubLabel"
-        android:textSize="@dimen/sp24"
-        app:layout_constraintBottom_toTopOf="@+id/div3"
-        app:layout_constraintEnd_toStartOf="@+id/appGithubLink"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:layout_optimizationLevel="chains" />
+            <View
+                android:id="@+id/div2"
+                android:layout_width="@dimen/dp0"
+                android:layout_height="@dimen/dp1"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/versionLabel" />
 
-    <TextView
-        android:id="@+id/aboutText"
-        android:layout_width="@dimen/dp0"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:gravity="start|top"
-        android:padding="@dimen/dp12"
-        android:text="@string/aboutText"
-        android:textSize="@dimen/sp18"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appTitleText" />
+            <TextView
+                android:id="@+id/aboutDataHeading"
+                android:layout_width="@dimen/dp0"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="@dimen/dp12"
+                android:text="@string/aboutDataHeading"
+                android:textSize="@dimen/sp30"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/expand_tv" />
 
-    <TextView
-        android:id="@+id/aboutDataHeading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/dp12"
-        android:text="@string/aboutDataHeading"
-        android:textSize="@dimen/sp30"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/aboutText" />
+            <TextView
+                android:id="@+id/censusText"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp0"
+                android:gravity="center"
+                android:text="@string/censusText"
+                android:textSize="@dimen/sp18"
+                app:layout_constraintBottom_toTopOf="@+id/div5"
+                app:layout_constraintStart_toEndOf="@+id/aboutPopulationLabel"
+                app:layout_constraintTop_toBottomOf="@+id/div4" />
 
-    <TextView
-        android:id="@+id/aboutAppHeading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/dp12"
-        android:text="@string/aboutAppHeading"
-        android:textSize="@dimen/sp30"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/div1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+            <View
+                android:id="@+id/div1"
+                android:layout_width="@dimen/dp0"
+                android:layout_height="@dimen/dp1"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/aboutAppHeading" />
 
-    <TextView
-        android:id="@+id/censusAttributionText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/dp12"
-        android:text="@string/censusAttributionText"
-        android:textSize="@dimen/sp14"
-        android:textStyle="italic"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/div6" />
+            <TextView
+                android:id="@+id/aboutText"
+                android:layout_width="@dimen/dp0"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:gravity="start|top"
+                android:padding="@dimen/dp12"
+                android:text="@string/aboutText"
+                android:textSize="@dimen/sp18"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/appTitleText" />
 
-    <TextView
-        android:id="@+id/aboutPopulationLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/dp12"
-        android:text="@string/aboutPopulationLabel"
-        android:textSize="@dimen/sp18"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/aboutDataHeading" />
+            <TextView
+                android:id="@+id/aboutCovidLabel"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dp0"
+                android:gravity="center"
+                android:padding="@dimen/dp12"
+                android:text="@string/covid19Label"
+                android:textSize="@dimen/sp18"
+                app:layout_constraintBottom_toBottomOf="@+id/diseaseList"
+                app:layout_constraintEnd_toStartOf="@+id/diseaseText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/div5" />
 
-    <TextView
-        android:id="@+id/aboutCovidLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/dp0"
-        android:gravity="center"
-        android:padding="@dimen/dp12"
-        android:text="@string/covid19Label"
-        android:textSize="@dimen/sp18"
-        app:layout_constraintBottom_toTopOf="@+id/div6"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/aboutPopulationLabel" />
+            <View
+                android:id="@+id/div6"
+                android:layout_width="@dimen/dp0"
+                android:layout_height="@dimen/dp1"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/aboutCovidLabel" />
 
-    <View
-        android:id="@+id/div4"
-        android:layout_width="@dimen/dp0"
-        android:layout_height="@dimen/dp1"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/aboutDataHeading" />
+            <ImageButton
+                android:id="@+id/censusLink"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp0"
+                android:layout_marginVertical="@dimen/dp12"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:backgroundTint="@android:color/black"
+                android:contentDescription="@string/linkCensus"
+                android:paddingHorizontal="@dimen/dp12"
+                android:src="@drawable/ic_link"
+                app:layout_constraintStart_toEndOf="@+id/censusText"
+                app:layout_constraintTop_toBottomOf="@+id/aboutDataHeading" />
 
-    <View
-        android:id="@+id/div5"
-        android:layout_width="@dimen/dp0"
-        android:layout_height="@dimen/dp1"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/aboutPopulationLabel" />
+            <ImageButton
+                android:id="@+id/appGithubLink"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp0"
+                android:layout_marginVertical="@dimen/dp12"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/linkApp"
+                android:paddingHorizontal="@dimen/dp12"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_gh"
+                app:layout_constraintStart_toEndOf="@+id/githubLabel"
+                app:layout_constraintTop_toBottomOf="@+id/div2"
+                app:layout_optimizationLevel="chains" />
 
-    <TextView
-        android:id="@+id/censusText"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/dp0"
-        android:gravity="center"
-        android:text="@string/censusText"
-        android:textSize="@dimen/sp18"
-        app:layout_constraintBottom_toTopOf="@+id/diseaseText"
-        app:layout_constraintEnd_toStartOf="@+id/censusLink"
-        app:layout_constraintHorizontal_bias="0.1"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toEndOf="@+id/aboutPopulationLabel"
-        app:layout_constraintTop_toBottomOf="@+id/aboutDataHeading"
-        app:layout_constraintVertical_bias="0.0" />
+            <ImageButton
+                android:id="@+id/diseaseGithubLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/dp12"
+                android:layout_marginTop="36dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/linkDisease"
+                android:paddingHorizontal="@dimen/dp12"
+                android:src="@drawable/ic_gh"
+                app:layout_constraintStart_toEndOf="@+id/diseaseText"
+                app:layout_constraintTop_toTopOf="@+id/diseaseText" />
 
-    <View
-        android:id="@+id/div6"
-        android:layout_width="@dimen/dp0"
-        android:layout_height="@dimen/dp1"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/diseaseList" />
+            <TextView
+                android:id="@+id/diseaseList"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:paddingHorizontal="@dimen/dp12"
+                android:paddingBottom="12dp"
+                android:text="@string/aboutList"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/diseaseText"
+                app:layout_constraintTop_toBottomOf="@+id/diseaseText" />
 
-    <TextView
-        android:id="@+id/diseaseText"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/dp0"
-        android:foregroundGravity="center"
-        android:gravity="center_vertical"
-        android:paddingVertical="@dimen/dp12"
-        android:text="@string/diseaseText"
-        android:textSize="@dimen/sp18"
-        app:layout_constraintStart_toStartOf="@+id/censusText"
-        app:layout_constraintTop_toBottomOf="@+id/div5" />
+            <TextView
+                android:id="@+id/versionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dp12"
+                android:text="@string/versionLabel"
+                android:textSize="@dimen/sp24"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/div1" />
 
-    <ImageButton
-        android:id="@+id/appGithubLink"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/dp0"
-        android:layout_marginVertical="@dimen/dp12"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/linkApp"
-        android:paddingHorizontal="@dimen/dp12"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_gh"
-        app:layout_constraintBottom_toTopOf="@+id/div3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/githubLabel"
-        app:layout_constraintTop_toBottomOf="@+id/div2"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:layout_optimizationLevel="chains" />
+            <TextView
+                android:id="@+id/aboutAppHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dp12"
+                android:text="@string/aboutAppHeading"
+                android:textSize="@dimen/sp30"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/censusAttributionText" />
 
-    <ImageButton
-        android:id="@+id/censusLink"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/dp0"
-        android:layout_marginVertical="@dimen/dp12"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:backgroundTint="@android:color/black"
-        android:contentDescription="@string/linkCensus"
-        android:paddingHorizontal="@dimen/dp12"
-        android:src="@drawable/ic_link"
-        app:layout_constraintBottom_toTopOf="@+id/diseaseText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/censusText"
-        app:layout_constraintTop_toBottomOf="@+id/aboutDataHeading" />
+            <TextView
+                android:id="@+id/githubLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dp12"
+                android:text="@string/githubLabel"
+                android:textSize="@dimen/sp24"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/div2"
+                app:layout_optimizationLevel="chains" />
 
-    <ImageButton
-        android:id="@+id/diseaseGithubLink"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/dp12"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/linkDisease"
-        android:paddingHorizontal="@dimen/dp12"
-        android:src="@drawable/ic_gh"
-        app:layout_constraintBottom_toTopOf="@id/diseaseList"
-        app:layout_constraintStart_toEndOf="@+id/diseaseText"
-        app:layout_constraintTop_toTopOf="@+id/diseaseText" />
+            <TextView
+                android:id="@+id/aboutPopulationLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dp12"
+                android:text="@string/aboutPopulationLabel"
+                android:textSize="@dimen/sp18"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/aboutDataHeading" />
 
-    <TextView
-        android:id="@+id/diseaseList"
-        android:layout_width="@dimen/dp0"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/dp12"
-        android:paddingBottom="12dp"
-        android:text="@string/aboutList"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/diseaseText"
-        app:layout_constraintTop_toBottomOf="@+id/diseaseText" />
+            <TextView
+                android:id="@+id/diseaseText"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp0"
+                android:foregroundGravity="center"
+                android:gravity="center_vertical"
+                android:paddingVertical="@dimen/dp12"
+                android:text="@string/diseaseText"
+                android:textSize="@dimen/sp18"
+                app:layout_constraintStart_toStartOf="@+id/censusText"
+                app:layout_constraintTop_toBottomOf="@+id/div5" />
+
+            <View
+                android:id="@+id/div3"
+                android:layout_width="@dimen/dp0"
+                android:layout_height="@dimen/dp1"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/githubLabel" />
+
+            <View
+                android:id="@+id/div4"
+                android:layout_width="@dimen/dp0"
+                android:layout_height="@dimen/dp1"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/aboutDataHeading" />
+
+            <TextView
+                android:id="@+id/versionText"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp0"
+                android:gravity="center"
+                android:padding="@dimen/dp12"
+                android:text="@string/versionText"
+                android:textSize="@dimen/sp24"
+                app:layout_constraintStart_toStartOf="@+id/appGithubLink"
+                app:layout_constraintTop_toBottomOf="@+id/aboutAppHeading" />
+
+            <TextView
+                android:id="@+id/determineRiskHeading"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/determineRiskHeadingText"
+                android:textSize="@dimen/sp30"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/aboutText" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
