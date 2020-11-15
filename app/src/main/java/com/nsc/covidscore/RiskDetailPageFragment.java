@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -74,8 +73,6 @@ public class RiskDetailPageFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_risk_detail, container, false);
         super.onCreate(savedInstanceState);
-        Bundle bundle = getArguments();
-
         Log.d(TAG, "onCreateView invoked");
         return v;
     }

@@ -11,7 +11,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,21 +18,12 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nsc.covidscore.api.Requests;
-import com.nsc.covidscore.api.VolleyJsonCallback;
 import com.nsc.covidscore.room.CovidSnapshot;
 import com.nsc.covidscore.room.CovidSnapshotWithLocationViewModel;
 import com.nsc.covidscore.room.Location;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -97,24 +87,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
 
-        // If this is just to rerun APIs, do that immediately
-        Bundle bundle = getArguments();
-
-        if (bundle != null) {
-            Log.i(TAG, "onViewCreated: Bundle received from MainActivity");
-            if (bundle.containsKey(Constants.API_LOCATION)) {
-                Location locationFromRoom = (Location) bundle.get(Constants.API_LOCATION);
-                justForApiCalls = true;
-                selectedLocation = locationFromRoom;
-                mutableCovidSnapshot.observe(getViewLifecycleOwner(), covidSnapshot -> {
-                    if (covidSnapshot != null && covidSnapshot.hasFieldsSet()) {
-                        callback.onSubmitButtonClicked(mutableCovidSnapshot, locationFromRoom);
-                    }
-                });
-                vm.makeApiCalls(locationFromRoom);
-            }
-        }
-
         MainActivity main = (MainActivity) getActivity();
 
         loadingTextView = v.findViewById(R.id.loadingTextView);
@@ -146,24 +118,6 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
             }
         });
         Log.d(TAG, "onViewCreated invoked");
-    }
-
-    public void saveSnapshotToRoom(CovidSnapshot currentCovidSnapshot, Location currentLocation) {
-        if (currentCovidSnapshot != null && currentCovidSnapshot.hasFieldsSet()) {
-            // make sure to set LocationIdFK on Snapshot to current LocationIdPK
-            if (currentCovidSnapshot.getLocationId() == null || currentCovidSnapshot.getLocationId() == 0) {
-                if (currentCovidSnapshot.getLocationId() == null) {
-                    // TODO: set boolean?
-                }
-                currentCovidSnapshot.setLocationId(currentLocation != null ? currentLocation.getLocationId() : -1);
-            }
-            Calendar calendar = Calendar.getInstance();
-            currentCovidSnapshot.setLastUpdated(calendar);
-            vm.insertCovidSnapshot(currentCovidSnapshot);
-        } else {
-            Log.e(TAG, "Incomplete Snapshot: " + currentCovidSnapshot.toString());
-        }
-        Log.d(TAG, "saveSnapshotToRoom invoked");
     }
 
     @Override
