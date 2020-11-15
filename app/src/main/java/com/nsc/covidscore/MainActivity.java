@@ -118,12 +118,12 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
                 Log.e(TAG, "no saved CovidSnapshot");
                 openLocationSelectionFragment();
             } else if (vm.getConnectionStatus()) { // CovidSnapshot saved, with Internet
-//                Log.e(TAG, "saved CovidSnapshot exists, update w/ internet");
-//                Location savedLocation = vm.getMapOfLocationsById().get(lastSavedCovidSnapshot.getLocationId());
-//                if (savedLocation != null) {
-//                Log.i(TAG, "loadFragments: + " + savedLocation.toString());
-//                openNewRiskDetailPageFragment2(lastSavedCovidSnapshot, savedLocation);
-                // wait...
+                Log.e(TAG, "saved CovidSnapshot exists, update w/ internet");
+                Location savedLocation = vm.getMapOfLocationsById().get(lastSavedCovidSnapshot.getLocationId());
+                if (savedLocation != null) {
+                    Log.i(TAG, "loadFragments: + " + savedLocation.toString());
+                    openNewRiskDetailPageFragment2(lastSavedCovidSnapshot, savedLocation);
+                }
             } else { // CovidSnapshot saved, no internet
                 Log.e(TAG, "saved CovidSnapshot exists, no internet or saved this hour");
                 Toast.makeText(context, "No Internet Connection Available", Toast.LENGTH_LONG);
