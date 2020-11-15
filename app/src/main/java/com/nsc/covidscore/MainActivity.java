@@ -115,7 +115,7 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
             if (!lastSavedCovidSnapshot.hasFieldsSet()) { // No saved CovidSnapshot
                 Log.e(TAG, "no saved CovidSnapshot");
                 openLocationSelectionFragment();
-            } else if (vm.getConnectionStatus()) { // CovidSnapshot saved, with Internet
+            } else if (vm.getConnectionStatus() && !hasBeenUpdatedThisHour()) { // CovidSnapshot saved, with Internet
                 Log.e(TAG, "saved CovidSnapshot exists, update w/ internet");
                 Location savedLocation = vm.getMapOfLocationsById().get(lastSavedCovidSnapshot.getLocationId());
                 if (savedLocation != null) {
@@ -272,17 +272,17 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
         return bundle;
     }
 
-//    private boolean hasBeenUpdatedThisHour() {
-//        Calendar lastSaved = lastSavedCovidSnapshot.getLastUpdated();
-//        Calendar lastSavedHour = Calendar.getInstance();
-//        lastSavedHour.clear();
-//        lastSavedHour.set(lastSaved.get(Calendar.YEAR), lastSaved.get(Calendar.MONTH), lastSaved.get(Calendar.DAY_OF_MONTH));
-//        lastSavedHour.set(Calendar.HOUR_OF_DAY, lastSaved.get(Calendar.HOUR_OF_DAY));
-//        Calendar now = Calendar.getInstance();
-//        Calendar nowHour = Calendar.getInstance();
-//        nowHour.clear();
-//        nowHour.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
-//        nowHour.set(Calendar.HOUR_OF_DAY, now.get(Calendar.HOUR_OF_DAY));
-//        return !nowHour.equals(lastSavedHour);
-//    }
+    private boolean hasBeenUpdatedThisHour() {
+        Calendar lastSaved = lastSavedCovidSnapshot.getLastUpdated();
+        Calendar lastSavedHour = Calendar.getInstance();
+        lastSavedHour.clear();
+        lastSavedHour.set(lastSaved.get(Calendar.YEAR), lastSaved.get(Calendar.MONTH), lastSaved.get(Calendar.DAY_OF_MONTH));
+        lastSavedHour.set(Calendar.HOUR_OF_DAY, lastSaved.get(Calendar.HOUR_OF_DAY));
+        Calendar now = Calendar.getInstance();
+        Calendar nowHour = Calendar.getInstance();
+        nowHour.clear();
+        nowHour.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
+        nowHour.set(Calendar.HOUR_OF_DAY, now.get(Calendar.HOUR_OF_DAY));
+        return !nowHour.equals(lastSavedHour);
+    }
 }
