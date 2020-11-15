@@ -159,7 +159,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
 
                 // get counties
                 countyLocations = vm.getMapOfLocationsByState().get(stateSelected);
-                List<String> countyNamesInner = countyLocations.stream().map(Location::getCounty).sorted().collect(Collectors.toList());
+                List<String> countyNamesInner = countyLocations.stream()
+                        .map(Location::getCounty).sorted().collect(Collectors.toList());
                 countyNamesInner.add(0, Constants.SELECT_COUNTY);
 
                 // set county spinner
