@@ -221,4 +221,3 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
         });
     }
 }
-

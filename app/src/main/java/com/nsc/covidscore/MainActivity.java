@@ -130,6 +130,13 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
         }
     }
 
+    public void openAboutFragment() {
+        AboutFragment aboutFragment = new AboutFragment();
+
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragContainer, aboutFragment, Constants.FRAGMENT_ABOUT).commit();
+    }
+
     public void locationSelectToRiskFragment() {
         // Used when navigating from LocationManualSelectFragment to RiskDetailPageFragment
         RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
