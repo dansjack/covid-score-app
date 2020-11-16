@@ -7,9 +7,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.net.ConnectivityManager;
 import android.net.Network;
-import android.net.NetworkRequest;
-import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,8 +27,10 @@ import com.nsc.covidscore.room.CovidSnapshotWithLocationViewModel;
 import com.nsc.covidscore.room.Location;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements RiskDetailPageFragment.OnSelectLocationButtonListener, LocationManualSelectionFragment.OnSubmitButtonListener {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -53,11 +52,8 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
     // Make sure to be using androidx.appcompat.app.ActionBarDrawerToggle version.
     private ActionBarDrawerToggle drawerToggle;
 
-    private MutableLiveData<List<CovidSnapshot>> lastSavedCovidLocationsListSnapshot = new MutableLiveData<List<CovidSnapshot>>();
-    private HashMap<Integer, Location> mapOfLocationsById = new HashMap<Integer, Location>();
-    private List<Location> locationIdsList;
-    private Location locationDrawerItem;
-    private int locationIdDrawerItem;
+    private List<Location> locationsNavList = new ArrayList<>();
+    private List<CovidSnapshot> covidSnapshotNavList = new ArrayList<>();
     private ConnectivityManager cm;
 
     @Override
@@ -101,10 +97,7 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
         // Access to Room Database/ Get the ViewModel.
         vm = new ViewModelProvider(this).get(CovidSnapshotWithLocationViewModel.class);
 
-        //TODO: get map of Locations -- done
-        mapOfLocationsById = vm.getMapOfLocationsById();
-
-        // This variable will hold latest copy of Covid Snapshot
+        // This will hold latest copy of Covid Snapshot
         vm.getLatestCovidSnapshot().observe(this, covidSnapshotFromDb -> {
             if (covidSnapshotFromDb != null) {
                 lastSavedCovidSnapshot = covidSnapshotFromDb;
@@ -117,6 +110,23 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
             if (firstOpen) { // Don't do this every time Room is updated
                 loadFragments(savedInstanceState);
                 firstOpen = false;
+            }
+        });
+
+        // This will hold latest copy of last 3 locationIds
+        vm.getLatestLocationsLatestCovidSnapshots().observe(this, snapshotListFromDb -> {
+            if (snapshotListFromDb != null && snapshotListFromDb.size() <= 3) {
+                locationsNavList.clear();
+                covidSnapshotNavList.clear();
+                for (int i = 0; i < snapshotListFromDb.size(); i++) {
+                    Location recentLocation = vm.getMapOfLocationsById().get(snapshotListFromDb.get(i).getLocationId());
+                    locationsNavList.add(recentLocation);
+
+                    covidSnapshotNavList.add(snapshotListFromDb.get(i));
+
+                    nvDrawer.getMenu().getItem(i).setVisible(true);
+                    nvDrawer.getMenu().getItem(i).setTitle(recentLocation.toApiFormat());
+                }
             }
         });
 
@@ -135,24 +145,6 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
                 isConnected = false;
             }
         });
-
-        // //TODO: Set Observer; access location list via vm; store in lastSavedCovidLocationsListSnapshot --done
-        //     vm.getLatestLocationsList().observe(this, covidLocationListSnapshotFromDb -> {
-        //         if (covidLocationListSnapshotFromDb != null) {
-        //             lastSavedCovidLocationsListSnapshot =
-        //                     (MutableLiveData<List<CovidSnapshot>>) covidLocationListSnapshotFromDb;
-        //             //TODO: get list of (up to) 3 last saved locationIds; taken from covidLocationListSnapshotFromDb
-
-        //             Log.e(TAG, "Most recently saved locations list snapshot: " +
-        //                     lastSavedCovidLocationsListSnapshot.toString());
-
-        //         } else {
-        //             Log.d(TAG, "Observer returned null CovidSnapshot location list");
-        //         }
-        //     }
-        // );
-
-
 
         requestManager = RequestSingleton.getInstance(this.getApplicationContext());
         queue = requestManager.getRequestQueue();
@@ -175,38 +167,38 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
             if (!lastSavedCovidSnapshot.hasFieldsSet()) { // No saved CovidSnapshot
                 Log.e(TAG, "no saved CovidSnapshot");
                 openLocationSelectionFragment();
-            } else if (vm.getConnectionStatus() == true && !hasBeenUpdatedThisHour()) { // CovidSnapshot saved, with Internet
+            } else if (vm.getConnectionStatus() == true && (covidSnapshotNavList.isEmpty() || !hasBeenUpdatedThisHour(covidSnapshotNavList.get(0)))) { // CovidSnapshot saved, with Internet
                 Log.e(TAG, "saved CovidSnapshot exists, update w/ internet");
                 rerunApis(vm.getMapOfLocationsById().get(lastSavedCovidSnapshot.getLocationId()));
             } else { // CovidSnapshot saved, no internet
                 Log.e(TAG, "saved CovidSnapshot exists, no internet or saved this hour");
                 Toast.makeText(context, "No Internet Connection Available", Toast.LENGTH_LONG);
-                openRiskDetailPageFragment();
+                openRiskDetailPageFragment(lastSavedCovidSnapshot, lastSavedLocation);
             }
         }
     }
 
-    public void openRiskDetailPageFragment() {
+    public void openRiskDetailPageFragment(CovidSnapshot snapshot, Location location) {
         // Create a new Risk Detail Fragment to be placed in the activity layout
         RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
 
         HashMap<Integer, Double> riskMap = RiskCalculation.getRiskCalculationsMap(
-                lastSavedCovidSnapshot.getCountyActiveCount(),
-                lastSavedCovidSnapshot.getCountyTotalPopulation(),
+                snapshot.getCountyActiveCount(),
+                snapshot.getCountyTotalPopulation(),
                 Constants.GROUP_SIZES);
 
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.CURRENT_LOCATION, lastSavedLocation.getCounty() + ", " + lastSavedLocation.getState());
-        bundle.putString(Constants.ACTIVE_COUNTY, lastSavedCovidSnapshot.getCountyActiveCount().toString());
-        bundle.putString(Constants.ACTIVE_STATE, lastSavedCovidSnapshot.getStateActiveCount().toString());
-        bundle.putString(Constants.ACTIVE_COUNTRY, lastSavedCovidSnapshot.getCountryActiveCount().toString());
-        bundle.putString(Constants.TOTAL_COUNTY, lastSavedCovidSnapshot.getCountyTotalPopulation().toString());
-        bundle.putString(Constants.TOTAL_STATE, lastSavedCovidSnapshot.getStateTotalPopulation().toString());
-        bundle.putString(Constants.TOTAL_COUNTRY, lastSavedCovidSnapshot.getCountryTotalPopulation().toString());
+        bundle.putString(Constants.CURRENT_LOCATION, location.getCounty() + ", " + location.getState());
+        bundle.putString(Constants.ACTIVE_COUNTY, snapshot.getCountyActiveCount().toString());
+        bundle.putString(Constants.ACTIVE_STATE, snapshot.getStateActiveCount().toString());
+        bundle.putString(Constants.ACTIVE_COUNTRY, snapshot.getCountryActiveCount().toString());
+        bundle.putString(Constants.TOTAL_COUNTY, snapshot.getCountyTotalPopulation().toString());
+        bundle.putString(Constants.TOTAL_STATE, snapshot.getStateTotalPopulation().toString());
+        bundle.putString(Constants.TOTAL_COUNTRY, snapshot.getCountryTotalPopulation().toString());
         bundle.putSerializable(Constants.RISK_MAP,riskMap);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        bundle.putString(Constants.LAST_UPDATED, sdf.format(lastSavedCovidSnapshot.getLastUpdated().getTime()));
+        bundle.putString(Constants.LAST_UPDATED, sdf.format(snapshot.getLastUpdated().getTime()));
 
         // In case this activity was started with special instructions from an
         // Intent, pass the Intent's extras to the fragment as arguments
@@ -222,7 +214,10 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
 
         LocationManualSelectionFragment lmsFragment = (LocationManualSelectionFragment) getSupportFragmentManager().findFragmentByTag(Constants.FRAGMENT_LMSF);
         if (lmsFragment != null) { // User has manually selected location already
-            lmsFragment.saveSnapshotToRoom(mcs.getValue(), selectedLocation);
+            CovidSnapshot snapshot = mcs.getValue();
+            if (!hasBeenUpdatedThisHour(snapshot)) {
+                lmsFragment.saveSnapshotToRoom(snapshot, selectedLocation);
+            }
         }
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -284,18 +279,7 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
     }
 
 
-
-
-
 //TODO: write method that takes list of locationIds and locationList snapshot and produces a Location and a Snapshot
-
-
-
-
-
-
-
-
 
 //TODO: write method which takes getLatestLocations and prints them as drawerItems
 //TODO: write method which takes a getLatestLocations drawerItem selection and
@@ -331,17 +315,34 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
     public void selectDrawerItem(MenuItem menuItem) {
         // Create a new fragment and specify the fragment to show based on nav item clicked
         Fragment fragment = null;
-        Class fragmentClass;
+        Class fragmentClass = null;
         switch(menuItem.getItemId()) {
             case R.id.nav_location_fragment_1:
-                //TODO: if(list of
-                fragmentClass = LocationManualSelectionFragment.class;
+                if (locationsNavList.size() >= 1 && covidSnapshotNavList.size() >= 1) {
+                    if (hasBeenUpdatedThisHour(covidSnapshotNavList.get(0))) {
+                        openRiskDetailPageFragment(covidSnapshotNavList.get(0), locationsNavList.get(0));
+                    } else {
+                        rerunApis(locationsNavList.get(0));
+                    }
+                }
                 break;
             case R.id.nav_location_fragment_2:
-                fragmentClass = LocationManualSelectionFragment.class;
+                if (locationsNavList.size() >= 2 && covidSnapshotNavList.size() >= 2) {
+                    if (hasBeenUpdatedThisHour(covidSnapshotNavList.get(1))) {
+                        openRiskDetailPageFragment(covidSnapshotNavList.get(1), locationsNavList.get(1));
+                    } else {
+                        rerunApis(locationsNavList.get(1));
+                    }
+                }
                 break;
             case R.id.nav_location_fragment_3:
-                fragmentClass = LocationManualSelectionFragment.class;
+                if (locationsNavList.size() >= 3 && covidSnapshotNavList.size() >= 3) {
+                    if (hasBeenUpdatedThisHour(covidSnapshotNavList.get(2))) {
+                        openRiskDetailPageFragment(covidSnapshotNavList.get(2), locationsNavList.get(2));
+                    } else {
+                        rerunApis(locationsNavList.get(2));
+                    }
+                }
                 break;
             case R.id.nav_location_settings_fragment:
                 fragmentClass = LocationSettingsPageFragment.class;
@@ -351,44 +352,29 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
         }
         try {
             fragment = (Fragment) fragmentClass.newInstance();
+
+            // Insert the fragment by replacing any existing fragment
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragContainer, fragment).commit();
+        } catch(NullPointerException e) {
+            // already handled new fragment
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        // Insert the fragment by replacing any existing fragment
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragContainer, fragment).commit();
-
         // Highlight the selected item has been done by NavigationView
         menuItem.setChecked(true);
-        // Set action bar title
-        setTitle(menuItem.getTitle());
+        // Set action bar title - This only triggers when navigating using the drawer - elsewise the title won't change
+        // setTitle(menuItem.getTitle());
         // Close the navigation drawer
         mDrawer.closeDrawers();
     }
+
     private ActionBarDrawerToggle setupDrawerToggle() {
         // NOTE: Make sure you pass in a valid toolbar reference.  ActionBarDrawToggle() does not
         // require it but won't render the hamburger icon without it.
         return new ActionBarDrawerToggle(this, mDrawer, toolbar,
                 R.string.drawer_open,  R.string.drawer_close);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     // `onPostCreate` called when activity start-up is complete after `onStart()`
     // NOTE 1: Make sure to override the method with only a single `Bundle` argument
@@ -446,7 +432,6 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
         if (tLmsf != null && tLmsf.isVisible()) {
             LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
             Bundle bundle = new Bundle();
-//            bundle.putSerializable(Constants.LOCATIONS_MAP_BY_STATE, mapOfLocationsByState);
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
@@ -483,8 +468,14 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
         openNewRiskDetailPageFragment(mcs, selectedLocation);
     }
 
-    private boolean hasBeenUpdatedThisHour() {
-        Calendar lastSaved = lastSavedCovidSnapshot.getLastUpdated();
+    /**
+     * Compare most recently saved CovidSnapshot to current time - if the snapshot is more than an hour old, and
+     * the phone has connectivity, we change behavior
+     * @return true if the CovidSnapshot is recent within the hour, false otherwise
+     * @param covidSnapshot
+     */
+    private boolean hasBeenUpdatedThisHour(CovidSnapshot covidSnapshot) {
+        Calendar lastSaved = covidSnapshot.getLastUpdated();
         Calendar lastSavedHour = Calendar.getInstance();
         lastSavedHour.clear();
         lastSavedHour.set(lastSaved.get(Calendar.YEAR), lastSaved.get(Calendar.MONTH), lastSaved.get(Calendar.DAY_OF_MONTH));
