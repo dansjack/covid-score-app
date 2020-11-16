@@ -139,9 +139,17 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
         // Create a new Risk Detail Fragment to be placed in the activity layout
         RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
 
-        HashMap<Integer, Double> riskMap = RiskCalculation.getRiskCalculationsMap(
+        HashMap<Integer, Double> countyRiskMap = RiskCalculation.getRiskCalculationsMap(
                 lastSavedCovidSnapshot.getCountyActiveCount(),
                 lastSavedCovidSnapshot.getCountyTotalPopulation(),
+                Constants.GROUP_SIZES);
+        HashMap<Integer, Double> stateRiskMap = RiskCalculation.getRiskCalculationsMap(
+                lastSavedCovidSnapshot.getStateActiveCount(),
+                lastSavedCovidSnapshot.getStateTotalPopulation(),
+                Constants.GROUP_SIZES);
+        HashMap<Integer, Double> countryRiskMap = RiskCalculation.getRiskCalculationsMap(
+                lastSavedCovidSnapshot.getCountryActiveCount(),
+                lastSavedCovidSnapshot.getCountryTotalPopulation(),
                 Constants.GROUP_SIZES);
 
         Bundle bundle = new Bundle();
@@ -152,7 +160,9 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
         bundle.putString(Constants.TOTAL_COUNTY, lastSavedCovidSnapshot.getCountyTotalPopulation().toString());
         bundle.putString(Constants.TOTAL_STATE, lastSavedCovidSnapshot.getStateTotalPopulation().toString());
         bundle.putString(Constants.TOTAL_COUNTRY, lastSavedCovidSnapshot.getCountryTotalPopulation().toString());
-        bundle.putSerializable(Constants.RISK_MAP,riskMap);
+        bundle.putSerializable(Constants.COUNTY_RISK_MAP, countyRiskMap);
+        bundle.putSerializable(Constants.STATE_RISK_MAP, stateRiskMap);
+        bundle.putSerializable(Constants.COUNTRY_RISK_MAP, countryRiskMap);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         bundle.putString(Constants.LAST_UPDATED, sdf.format(lastSavedCovidSnapshot.getLastUpdated().getTime()));
@@ -178,11 +188,19 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
         RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
         CovidSnapshot snapshot = mcs.getValue();
 
-        HashMap<Integer, Double> riskMap = RiskCalculation.getRiskCalculationsMap(
-                snapshot.getCountyActiveCount(),
-                snapshot.getCountyTotalPopulation(),
+        HashMap<Integer, Double> countyRiskMap = RiskCalculation.getRiskCalculationsMap(
+                lastSavedCovidSnapshot.getCountyActiveCount(),
+                lastSavedCovidSnapshot.getCountyTotalPopulation(),
                 Constants.GROUP_SIZES);
-        Log.i(TAG, "onViewCreated: riskMap" + riskMap.toString());
+        HashMap<Integer, Double> stateRiskMap = RiskCalculation.getRiskCalculationsMap(
+                lastSavedCovidSnapshot.getStateActiveCount(),
+                lastSavedCovidSnapshot.getStateTotalPopulation(),
+                Constants.GROUP_SIZES);
+        HashMap<Integer, Double> countryRiskMap = RiskCalculation.getRiskCalculationsMap(
+                lastSavedCovidSnapshot.getCountryActiveCount(),
+                lastSavedCovidSnapshot.getCountryTotalPopulation(),
+                Constants.GROUP_SIZES);
+        Log.i(TAG, "onViewCreated: countyRiskMap" + countyRiskMap.toString());
 
         Bundle bundle = new Bundle();
         StringBuilder currentLocationSB = new StringBuilder(selectedLocation.getCounty())
@@ -194,7 +212,9 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
         bundle.putString(Constants.TOTAL_COUNTY, snapshot.getCountyTotalPopulation().toString());
         bundle.putString(Constants.TOTAL_STATE, snapshot.getStateTotalPopulation().toString());
         bundle.putString(Constants.TOTAL_COUNTRY, snapshot.getCountryTotalPopulation().toString());
-        bundle.putSerializable(Constants.RISK_MAP,riskMap);
+        bundle.putSerializable(Constants.COUNTY_RISK_MAP, countyRiskMap);
+        bundle.putSerializable(Constants.STATE_RISK_MAP, stateRiskMap);
+        bundle.putSerializable(Constants.COUNTRY_RISK_MAP, countryRiskMap);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         bundle.putString(Constants.LAST_UPDATED, sdf.format(lastSavedCovidSnapshot.getLastUpdated().getTime()));
         riskDetailPageFragment.setArguments(bundle);

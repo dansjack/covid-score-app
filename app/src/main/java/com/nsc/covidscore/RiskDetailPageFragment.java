@@ -36,7 +36,9 @@ public class RiskDetailPageFragment extends Fragment {
     private String totalCounty;
     private String totalState;
     private String totalCountry;
-    private HashMap<Integer, Double> riskMap;
+    private HashMap<Integer, Double> countyRiskMap;
+    private HashMap<Integer, Double> stateRiskMap;
+    private HashMap<Integer, Double> countryRiskMap;
     private String lastUpdated;
 
     private TextView currentLocationV;
@@ -137,7 +139,9 @@ public class RiskDetailPageFragment extends Fragment {
             totalState = bundle.getString(Constants.TOTAL_STATE);
             totalCountry = bundle.getString(Constants.TOTAL_COUNTRY);
 
-            riskMap = (HashMap<Integer, Double>) bundle.getSerializable(Constants.RISK_MAP);
+            countyRiskMap = (HashMap<Integer, Double>) bundle.getSerializable(Constants.COUNTY_RISK_MAP);
+            stateRiskMap = (HashMap<Integer, Double>) bundle.getSerializable(Constants.STATE_RISK_MAP);
+            countryRiskMap = (HashMap<Integer, Double>) bundle.getSerializable(Constants.COUNTRY_RISK_MAP);
 
             StringBuilder lastUpdatedSB = new StringBuilder(Constants.UPDATED)
                     .append(bundle.getString(Constants.LAST_UPDATED));
@@ -159,52 +163,84 @@ public class RiskDetailPageFragment extends Fragment {
             labelRiskGroup4.setText(String.format(res.getString(R.string.group), groupSizesArray[3]));
             labelRiskGroup5.setText(String.format(res.getString(R.string.group), groupSizesArray[4]));
 
-            riskGroup1.setText(String.format(res.getString(R.string.risk), riskMap.get(Constants.GROUP_SIZES[0])));
-            riskGroup2.setText(String.format(res.getString(R.string.risk), riskMap.get(Constants.GROUP_SIZES[1])));
-            riskGroup3.setText(String.format(res.getString(R.string.risk), riskMap.get(Constants.GROUP_SIZES[2])));
-            riskGroup4.setText(String.format(res.getString(R.string.risk), riskMap.get(Constants.GROUP_SIZES[3])));
-            riskGroup5.setText(String.format(res.getString(R.string.risk), riskMap.get(Constants.GROUP_SIZES[4])));
+            riskGroup1.setText(String.format(res.getString(R.string.risk), countyRiskMap.get(Constants.GROUP_SIZES[0])));
+            riskGroup2.setText(String.format(res.getString(R.string.risk), countyRiskMap.get(Constants.GROUP_SIZES[1])));
+            riskGroup3.setText(String.format(res.getString(R.string.risk), countyRiskMap.get(Constants.GROUP_SIZES[2])));
+            riskGroup4.setText(String.format(res.getString(R.string.risk), countyRiskMap.get(Constants.GROUP_SIZES[3])));
+            riskGroup5.setText(String.format(res.getString(R.string.risk), countyRiskMap.get(Constants.GROUP_SIZES[4])));
 
             lastUpdatedV.setText(lastUpdated);
 
             Log.i(TAG, "onCreateView: Bundle received from LocationManualSelectionFragment");
         }
 
-        // TODO: CHECK THIS
-
-        //Draws graph for risks vs. group size relationship
         riskTrendChart = v.findViewById(R.id.lineGraph);
-        LineDataSet riskDataSet = new LineDataSet(getCountyEntryList(),"Risk vs. Group size");
-//        ArrayList<ILineDataSet> riskTrendDataSet = new ArrayList<>();
-//        riskTrendDataSet.add(riskDataSet);
+        setRiskChart();
 
-        riskDataSet.setCircleColor(R.color.black_overlay);
-        riskDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
-        riskDataSet.setLineWidth(5);
-        riskDataSet.setColor(R.color.colorAccent);
+    }
 
-        LineData riskDataLine = new LineData(riskDataSet);
-        riskDataLine.setValueTextSize(R.dimen.std_text_size);
+    private void setRiskChart() {
+        //Draws graph for risks vs. group size relationship
+        LineDataSet countyRiskDataSet = new LineDataSet(getCountyEntryList(),"County");
+        LineDataSet stateRiskDataSet = new LineDataSet(getStateEntryList(), "State");
+        LineDataSet countryRiskDataSet = new LineDataSet(getCountryEntryList(), "Country");
+
+        countyRiskDataSet.setCircleColor(R.color.black_overlay);
+        countyRiskDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+        countyRiskDataSet.setLineWidth(5);
+        countyRiskDataSet.setColor(Color.rgb(93, 211, 158));
+        stateRiskDataSet.setCircleColor(R.color.black_overlay);
+        stateRiskDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+        stateRiskDataSet.setLineWidth(5);
+        stateRiskDataSet.setColor(Color.rgb(52, 138, 167));
+        countryRiskDataSet.setCircleColor(R.color.black_overlay);
+        countryRiskDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+        countryRiskDataSet.setLineWidth(5);
+        countryRiskDataSet.setColor(Color.rgb(188, 231, 132));
+
+        ArrayList<ILineDataSet> riskLineSet = new ArrayList<>();
+        riskLineSet.add(countyRiskDataSet);
+        riskLineSet.add(stateRiskDataSet);
+        riskLineSet.add(countryRiskDataSet);
 
         setAxes();
-        riskTrendChart.setData(riskDataLine);
+        riskTrendChart.setData(new LineData(riskLineSet));
         riskTrendChart.getDescription().setEnabled(true);
         Description description = new Description();
-        description.setText("Group Size vs. Risk at your location");
-        description.setTextSize(30);
+//        description.setText("County Risk");
+        description.setTextSize(50);
         description.setPosition(0f,0f);
         riskTrendChart.setDescription(description);
         riskTrendChart.setPinchZoom(true);
         riskTrendChart.invalidate();
-
     }
 
-    // TODO: CHECK
     private ArrayList<Entry> getCountyEntryList()
     {
         ArrayList<Entry> riskVals = new ArrayList<>();
+        riskVals.add(new Entry(0f, 0f));
         for (int i = 0; i < groupSizesArray.length; i++) {
-            riskVals.add(new Entry((float) Constants.GROUP_SIZES[i], riskMap.get(Constants.GROUP_SIZES[i]).floatValue()));
+            riskVals.add(new Entry((float) Constants.GROUP_SIZES[i], countyRiskMap.get(Constants.GROUP_SIZES[i]).floatValue()));
+        }
+        return riskVals;
+    };
+
+    private ArrayList<Entry> getStateEntryList()
+    {
+        ArrayList<Entry> riskVals = new ArrayList<>();
+        riskVals.add(new Entry(0f, 0f));
+        for (int i = 0; i < groupSizesArray.length; i++) {
+            riskVals.add(new Entry((float) Constants.GROUP_SIZES[i], stateRiskMap.get(Constants.GROUP_SIZES[i]).floatValue()));
+        }
+        return riskVals;
+    };
+
+    private ArrayList<Entry> getCountryEntryList()
+    {
+        ArrayList<Entry> riskVals = new ArrayList<>();
+        riskVals.add(new Entry(0f, 0f));
+        for (int i = 0; i < groupSizesArray.length; i++) {
+            riskVals.add(new Entry((float) Constants.GROUP_SIZES[i], countryRiskMap.get(Constants.GROUP_SIZES[i]).floatValue()));
         }
         return riskVals;
     };
@@ -214,13 +250,13 @@ public class RiskDetailPageFragment extends Fragment {
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setAxisMinimum(0);
         xAxis.setAxisMaximum(Constants.GROUP_SIZES[Constants.GROUP_SIZES.length - 1] + 10);
-        xAxis.setTextSize(10);
-        xAxis.setGridColor(R.color.colorAccentDark);
+        xAxis.setTextSize(18);
+//        xAxis.setGridColor(R.color.colorPrimary);
         YAxis yAxis = riskTrendChart.getAxisLeft();
         yAxis.setAxisMinimum(0);
         yAxis.setAxisMaximum(100);
-        yAxis.setTextSize(10);
-        yAxis.setGridColor(R.color.colorAccentDark);
+        yAxis.setTextSize(18);
+//        yAxis.setGridColor(R.color.colorPrimary);
         YAxis rightAxis = riskTrendChart.getAxisRight();
         rightAxis.setDrawAxisLine(false);
         rightAxis.setDrawGridLines(false);
