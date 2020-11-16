@@ -61,25 +61,25 @@ public class Requests {
      * @param days how many days back to retrieve data. Get all available data with "all"
      * @param cb callback class (see VolleyJsonCallback interface)
      */
-    public static void getCountyHistorical(
-            Context context, String location, String days, final VolleyJsonCallback cb) {
-        location = location.toLowerCase();
-        final String county = location.split(",")[0];
-        final String state = location.split(",")[1];
-        String url = "https://corona.lmao.ninja/v2/historical/usacounties/" +
-                state + "?lastdays=" + days;
-        final String TAG = Constants.COUNTY_HISTORICAL;
-
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                response -> APIHelpers.handleJsonResponse(
-                        Constants.COUNTY_HISTORICAL, response, county, state, cb),
-                error -> Log.d(TAG, "onErrorResponse: " + error));
-        stringRequest.setTag(TAG);
-
-        // Add the request to the RequestQueue.
-        RequestSingleton.getInstance(context.getApplicationContext()).addToRequestQueue(stringRequest);
-    }
+//    public static void getCountyHistorical(
+//            Context context, String location, String days, final VolleyJsonCallback cb) {
+//        location = location.toLowerCase();
+//        final String county = location.split(",")[0];
+//        final String state = location.split(",")[1];
+//        String url = "https://disease.sh/v3/covid-19/historical/usacounties/" +
+//                state + "?lastdays=" + days;
+//        final String TAG = Constants.COUNTY_HISTORICAL;
+//
+//
+//        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+//                response -> APIHelpers.handleJsonResponse(
+//                        Constants.COUNTY_HISTORICAL, response, county, state, cb),
+//                error -> Log.d(TAG, "onErrorResponse: " + error));
+//        stringRequest.setTag(TAG);
+//
+//        // Add the request to the RequestQueue.
+//        RequestSingleton.getInstance(context.getApplicationContext()).addToRequestQueue(stringRequest);
+//    }
 
     /**
      * <p>Returns the last x days of COVID stats for the U.S. within a callback</p>
@@ -134,7 +134,6 @@ public class Requests {
      */
     public static void getStatePopulation(Context context, Location location, final VolleyStringCallback cb) {
         final String TAG = Constants.STATE_POPULATION;
-        Log.i(TAG, "getStatePopulation: FAILED LOCATION " + location);
         StringBuilder url = new StringBuilder(
                 "https://api.census.gov/data/2019/pep/population?get=NAME,POP&for=state:")
                 .append(location.getStateFips()).append("&key=")

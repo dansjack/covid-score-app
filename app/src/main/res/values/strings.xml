@@ -6,27 +6,10 @@
     <string name="county">Select county</string>
     <string name="submit_btn">Submit</string>
 
-
-<!--TODO: delete after database connection-->
-    <string-array name="states_array">
-        <item>Washington</item>
-    </string-array>
-    <string-array name="counties_array">
-        <item>King</item>
-        <item>Snohomish</item>
-        <item>Pierce</item>
-        <item>Kitsap</item>
-        <item>Chelan</item>
-        <item>Skagit</item>
-        <item>San Juan</item>
-    </string-array>
-    <string name="current_location">Current Location:</string>
+    <string name="current_location">Current Location:&#160;&#160;</string>
     <string name="active_county">Active Cases in County:</string>
     <string name="active_state">Active Cases in State:</string>
     <string name="active_country">Active Cases in US:</string>
-
-</resources>
-
     <string name="pick_state_county">Please pick a state and county</string>
     <string name="loading_data">Loading COVID data…</string>
     <string name="select_location">Select Location</string>
@@ -38,7 +21,36 @@
     <string name="populations">Populations</string>
     <string name="risk_assessment">Risk Assessment</string>
     <string name="group_size">Group Size</string>
-    <string name="risk_of_being_exposed_to_covid">Risk of being exposed to COVID</string>
+    <string name="risk_of_being_exposed_to_covid">Risk of COVID exposure</string>
+    <string name="aboutText">CovidScore calculates your risk of being exposed to COVID-19 within a
+        U.S. county.</string>
+    <string name="riskExplanationText">To calculate the risk of being exposed to COVID, we need
+        to start with the probability that any one person has COVID, which is a simple division of
+        active cases by total population.\n\nWe can interpret the complement of this probability to
+        be the probability that any one person doesn\'t have COVID.\n\nWe then multiply this by
+        itself for as many people as there are in the group, e.g. if the probability of 1 person not
+        having COVID is 0.5, then the probability of 2 people would be 0.5*0.5 = 0.25, for 3 people
+        it would be 0.5*0.5*0.5 = 0.125, and so on.\n\nThe resulting value can be interpreted as the
+        probability that nobody in the group has COVID.\n\nSo the complement of this can then be
+        interpreted as the probability that someone in the group has COVID, and this is the value
+        that we display to you.</string>
+    <string name="aboutDataHeading">Data Sources</string>
+    <string name="githubLabel">Check us out on GitHub</string>
+    <string name="versionText">0.3.0</string>
+    <string name="versionLabel">Version</string>
+    <string name="appTitle">CovidScore</string>
+    <string name="censusAttributionText">Note: This app uses the Census Bureau Data API but is not endorsed or certified by the Census Bureau.</string>
+    <string name="aboutAppHeading">About The App</string>
+    <string name="aboutPopulationLabel">Population</string>
+    <string name="covid19Label">COVID19</string>
+    <string name="censusText">U.S. Census Bureau</string>
+    <string name="diseaseText">Disease.sh</string>
+    <string name="linkApp">Link to app GitHub</string>
+    <string name="linkCensus">Link to U.S. Census Bureau</string>
+    <string name="linkDisease">Link to Disease.sh\'s GitHub</string>
+    <string name="no_internet">No Internet Connection Available</string>
+    <string name="aboutList">&#8226; State data from Worldometer\n&#8226; All other data from Johns Hopkins University</string>
+    <string name="determineRiskHeadingText">Determining Risk</string>
 
     <string-array name="group_sizes">
         <item>10</item>
@@ -48,4 +60,3 @@
         <item>200</item>
     </string-array>
 </resources>
-
