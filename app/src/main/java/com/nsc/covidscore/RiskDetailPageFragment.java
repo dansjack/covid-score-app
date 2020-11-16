@@ -213,7 +213,6 @@ public class RiskDetailPageFragment extends Fragment {
         setAxes();
         riskTrendChart.setData(new LineData(riskLineSet));
         riskTrendChart.getDescription().setEnabled(true);
-        riskTrendChart.setDescription(description);
         riskTrendChart.setPinchZoom(true);
         riskTrendChart.invalidate();
     }
