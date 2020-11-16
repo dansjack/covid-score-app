@@ -1,7 +1,11 @@
 package com.nsc.covidscore;
 
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -86,7 +90,6 @@ public class RiskDetailPageFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_risk_detail, container, false);
         super.onCreate(savedInstanceState);
-
         Log.d(TAG, "onCreateView invoked");
         return v;
     }
@@ -95,7 +98,7 @@ public class RiskDetailPageFragment extends Fragment {
     public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
 
-        currentLocationV = v.findViewById(R.id.currentLocation);
+        currentLocationV = v.findViewById(R.id.labelCurrentLocation);
 
         activeCountyV = v.findViewById(R.id.activeCounty);
         activeStateV = v.findViewById(R.id.activeState);
@@ -146,8 +149,12 @@ public class RiskDetailPageFragment extends Fragment {
             StringBuilder lastUpdatedSB = new StringBuilder(Constants.UPDATED)
                     .append(bundle.getString(Constants.LAST_UPDATED));
             lastUpdated = lastUpdatedSB.toString();
+            String locationString = getResources().getString(R.string.current_location) + currentLocation;
+            SpannableString locationStringSpannable = new SpannableString(locationString);
+            StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
+            locationStringSpannable.setSpan(boldSpan, 0, 17, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-            currentLocationV.setText(currentLocation);
+            currentLocationV.setText(locationStringSpannable);
 
             activeCountyV.setText(activeCounty);
             activeStateV.setText(activeState);
@@ -206,10 +213,6 @@ public class RiskDetailPageFragment extends Fragment {
         setAxes();
         riskTrendChart.setData(new LineData(riskLineSet));
         riskTrendChart.getDescription().setEnabled(true);
-        Description description = new Description();
-//        description.setText("County Risk");
-        description.setTextSize(50);
-        description.setPosition(0f,0f);
         riskTrendChart.setDescription(description);
         riskTrendChart.setPinchZoom(true);
         riskTrendChart.invalidate();
@@ -251,12 +254,10 @@ public class RiskDetailPageFragment extends Fragment {
         xAxis.setAxisMinimum(0);
         xAxis.setAxisMaximum(Constants.GROUP_SIZES[Constants.GROUP_SIZES.length - 1] + 10);
         xAxis.setTextSize(18);
-//        xAxis.setGridColor(R.color.colorPrimary);
         YAxis yAxis = riskTrendChart.getAxisLeft();
         yAxis.setAxisMinimum(0);
         yAxis.setAxisMaximum(100);
         yAxis.setTextSize(18);
-//        yAxis.setGridColor(R.color.colorPrimary);
         YAxis rightAxis = riskTrendChart.getAxisRight();
         rightAxis.setDrawAxisLine(false);
         rightAxis.setDrawGridLines(false);

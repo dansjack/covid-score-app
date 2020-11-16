@@ -1,19 +1,12 @@
 package com.nsc.covidscore.room;
 
-import androidx.annotation.NonNull;
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
 import androidx.room.Ignore;
-import androidx.room.Index;
-import androidx.room.PrimaryKey;
 
 import com.nsc.covidscore.Constants;
 
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.Calendar;
-import java.util.List;
 
 public class Location implements Serializable {
 
@@ -27,15 +20,15 @@ public class Location implements Serializable {
     private String county;
     public String getCounty() { return county; }
     public void setCounty(String county) {
-        propertyChangeSupport.firePropertyChange(Constants.COUNTY, this.county, county.toLowerCase());
-        this.county = county.toLowerCase();
+        propertyChangeSupport.firePropertyChange(Constants.COUNTY, this.county, county);
+        this.county = county;
     }
 
     private String state;
     public String getState() { return state; }
     public void setState(String state) {
-        propertyChangeSupport.firePropertyChange(Constants.STATE, this.state, state.toLowerCase());
-        this.state = state.toLowerCase();
+        propertyChangeSupport.firePropertyChange(Constants.STATE, this.state, state);
+        this.state = state;
     }
 
     private String countyFips;
@@ -75,8 +68,8 @@ public class Location implements Serializable {
     public Location(Integer locationId, String county, String state, String countyFips, String stateFips) {
         propertyChangeSupport = new PropertyChangeSupport(this);
         this.locationId = locationId;
-        this.county = county.toLowerCase();
-        this.state = state.toLowerCase();
+        this.county = county;
+        this.state = state;
         this.countyFips = countyFips;
         this.stateFips = stateFips;
         Calendar calendar = Calendar.getInstance();
@@ -85,8 +78,8 @@ public class Location implements Serializable {
 
     public Location(String county, String state, String countyFips, String stateFips) {
         propertyChangeSupport = new PropertyChangeSupport(this);
-        this.county = county.toLowerCase();
-        this.state = state.toLowerCase();
+        this.county = county;
+        this.state = state;
         this.countyFips = countyFips;
         this.stateFips = stateFips;
         Calendar calendar = Calendar.getInstance();
@@ -96,8 +89,8 @@ public class Location implements Serializable {
     @Ignore
     public Location(String county, String state) {
         propertyChangeSupport = new PropertyChangeSupport(this);
-        this.county = county.toLowerCase();
-        this.state = state.toLowerCase();
+        this.county = county;
+        this.state = state;
     }
 
     public void setAllState(Location other) {
@@ -109,7 +102,7 @@ public class Location implements Serializable {
     }
 
     public String toApiFormat() {
-        return county + "," + state;
+        return county.toLowerCase() + "," + state.toLowerCase();
     }
 
     public boolean hasFieldsSet() {
@@ -123,7 +116,8 @@ public class Location implements Serializable {
     }
 
     public boolean hasSameData(Location other) {
-        return this.state.equals(other.state) && this.county.equals(other.county);
+        return this.state.toLowerCase().equals(other.state.toLowerCase()) &&
+                this.county.toLowerCase().equals(other.county.toLowerCase());
     }
 
     @Override

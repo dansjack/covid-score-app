@@ -6,11 +6,10 @@
     <string name="county">Select county</string>
     <string name="submit_btn">Submit</string>
 
-    <string name="current_location">Current Location:</string>
+    <string name="current_location">Current Location:&#160;&#160;</string>
     <string name="active_county">Active Cases in County:</string>
     <string name="active_state">Active Cases in State:</string>
     <string name="active_country">Active Cases in US:</string>
-
     <string name="pick_state_county">Please pick a state and county</string>
     <string name="loading_data">Loading COVID data…</string>
     <string name="select_location">Select Location</string>
@@ -50,7 +49,7 @@
     <string name="linkCensus">Link to U.S. Census Bureau</string>
     <string name="linkDisease">Link to Disease.sh\'s GitHub</string>
     <string name="no_internet">No Internet Connection Available</string>
-    <string name="aboutList">&#8226; State data from Worldometer\n&#8226; All other data from Johns Hopkins &#160;&#160;University</string>
+    <string name="aboutList">&#8226; State data from Worldometer\n&#8226; All other data from Johns Hopkins University</string>
     <string name="determineRiskHeadingText">Determining Risk</string>
 
     <string-array name="group_sizes">
@@ -61,4 +60,3 @@
         <item>200</item>
     </string-array>
 </resources>
-

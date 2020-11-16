@@ -43,19 +43,16 @@ public class AboutFragment extends Fragment {
         censusLink.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.census.gov/data/developers/data-sets/popest-popproj/popest.html"));
             startActivity(intent);
-            getActivity().finish();
         });
 
         appLink.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/dansjack/covid-score-app"));
             startActivity(intent);
-            getActivity().finish();
         });
 
         diseaseLink.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/disease-sh/API"));
             startActivity(intent);
-            getActivity().finish();
         });
 
     }
