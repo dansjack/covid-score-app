@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -14,9 +13,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
-
+import androidx.core.content.ContextCompat;
+import android.graphics.Color;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 public class RiskDetailPageFragment extends Fragment {
     private static final String TAG = RiskDetailPageFragment.class.getSimpleName();
@@ -50,6 +59,7 @@ public class RiskDetailPageFragment extends Fragment {
     private TextView riskGroup5;
 
     private TextView lastUpdatedV;
+    private LineChart riskTrendChart;
 
     private String[] groupSizesArray;
     Resources res;
@@ -74,7 +84,6 @@ public class RiskDetailPageFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_risk_detail, container, false);
         super.onCreate(savedInstanceState);
-        Bundle bundle = getArguments();
 
         Log.d(TAG, "onCreateView invoked");
         return v;
@@ -160,6 +169,62 @@ public class RiskDetailPageFragment extends Fragment {
 
             Log.i(TAG, "onCreateView: Bundle received from LocationManualSelectionFragment");
         }
+
+        // TODO: CHECK THIS
+
+        //Draws graph for risks vs. group size relationship
+        riskTrendChart = v.findViewById(R.id.lineGraph);
+        LineDataSet riskDataSet = new LineDataSet(getCountyEntryList(),"Risk vs. Group size");
+//        ArrayList<ILineDataSet> riskTrendDataSet = new ArrayList<>();
+//        riskTrendDataSet.add(riskDataSet);
+
+        riskDataSet.setCircleColor(R.color.black_overlay);
+        riskDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+        riskDataSet.setLineWidth(5);
+        riskDataSet.setColor(R.color.colorAccent);
+
+        LineData riskDataLine = new LineData(riskDataSet);
+        riskDataLine.setValueTextSize(R.dimen.std_text_size);
+
+        setAxes();
+        riskTrendChart.setData(riskDataLine);
+        riskTrendChart.getDescription().setEnabled(true);
+        Description description = new Description();
+        description.setText("Group Size vs. Risk at your location");
+        description.setTextSize(30);
+        description.setPosition(0f,0f);
+        riskTrendChart.setDescription(description);
+        riskTrendChart.setPinchZoom(true);
+        riskTrendChart.invalidate();
+
+    }
+
+    // TODO: CHECK
+    private ArrayList<Entry> getCountyEntryList()
+    {
+        ArrayList<Entry> riskVals = new ArrayList<>();
+        for (int i = 0; i < groupSizesArray.length; i++) {
+            riskVals.add(new Entry((float) Constants.GROUP_SIZES[i], riskMap.get(Constants.GROUP_SIZES[i]).floatValue()));
+        }
+        return riskVals;
+    };
+
+    private void setAxes() {
+        XAxis xAxis = riskTrendChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setAxisMinimum(0);
+        xAxis.setAxisMaximum(Constants.GROUP_SIZES[Constants.GROUP_SIZES.length - 1] + 10);
+        xAxis.setTextSize(10);
+        xAxis.setGridColor(R.color.colorAccentDark);
+        YAxis yAxis = riskTrendChart.getAxisLeft();
+        yAxis.setAxisMinimum(0);
+        yAxis.setAxisMaximum(100);
+        yAxis.setTextSize(10);
+        yAxis.setGridColor(R.color.colorAccentDark);
+        YAxis rightAxis = riskTrendChart.getAxisRight();
+        rightAxis.setDrawAxisLine(false);
+        rightAxis.setDrawGridLines(false);
+        rightAxis.setDrawLabels(false);
     }
 
     @Override
@@ -170,7 +235,6 @@ public class RiskDetailPageFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-//        Log.d(TAG, String.valueOf(outState));
     }
 
     @Override

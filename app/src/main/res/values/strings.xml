@@ -6,26 +6,10 @@
     <string name="county">Select county</string>
     <string name="submit_btn">Submit</string>
 
-
-<!--TODO: delete after database connection-->
-    <string-array name="states_array">
-        <item>Washington</item>
-    </string-array>
-    <string-array name="counties_array">
-        <item>King</item>
-        <item>Snohomish</item>
-        <item>Pierce</item>
-        <item>Kitsap</item>
-        <item>Chelan</item>
-        <item>Skagit</item>
-        <item>San Juan</item>
-    </string-array>
     <string name="current_location">Current Location:</string>
     <string name="active_county">Active Cases in County:</string>
     <string name="active_state">Active Cases in State:</string>
     <string name="active_country">Active Cases in US:</string>
-
-</resources>
 
     <string name="pick_state_county">Please pick a state and county</string>
     <string name="loading_data">Loading COVID data…</string>

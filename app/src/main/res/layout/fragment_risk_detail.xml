@@ -23,7 +23,8 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:paddingBottom="50dp">
 
                 <ImageButton
                     android:id="@+id/select_location_btn"
@@ -90,6 +91,28 @@
                     app:layout_constraintTop_toBottomOf="@id/totalPopsCardView">
 
                     <include layout="@layout/risk_detail"/>
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/riskGraphCardView"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:minHeight="40dp"
+                    android:layout_margin="10dp"
+                    app:cardBackgroundColor="@color/cardBackground"
+                    app:cardCornerRadius="10dp"
+                    android:elevation="10dp"
+                    app:barrierMargin="@dimen/text_margin"
+                    android:translationZ="0dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/riskDisplayCardView">
+
+                    <com.github.mikephil.charting.charts.LineChart
+                        android:id="@+id/lineGraph"
+                        android:layout_height="match_parent"
+                        android:layout_width="match_parent"
+                        android:padding="@dimen/text_margin"/>
 
                 </androidx.cardview.widget.CardView>
 
