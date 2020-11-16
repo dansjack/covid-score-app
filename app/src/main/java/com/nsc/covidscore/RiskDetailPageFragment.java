@@ -217,8 +217,7 @@ public class RiskDetailPageFragment extends Fragment {
         riskTrendChart.invalidate();
     }
 
-    private ArrayList<Entry> getCountyEntryList()
-    {
+    private ArrayList<Entry> getCountyEntryList() {
         ArrayList<Entry> riskVals = new ArrayList<>();
         riskVals.add(new Entry(0f, 0f));
         for (int i = 0; i < groupSizesArray.length; i++) {

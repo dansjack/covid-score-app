@@ -260,16 +260,16 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
         Bundle bundle = new Bundle();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         HashMap<Integer, Double> countyRiskMap = RiskCalculation.getRiskCalculationsMap(
-                lastSavedCovidSnapshot.getCountyActiveCount(),
-                lastSavedCovidSnapshot.getCountyTotalPopulation(),
+                snapshot.getCountyActiveCount(),
+                snapshot.getCountyTotalPopulation(),
                 Constants.GROUP_SIZES);
         HashMap<Integer, Double> stateRiskMap = RiskCalculation.getRiskCalculationsMap(
-                lastSavedCovidSnapshot.getStateActiveCount(),
-                lastSavedCovidSnapshot.getStateTotalPopulation(),
+                snapshot.getStateActiveCount(),
+                snapshot.getStateTotalPopulation(),
                 Constants.GROUP_SIZES);
         HashMap<Integer, Double> countryRiskMap = RiskCalculation.getRiskCalculationsMap(
-                lastSavedCovidSnapshot.getCountryActiveCount(),
-                lastSavedCovidSnapshot.getCountryTotalPopulation(),
+                snapshot.getCountryActiveCount(),
+                snapshot.getCountryTotalPopulation(),
                 Constants.GROUP_SIZES);
         StringBuilder locationSb = new StringBuilder(location.getCounty())
                 .append(Constants.COMMA_SPACE).append(location.getState());
