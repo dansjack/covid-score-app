@@ -1,23 +1,50 @@
 package com.nsc.covidscore.room;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.res.AssetManager;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.nsc.covidscore.Constants;
 import com.nsc.covidscore.room.CovidSnapshot;
 import com.nsc.covidscore.room.CovidSnapshotWithLocationRepository;
 import com.nsc.covidscore.room.Location;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
 
     private CovidSnapshotWithLocationRepository repo;
+    private Context context;
+    private boolean isConnected;
+
+    private HashMap<String, List<Location>> mapOfLocationsByState = new HashMap<>();
+    private HashMap<Integer, Location> mapOfLocationsById = new HashMap<>();
 
     public CovidSnapshotWithLocationViewModel(Application application) {
         super(application);
         repo = new CovidSnapshotWithLocationRepository(application);
+        context = application.getApplicationContext();
+        isConnected = false;
+        fillLocationsMaps();
+    }
+
+    public HashMap<String, List<Location>> getMapOfLocationsByState() {
+        return mapOfLocationsByState;
+    }
+
+    public HashMap<Integer, Location> getMapOfLocationsById() {
+        return mapOfLocationsById;
     }
 
     public void insertCovidSnapshot(CovidSnapshot covidSnapshot) {
@@ -30,5 +57,49 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
 //    public LiveData<CovidSnapshot> getLatestCovidSnapshotByLocation(Location location) { return repo.getLatestCovidSnapshotByLocation(location); }
 
     public LiveData<CovidSnapshot> getLatestCovidSnapshot() { return repo.getLatestSnapshot(); }
+
+    private void fillLocationsMaps() {
+        String jsonString;
+        JSONArray jsonArray;
+        AssetManager assetManager = context.getAssets();
+        try {
+            InputStream inputStream = assetManager.open(Constants.LOCATION_FILENAME);
+            byte[] buffer = new byte[inputStream.available()];
+            int read = inputStream.read(buffer);
+            if (read == -1) {
+                inputStream.close();
+            }
+            jsonString = new String(buffer, StandardCharsets.UTF_8);
+            jsonArray = new JSONArray(jsonString);
+            for (int i = 1; i < jsonArray.length(); i++) {
+                JSONArray currentArray = jsonArray.getJSONArray(i);
+                Integer locationId = currentArray.getInt(0);
+                // split county and state names
+                String[] nameArray = currentArray.getString(1).split(Constants.COMMA);
+                String countyName = nameArray[0].trim();
+                String stateName = nameArray[1].trim();
+                String stateFips = currentArray.getString(2);
+                String countyFips = currentArray.getString(3);
+                Location countyInState = new Location(locationId, countyName, stateName, countyFips, stateFips);
+
+                mapOfLocationsById.put(locationId, countyInState);
+                if (mapOfLocationsByState.get(stateName) == null) {
+                    mapOfLocationsByState.put(stateName, new ArrayList<>());
+                }
+                mapOfLocationsByState.get(stateName).add(countyInState);
+            }
+
+        } catch (IOException | JSONException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    public void setConnectionStatus(boolean connected) {
+        isConnected = connected;
+    }
+
+    public boolean getConnectionStatus() {
+        return isConnected;
+    }
 }
 

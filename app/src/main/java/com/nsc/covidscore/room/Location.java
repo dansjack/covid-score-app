@@ -53,7 +53,6 @@ public class Location implements Serializable {
     private Calendar lastUpdated;
     public Calendar getLastUpdated() { return lastUpdated; }
     public void setLastUpdated(Calendar lastUpdated) {
-        propertyChangeSupport.firePropertyChange(Constants.LAST_UPDATED_LOCATION, this.lastUpdated, lastUpdated);
         this.lastUpdated = lastUpdated;
     }
 
