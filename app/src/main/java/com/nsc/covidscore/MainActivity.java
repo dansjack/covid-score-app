@@ -283,6 +283,6 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
         nowHour.clear();
         nowHour.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
         nowHour.set(Calendar.HOUR_OF_DAY, now.get(Calendar.HOUR_OF_DAY));
-        return !nowHour.equals(lastSavedHour);
+        return nowHour.equals(lastSavedHour);
     }
 }
