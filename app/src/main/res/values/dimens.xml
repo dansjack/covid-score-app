@@ -1,4 +1,14 @@
 <resources>
+    <dimen name="dp0">0dp</dimen>
+    <dimen name="dp1">1dp</dimen>
+    <dimen name="dp12">12dp</dimen>
     <dimen name="text_margin">16dp</dimen>
+    <dimen name="dp24">24dp</dimen>
+
     <dimen name="std_text_size">18sp</dimen>
+    <dimen name="sp24">24sp</dimen>
+    <dimen name="sp36">36sp</dimen>
+    <dimen name="sp18">18sp</dimen>
+    <dimen name="sp30">30sp</dimen>
+    <dimen name="sp14">14sp</dimen>
 </resources>

@@ -102,4 +102,3 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
         return isConnected;
     }
 }
-
