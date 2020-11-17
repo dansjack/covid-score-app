@@ -1,12 +1,15 @@
 package com.nsc.covidscore;
 
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -74,8 +77,6 @@ public class RiskDetailPageFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_risk_detail, container, false);
         super.onCreate(savedInstanceState);
-        Bundle bundle = getArguments();
-
         Log.d(TAG, "onCreateView invoked");
         return v;
     }
@@ -84,7 +85,7 @@ public class RiskDetailPageFragment extends Fragment {
     public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
 
-        currentLocationV = v.findViewById(R.id.currentLocation);
+        currentLocationV = v.findViewById(R.id.labelCurrentLocation);
 
         activeCountyV = v.findViewById(R.id.activeCounty);
         activeStateV = v.findViewById(R.id.activeState);
@@ -133,8 +134,12 @@ public class RiskDetailPageFragment extends Fragment {
             StringBuilder lastUpdatedSB = new StringBuilder(Constants.UPDATED)
                     .append(bundle.getString(Constants.LAST_UPDATED));
             lastUpdated = lastUpdatedSB.toString();
+            String locationString = getResources().getString(R.string.current_location) + currentLocation;
+            SpannableString locationStringSpannable = new SpannableString(locationString);
+            StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
+            locationStringSpannable.setSpan(boldSpan, 0, 17, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-            currentLocationV.setText(currentLocation);
+            currentLocationV.setText(locationStringSpannable);
 
             activeCountyV.setText(activeCounty);
             activeStateV.setText(activeState);
