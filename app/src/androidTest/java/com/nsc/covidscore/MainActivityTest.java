@@ -133,6 +133,14 @@ public class MainActivityTest {
                 .navigateTo(R.id.nav_location_settings_fragment)); // start nav_location_settings_fragment
         Thread.sleep(1000);
 
+        // test nav_about_fragment
+        onView(withId(R.id.drawer_layout))
+                .check(matches(isClosed(Gravity.LEFT)))
+                .perform(DrawerActions.open());
+        onView(withId(R.id.nvView)).perform(NavigationViewActions
+                .navigateTo(R.id.nav_about_fragment)); // start nav_about_fragment
+        Thread.sleep(1000);
+
 
         //TODO: this test relies on the tests above selecting locations to complete
         // test riskdetail1
@@ -140,7 +148,7 @@ public class MainActivityTest {
                 .check(matches(isClosed(Gravity.LEFT)))
                 .perform(DrawerActions.open());
         onView(withId(R.id.nvView)).perform(NavigationViewActions
-                .navigateTo(R.id.nav_location_fragment_1)); // start nav_location_settings_fragment
+                .navigateTo(R.id.nav_location_fragment_1)); // start nav_location_fragment_1
         Thread.sleep(1000);
 
         //TODO: this test relies on the tests above selecting locations to complete
@@ -149,7 +157,7 @@ public class MainActivityTest {
                 .check(matches(isClosed(Gravity.LEFT)))
                 .perform(DrawerActions.open());
         onView(withId(R.id.nvView)).perform(NavigationViewActions
-                .navigateTo(R.id.nav_location_fragment_2));
+                .navigateTo(R.id.nav_location_fragment_2)); // start nav_location_fragment_2
         Thread.sleep(1000);
 
 //        // test riskdetail3
