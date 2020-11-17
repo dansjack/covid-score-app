@@ -1,20 +1,13 @@
 package com.nsc.covidscore;
 
-import android.app.Instrumentation;
-import android.provider.Settings;
-import android.view.View;
+import android.view.Gravity;
 
 import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.espresso.PerformException;
+import androidx.test.espresso.contrib.DrawerActions;
+import androidx.test.espresso.contrib.NavigationViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
-import androidx.test.uiautomator.By;
-import androidx.test.uiautomator.UiDevice;
-import androidx.test.uiautomator.UiObject;
-import androidx.test.uiautomator.UiObject2;
-import androidx.test.uiautomator.UiObjectNotFoundException;
-import androidx.test.uiautomator.UiSelector;
 
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
@@ -22,19 +15,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.scrollTo;
-import static androidx.test.espresso.action.ViewActions.swipeDown;
-import static androidx.test.espresso.action.ViewActions.swipeUp;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.*;
-import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
+import static androidx.test.espresso.contrib.DrawerMatchers.isClosed;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -130,6 +119,47 @@ public class MainActivityTest {
             // we're in the RiskDetailPageFragment
             onView(withId(R.id.activeCounty)).check(matches(not(withText(""))));
         }
+    }
+
+    @Test
+    public void testNavigationView() throws InterruptedException {
+        Thread.sleep(2000);
+
+        // test nav_location_settings_fragment
+        onView(withId(R.id.drawer_layout))
+                .check(matches(isClosed(Gravity.LEFT)))  // check drawer is closed
+                .perform(DrawerActions.open()); // open drawer
+        onView(withId(R.id.nvView)).perform(NavigationViewActions
+                .navigateTo(R.id.nav_location_settings_fragment)); // start nav_location_settings_fragment
+        Thread.sleep(1000);
+
+
+        //TODO: this test relies on the tests above selecting locations to complete
+        // test riskdetail1
+        onView(withId(R.id.drawer_layout))
+                .check(matches(isClosed(Gravity.LEFT)))
+                .perform(DrawerActions.open());
+        onView(withId(R.id.nvView)).perform(NavigationViewActions
+                .navigateTo(R.id.nav_location_fragment_1)); // start nav_location_settings_fragment
+        Thread.sleep(1000);
+
+        //TODO: this test relies on the tests above selecting locations to complete
+        // test riskdetail2
+        onView(withId(R.id.drawer_layout))
+                .check(matches(isClosed(Gravity.LEFT)))
+                .perform(DrawerActions.open());
+        onView(withId(R.id.nvView)).perform(NavigationViewActions
+                .navigateTo(R.id.nav_location_fragment_2));
+        Thread.sleep(1000);
+
+//        // test riskdetail3
+//        onView(withId(R.id.drawer_layout))
+//                .check(matches(isClosed(Gravity.LEFT)))
+//                .perform(DrawerActions.open());
+//        onView(withId(R.id.nvView)).perform(NavigationViewActions
+//                .navigateTo(R.id.nav_location_fragment_3));
+//        Thread.sleep(1000);
+
     }
 
     // This test works locally - uncomment and try it!
