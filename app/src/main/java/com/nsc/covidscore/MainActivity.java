@@ -301,9 +301,6 @@ public class MainActivity extends AppCompatActivity implements
                     }
                 }
                 break;
-            case R.id.nav_location_settings_fragment:
-                fragmentClass = LocationSettingsPageFragment.class;
-                break;
             case R.id.nav_about_fragment:
                 fragmentClass = AboutFragment.class;
                 break;
