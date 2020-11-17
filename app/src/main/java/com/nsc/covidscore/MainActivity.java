@@ -7,8 +7,6 @@ import android.net.Network;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.net.ConnectivityManager;
-import android.net.Network;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -55,8 +53,8 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
     // Make sure to be using androidx.appcompat.app.ActionBarDrawerToggle version.
     private ActionBarDrawerToggle drawerToggle;
 
-    private List<Location> locationsNavList = new ArrayList<>();
-    private List<CovidSnapshot> covidSnapshotNavList = new ArrayList<>();
+    private final List<Location> locationsNavList = new ArrayList<>();
+    private final List<CovidSnapshot> covidSnapshotNavList = new ArrayList<>();
     private ConnectivityManager cm;
 
     @Override
@@ -204,7 +202,6 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
 
     public void openNewRiskDetailPageFragment(CovidSnapshot cs, Location selectedLocation) {
         // Used when opening the app with an existing CovidSnapshot
-
         if (cs.hasFieldsSet() && cs.getLocationId() != null) {
             Log.i(TAG, "openNewRiskDetailPageFragment2: ++ Inserting CS" + cs.toString());
             vm.makeApiCalls(selectedLocation);
@@ -225,6 +222,20 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
         }
     }
 
+    public void rerunApis(Location location) {
+        // Create a new Location Selection Fragment
+        LocationManualSelectionFragment lmsf = new LocationManualSelectionFragment();
+        Bundle bundle = new Bundle();
+        // If this exists in bundle, it will automatically run the APIs
+        bundle.putSerializable(Constants.API_LOCATION, location);
+        lmsf.setArguments(bundle);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.fragContainer, lmsf, Constants.FRAGMENT_LMSF)
+                .hide(lmsf)
+                .addToBackStack(null).commit();
+    }
+
     public void openLocationSelectionFragment() {
         // Create a new Location Selection Fragment to be placed in the activity layout
         LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
@@ -235,18 +246,6 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
             .replace(R.id.fragContainer, locationManualSelectionFragment, Constants.FRAGMENT_LMSF)
             .addToBackStack(null).commit();
     }
-
-
-//TODO: write method that takes list of locationIds and locationList snapshot and produces a Location and a Snapshot
-
-//TODO: write method which takes getLatestLocations and prints them as drawerItems
-//TODO: write method which takes a getLatestLocations drawerItem selection and
-// spins up new RiskDetailFragment given location using vm.getLatestCovidSnapshotByLocation from repository
-//    public void updateDrawerItems() {
-//        locationsList = vm.getLatestLocations();
-//        NavigationView navigationView = (NavigationView) findViewById(R.id.nvView);
-//        navigationView.getMenu().findItem(R.id.nav_location_fragment_1).setTitle("savedlocation1");
-//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
@@ -268,8 +267,6 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
                 });
     }
 
-    //
-//TODO: RiskDetail fragment should open with location state
     public void selectDrawerItem(MenuItem menuItem) {
         // Create a new fragment and specify the fragment to show based on nav item clicked
         Fragment fragment = null;
@@ -278,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
             case R.id.nav_location_fragment_1:
                 if (locationsNavList.size() >= 1 && covidSnapshotNavList.size() >= 1) {
                     if (hasBeenUpdatedThisHour(covidSnapshotNavList.get(0))) {
-                        openRiskDetailPageFragment(covidSnapshotNavList.get(0), locationsNavList.get(0));
+                        openNewRiskDetailPageFragment(covidSnapshotNavList.get(0), locationsNavList.get(0));
                     } else {
                         rerunApis(locationsNavList.get(0));
                     }
@@ -287,7 +284,7 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
             case R.id.nav_location_fragment_2:
                 if (locationsNavList.size() >= 2 && covidSnapshotNavList.size() >= 2) {
                     if (hasBeenUpdatedThisHour(covidSnapshotNavList.get(1))) {
-                        openRiskDetailPageFragment(covidSnapshotNavList.get(1), locationsNavList.get(1));
+                        openNewRiskDetailPageFragment(covidSnapshotNavList.get(1), locationsNavList.get(1));
                     } else {
                         rerunApis(locationsNavList.get(1));
                     }
@@ -296,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
             case R.id.nav_location_fragment_3:
                 if (locationsNavList.size() >= 3 && covidSnapshotNavList.size() >= 3) {
                     if (hasBeenUpdatedThisHour(covidSnapshotNavList.get(2))) {
-                        openRiskDetailPageFragment(covidSnapshotNavList.get(2), locationsNavList.get(2));
+                        openNewRiskDetailPageFragment(covidSnapshotNavList.get(2), locationsNavList.get(2));
                     } else {
                         rerunApis(locationsNavList.get(2));
                     }
@@ -334,10 +331,13 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
                 R.string.drawer_open,  R.string.drawer_close);
     }
 
-    // `onPostCreate` called when activity start-up is complete after `onStart()`
-    // NOTE 1: Make sure to override the method with only a single `Bundle` argument
-    // Note 2: Make sure you implement the correct `onPostCreate(Bundle savedInstanceState)` method.
-    // There are 2 signatures and only `onPostCreate(Bundle state)` shows the hamburger icon.
+    /**
+     * onPostCreate called when activity start-up is complete after onStart()
+     * NOTE 1: Make sure to override the method with only a single Bundle argument
+     * Note 2: Make sure you implement the correct onPostCreate(Bundle savedInstanceState) method.
+     * There are 2 signatures and only onPostCreate(Bundle state) shows the hamburger icon.
+     * @param savedInstanceState state from current session
+     */
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -454,7 +454,27 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
      * Compare most recently saved CovidSnapshot to current time - if the snapshot is more than an hour old, and
      * the phone has connectivity, we change behavior
      * @return true if the CovidSnapshot is recent within the hour, false otherwise
-     * @param covidSnapshot
+     */
+    private boolean hasBeenUpdatedThisHour() {
+        Calendar lastSaved = lastSavedCovidSnapshot.getLastUpdated();
+        Calendar lastSavedHour = Calendar.getInstance();
+        lastSavedHour.clear();
+        lastSavedHour.set(lastSaved.get(Calendar.YEAR), lastSaved.get(Calendar.MONTH), lastSaved.get(Calendar.DAY_OF_MONTH));
+        lastSavedHour.set(Calendar.HOUR_OF_DAY, lastSaved.get(Calendar.HOUR_OF_DAY));
+        Calendar now = Calendar.getInstance();
+        Calendar nowHour = Calendar.getInstance();
+        nowHour.clear();
+        nowHour.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
+        nowHour.set(Calendar.HOUR_OF_DAY, now.get(Calendar.HOUR_OF_DAY));
+        return nowHour.equals(lastSavedHour);
+    }
+
+    /**
+     * Note: This parameterized method version is for use with nav drawer items
+     * Compare most recently saved CovidSnapshot to current time - if the snapshot is more than
+     * an hour old, and the phone has connectivity, we change behavior
+     * @return true if the CovidSnapshot is recent within the hour, false otherwise
+     * @param covidSnapshot snapshot to check
      */
     private boolean hasBeenUpdatedThisHour(CovidSnapshot covidSnapshot) {
         Calendar lastSaved = covidSnapshot.getLastUpdated();

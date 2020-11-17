@@ -47,18 +47,24 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
         // Required empty public constructor
     }
 
-    // onAttach method fires 1st, before creation of fragment or any views
-    // It is called when the Fragment instance is associated with an Activity.
-    // This does not mean the Activity is fully initialized.
+    /**
+     * onAttach fires 1st, before creation of fragment or any views
+     * It is called when the Fragment instance is associated with an Activity.
+     * This does not mean the Activity is fully initialized.
+     * @param context from activity; attach to fragment
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         Log.d(TAG, "onAttach invoked");
     }
 
-    // This event fires 2nd, before views are created for the fragment
-    // The onCreate method is called when the Fragment instance is being created, or re-created.
-    // Use onCreate for any standard setup that does not require the activity to be fully created
+    /**
+     * onCreate fires 2nd, before views are created for the fragment
+     * The onCreate method is called when the Fragment instance is being created, or re-created.
+     * Use onCreate for any standard setup that does not require the activity to be fully created
+     * @param savedInstanceState state from current session
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,9 +86,12 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
         return v;
     }
 
-    //     This event is triggered soon after onCreateView().
-    //     onViewCreated() is only called if the view returned from onCreateView() is non-null.
-    //     Any view setup should occur here.  E.g., view lookups and attaching view listeners.
+    /**
+     *  This event is triggered soon after onCreateView(). onViewCreated() is only called
+     *  if the view returned from onCreateView() is non-null. Any view setup should occur here.
+     *  E.g., view lookups and attaching view listeners.
+     */
+
     @Override
     public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);

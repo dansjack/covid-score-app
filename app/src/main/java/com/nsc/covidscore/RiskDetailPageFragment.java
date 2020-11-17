@@ -188,6 +188,6 @@ public class RiskDetailPageFragment extends Fragment {
     }
 
     public interface OnSelectLocationButtonListener {
-        public void onLocationButtonClicked();
+        void onLocationButtonClicked();
     }
 }

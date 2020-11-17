@@ -40,8 +40,10 @@ public class CovidSnapshotWithLocationRepository {
         return covidSnapshotDao.getLatest();
     }
 
-    // Returns a list of up to 3 LiveData objects (CovidSnapshots)
-    // directly from AppDatabase via CovidSnapshotDao.
+    /**
+     * @return a list of up to 3 LiveData objects (CovidSnapshots) directly from AppDatabase
+     *  via CovidSnapshotDao.
+     */
     LiveData<List<CovidSnapshot>> getLatestLocationsLatestSnapshots() {
         return covidSnapshotDao.getLastThreeLocationsLatestSnapshots();
     }
