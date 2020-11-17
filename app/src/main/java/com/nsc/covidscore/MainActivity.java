@@ -33,7 +33,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements RiskDetailPageFragment.OnSelectLocationButtonListener, LocationManualSelectionFragment.OnSubmitButtonListener {
+public class MainActivity extends AppCompatActivity implements
+        RiskDetailPageFragment.OnSelectLocationButtonListener,
+        LocationManualSelectionFragment.OnSubmitButtonListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private Location lastSavedLocation;
@@ -301,6 +303,9 @@ public class MainActivity extends AppCompatActivity implements RiskDetailPageFra
                 break;
             case R.id.nav_location_settings_fragment:
                 fragmentClass = LocationSettingsPageFragment.class;
+                break;
+            case R.id.nav_about_fragment:
+                fragmentClass = AboutFragment.class;
                 break;
             default:
                 fragmentClass = LocationManualSelectionFragment.class;
