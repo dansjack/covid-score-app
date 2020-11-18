@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements
     private final List<Location> locationsNavList = new ArrayList<>();
     private final List<CovidSnapshot> covidSnapshotNavList = new ArrayList<>();
 
+    private MenuItem menuItem;
+
     @Override
     public void onAttachFragment(@NonNull Fragment fragment) {
         super.onAttachFragment(fragment);
@@ -191,6 +193,9 @@ public class MainActivity extends AppCompatActivity implements
         Bundle bundle = makeRiskDetailPageBundle(lastSavedCovidSnapshot, lastSavedLocation);
         riskDetailPageFragment.setArguments(bundle);
 
+        // Select first drawer item
+        nvDrawer.setCheckedItem(R.id.nav_location_fragment_1);
+
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragContainer, riskDetailPageFragment, Constants.FRAGMENT_RDPF).commit();
     }
@@ -246,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @SuppressLint("NonConstantResourceId")
-    public void selectDrawerItem(MenuItem menuItem) {
+    public void selectDrawerItem(@NonNull MenuItem menuItem) {
         // Create a new fragment and specify the fragment to show based on nav item clicked
         Fragment fragment;
         Class fragmentClass = null;
