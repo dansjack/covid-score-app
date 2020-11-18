@@ -96,6 +96,24 @@
 
                 </androidx.cardview.widget.CardView>
 
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/riskGraphCardView"
+                    android:layout_width="match_parent"
+                    android:layout_height="400dp"
+                    android:minHeight="40dp"
+                    android:layout_margin="10dp"
+                    app:cardBackgroundColor="@color/cardBackground"
+                    app:cardCornerRadius="10dp"
+                    android:elevation="10dp"
+                    app:barrierMargin="@dimen/text_margin"
+                    android:translationZ="0dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/riskDisplayCardView">
+
+                    <include layout="@layout/risk_chart_detail"/>
+
+                </androidx.cardview.widget.CardView>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>

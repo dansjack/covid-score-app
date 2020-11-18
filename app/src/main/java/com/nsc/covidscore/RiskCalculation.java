@@ -3,8 +3,6 @@ package com.nsc.covidscore;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 public class RiskCalculation {
 

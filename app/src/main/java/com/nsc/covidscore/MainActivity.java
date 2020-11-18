@@ -400,12 +400,21 @@ public class MainActivity extends AppCompatActivity implements
 
     private Bundle makeRiskDetailPageBundle(CovidSnapshot snapshot, Location location) {
         Bundle bundle = new Bundle();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
-                java.util.Locale.getDefault());
-        HashMap<Integer, Double> riskMap = RiskCalculation.getRiskCalculationsMap(
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        HashMap<Integer, Double> countyRiskMap = RiskCalculation.getRiskCalculationsMap(
                 snapshot.getCountyActiveCount(),
                 snapshot.getCountyTotalPopulation(),
                 Constants.GROUP_SIZES);
+        HashMap<Integer, Double> stateRiskMap = RiskCalculation.getRiskCalculationsMap(
+                snapshot.getStateActiveCount(),
+                snapshot.getStateTotalPopulation(),
+                Constants.GROUP_SIZES);
+        HashMap<Integer, Double> countryRiskMap = RiskCalculation.getRiskCalculationsMap(
+                snapshot.getCountryActiveCount(),
+                snapshot.getCountryTotalPopulation(),
+                Constants.GROUP_SIZES);
+        StringBuilder locationSb = new StringBuilder(location.getCounty())
+                .append(Constants.COMMA_SPACE).append(location.getState());
 
         String locationSb = location.getCounty() +
                 Constants.COMMA_SPACE + location.getState();
@@ -416,7 +425,9 @@ public class MainActivity extends AppCompatActivity implements
         bundle.putString(Constants.TOTAL_COUNTY, snapshot.getCountyTotalPopulation().toString());
         bundle.putString(Constants.TOTAL_STATE, snapshot.getStateTotalPopulation().toString());
         bundle.putString(Constants.TOTAL_COUNTRY, snapshot.getCountryTotalPopulation().toString());
-        bundle.putSerializable(Constants.RISK_MAP, riskMap);
+        bundle.putSerializable(Constants.COUNTY_RISK_MAP, countyRiskMap);
+        bundle.putSerializable(Constants.STATE_RISK_MAP, stateRiskMap);
+        bundle.putSerializable(Constants.COUNTRY_RISK_MAP, countryRiskMap);
         bundle.putString(Constants.LAST_UPDATED, sdf.format(snapshot.getLastUpdated().getTime()));
 
         return bundle;
