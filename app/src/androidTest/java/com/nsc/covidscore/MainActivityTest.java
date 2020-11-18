@@ -122,16 +122,8 @@ public class MainActivityTest {
     }
 
     @Test
-    public void testNavigationView() throws InterruptedException {
+    public void t3_testNavigationView() throws InterruptedException {
         Thread.sleep(2000);
-
-        // test nav_location_settings_fragment
-        onView(withId(R.id.drawer_layout))
-                .check(matches(isClosed(Gravity.LEFT)))  // check drawer is closed
-                .perform(DrawerActions.open()); // open drawer
-        onView(withId(R.id.nvView)).perform(NavigationViewActions
-                .navigateTo(R.id.nav_location_settings_fragment)); // start nav_location_settings_fragment
-        Thread.sleep(1000);
 
         // test nav_about_fragment
         onView(withId(R.id.drawer_layout))
@@ -142,8 +134,7 @@ public class MainActivityTest {
         Thread.sleep(1000);
 
 
-        //TODO: this test relies on the tests above selecting locations to complete
-        // test riskdetail1
+        //TODO: this test currently relies on the tests above selecting locations to complete
         onView(withId(R.id.drawer_layout))
                 .check(matches(isClosed(Gravity.LEFT)))
                 .perform(DrawerActions.open());
@@ -151,8 +142,7 @@ public class MainActivityTest {
                 .navigateTo(R.id.nav_location_fragment_1)); // start nav_location_fragment_1
         Thread.sleep(1000);
 
-        //TODO: this test relies on the tests above selecting locations to complete
-        // test riskdetail2
+        //TODO: this test currently relies on the tests above selecting locations to complete
         onView(withId(R.id.drawer_layout))
                 .check(matches(isClosed(Gravity.LEFT)))
                 .perform(DrawerActions.open());
