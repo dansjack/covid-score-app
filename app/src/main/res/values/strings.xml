@@ -36,7 +36,7 @@
         that we display to you.</string>
     <string name="aboutDataHeading">Data Sources</string>
     <string name="githubLabel">Check us out on GitHub</string>
-    <string name="versionText">0.3.0</string>
+    <string name="versionText">0.4.0</string>
     <string name="versionLabel">Version</string>
     <string name="appTitle">CovidScore</string>
     <string name="censusAttributionText">Note: This app uses the Census Bureau Data API but is not endorsed or certified by the Census Bureau.</string>
