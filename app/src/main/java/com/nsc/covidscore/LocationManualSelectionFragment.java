@@ -114,7 +114,11 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                         vm.makeApiCalls(selectedLocation);
                         mutableCovidSnapshot.observe(getViewLifecycleOwner(), covidSnapshot -> {
                             if (!justForApiCalls && (covidSnapshot != null && covidSnapshot.hasFieldsSet())) {
+                                CovidSnapshot mcsValue = mutableCovidSnapshot.getValue();
+                                mcsValue.setLastUpdated(null);
+                                mutableCovidSnapshot.setValue(mcsValue);
                                 callback.onSubmitButtonClicked(mutableCovidSnapshot, selectedLocation);
+                                mutableCovidSnapshot.removeObservers(getViewLifecycleOwner());
                             }
                         });
                     }
