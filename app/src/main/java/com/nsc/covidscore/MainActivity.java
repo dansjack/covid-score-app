@@ -131,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements
                     nvDrawer.getMenu().getItem(i).setVisible(true);
                     nvDrawer.getMenu().getItem(i).setTitle(recentLocation.toApiFormat());
                 }
+                nvDrawer.getMenu().getItem(0).setChecked(true);
             }
         });
 
@@ -204,10 +205,14 @@ public class MainActivity extends AppCompatActivity implements
         // Used when opening the app with an existing CovidSnapshot
         if (cs.hasFieldsSet() && cs.getLocationId() != null) {
             Log.i(TAG, "openNewRiskDetailPageFragment2: ++ Inserting CS" + cs.toString());
-            vm.makeApiCalls(selectedLocation);
-            Calendar calendar = Calendar.getInstance();
-            cs.setLastUpdated(calendar);
-            vm.insertCovidSnapshot(cs);
+
+            if (cs.getLastUpdated() == null) { // new Snapshot needs to be added to DB
+                Calendar calendar = Calendar.getInstance();
+                cs.setLastUpdated(calendar);
+                vm.insertCovidSnapshot(cs);
+            } else if (!hasBeenUpdatedThisHour(cs)) {
+                vm.makeApiCalls(selectedLocation);
+            }
 
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
@@ -429,6 +434,20 @@ public class MainActivity extends AppCompatActivity implements
      */
     private boolean hasBeenUpdatedThisHour() {
         Calendar lastSaved = lastSavedCovidSnapshot.getLastUpdated();
+        Calendar lastSavedHour = Calendar.getInstance();
+        lastSavedHour.clear();
+        lastSavedHour.set(lastSaved.get(Calendar.YEAR), lastSaved.get(Calendar.MONTH), lastSaved.get(Calendar.DAY_OF_MONTH));
+        lastSavedHour.set(Calendar.HOUR_OF_DAY, lastSaved.get(Calendar.HOUR_OF_DAY));
+        Calendar now = Calendar.getInstance();
+        Calendar nowHour = Calendar.getInstance();
+        nowHour.clear();
+        nowHour.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
+        nowHour.set(Calendar.HOUR_OF_DAY, now.get(Calendar.HOUR_OF_DAY));
+        return nowHour.equals(lastSavedHour);
+    }
+
+    private boolean hasBeenUpdatedThisHour(CovidSnapshot cs) {
+        Calendar lastSaved = cs.getLastUpdated();
         Calendar lastSavedHour = Calendar.getInstance();
         lastSavedHour.clear();
         lastSavedHour.set(lastSaved.get(Calendar.YEAR), lastSaved.get(Calendar.MONTH), lastSaved.get(Calendar.DAY_OF_MONTH));
