@@ -26,7 +26,9 @@ public class Constants {
     public static final String LAST_UPDATED = "lastUpdated";
     public static final String LOCATION_ID_FK = "locationIdFK";
     public static final String LOCATION_ID_PK = "locationIdPK";
-    public static final String RISK_MAP = "riskMap";
+    public static final String COUNTY_RISK_MAP = "countyRiskMap";
+    public static final String STATE_RISK_MAP = "stateRiskMap";
+    public static final String COUNTRY_RISK_MAP = "countryRiskMap";
     public static final String TOTAL_COUNTY = "totalCounty";
     public static final String TOTAL_COUNTRY = "totalCountry";
     public static final String TOTAL_STATE = "totalState";
@@ -45,6 +47,7 @@ public class Constants {
 
     public static final String FRAGMENT_LMSF = "locationManualSelectionFragment";
     public static final String FRAGMENT_RDPF = "riskDetailPageFragment";
+    public static final String FRAGMENT_ABOUT = "aboutFragment";
 
     public static final String LOCATION_FILENAME = "county_fips.json";
 

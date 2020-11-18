@@ -68,7 +68,7 @@ public class MainActivityTest {
 
             // select county
             onView(withId(R.id.county_spinner)).perform(click());
-            onData(allOf(is(instanceOf(String.class)), is("imperial"))).perform(click());
+            onData(allOf(is(instanceOf(String.class)), is("Imperial"))).perform(click());
 
             // click submit
             onView(withId(R.id.submit_btn)).perform(click());
@@ -121,7 +121,7 @@ public class MainActivityTest {
 
             // select county
             onView(withId(R.id.county_spinner)).perform(click());
-            onData(allOf(is(instanceOf(String.class)), is("king"))).perform(click());
+            onData(allOf(is(instanceOf(String.class)), is("King"))).perform(click());
 
             Thread.sleep(3000);
             pressBack();

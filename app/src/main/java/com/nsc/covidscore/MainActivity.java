@@ -3,7 +3,6 @@ package com.nsc.covidscore;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
-import android.net.NetworkRequest;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -24,6 +23,7 @@ import com.nsc.covidscore.room.Location;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class MainActivity extends FragmentActivity implements RiskDetailPageFragment.OnSelectLocationButtonListener, LocationManualSelectionFragment.OnSubmitButtonListener {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -69,7 +69,6 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
                 lastSavedCovidSnapshot = covidSnapshotFromDb;
                 lastSavedLocation = vm.getMapOfLocationsById().get(covidSnapshotFromDb.getLocationId());
                 Log.e(TAG, "Most recently saved Snapshot: " + covidSnapshotFromDb.toString());
-
             } else {
                 Log.d(TAG, "Observer returned null CovidSnapshot");
             }
@@ -116,101 +115,60 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
             if (!lastSavedCovidSnapshot.hasFieldsSet()) { // No saved CovidSnapshot
                 Log.e(TAG, "no saved CovidSnapshot");
                 openLocationSelectionFragment();
-            } else if (vm.getConnectionStatus() == true && !hasBeenUpdatedThisHour()) { // CovidSnapshot saved, with Internet
+            } else if (vm.getConnectionStatus() && !hasBeenUpdatedThisHour()) { // CovidSnapshot saved, with Internet
                 Log.e(TAG, "saved CovidSnapshot exists, update w/ internet");
-                rerunApis(vm.getMapOfLocationsById().get(lastSavedCovidSnapshot.getLocationId()));
+                Location savedLocation = vm.getMapOfLocationsById().get(lastSavedCovidSnapshot.getLocationId());
+                if (savedLocation != null) {
+                    Log.i(TAG, "loadFragments: + " + savedLocation.toString());
+                    openNewRiskDetailPageFragment(lastSavedCovidSnapshot, savedLocation);
+                }
             } else { // CovidSnapshot saved, no internet
                 Log.e(TAG, "saved CovidSnapshot exists, no internet or saved this hour");
                 Toast.makeText(context, "No Internet Connection Available", Toast.LENGTH_LONG);
-                openRiskDetailPageFragment();
+                locationSelectToRiskFragment();
             }
         }
     }
 
-    public void openRiskDetailPageFragment() {
-        // Create a new Risk Detail Fragment to be placed in the activity layout
+    public void openAboutFragment() {
+        AboutFragment aboutFragment = new AboutFragment();
+
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragContainer, aboutFragment, Constants.FRAGMENT_ABOUT).commit();
+    }
+
+    public void locationSelectToRiskFragment() {
+        // Used when navigating from LocationManualSelectFragment to RiskDetailPageFragment
         RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
 
-        HashMap<Integer, Double> riskMap = RiskCalculation.getRiskCalculationsMap(
-                lastSavedCovidSnapshot.getCountyActiveCount(),
-                lastSavedCovidSnapshot.getCountyTotalPopulation(),
-                Constants.GROUP_SIZES);
-
-        Bundle bundle = new Bundle();
-        bundle.putString(Constants.CURRENT_LOCATION, lastSavedLocation.getCounty() + ", " + lastSavedLocation.getState());
-        bundle.putString(Constants.ACTIVE_COUNTY, lastSavedCovidSnapshot.getCountyActiveCount().toString());
-        bundle.putString(Constants.ACTIVE_STATE, lastSavedCovidSnapshot.getStateActiveCount().toString());
-        bundle.putString(Constants.ACTIVE_COUNTRY, lastSavedCovidSnapshot.getCountryActiveCount().toString());
-        bundle.putString(Constants.TOTAL_COUNTY, lastSavedCovidSnapshot.getCountyTotalPopulation().toString());
-        bundle.putString(Constants.TOTAL_STATE, lastSavedCovidSnapshot.getStateTotalPopulation().toString());
-        bundle.putString(Constants.TOTAL_COUNTRY, lastSavedCovidSnapshot.getCountryTotalPopulation().toString());
-        bundle.putSerializable(Constants.RISK_MAP,riskMap);
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        bundle.putString(Constants.LAST_UPDATED, sdf.format(lastSavedCovidSnapshot.getLastUpdated().getTime()));
-
-        // In case this activity was started with special instructions from an
-        // Intent, pass the Intent's extras to the fragment as arguments
+        Bundle bundle = makeRiskDetailPageBundle(lastSavedCovidSnapshot, lastSavedLocation);
         riskDetailPageFragment.setArguments(bundle);
 
-        // Add the fragment to the "Fragment_container" FrameLayout
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragContainer, riskDetailPageFragment, Constants.FRAGMENT_RDPF).commit();
     }
 
-    public void openNewRiskDetailPageFragment(MutableLiveData<CovidSnapshot> mcs, Location selectedLocation) {
-        Log.i(TAG, "onViewCreated - btnNavRiskDetail - selectedLocation filled: " + selectedLocation.toString());
+    public void openNewRiskDetailPageFragment(CovidSnapshot cs, Location selectedLocation) {
+        // Used when opening the app with an existing CovidSnapshot
 
-        LocationManualSelectionFragment lmsFragment = (LocationManualSelectionFragment) getSupportFragmentManager().findFragmentByTag(Constants.FRAGMENT_LMSF);
-        if (lmsFragment != null) { // User has manually selected location already
-            lmsFragment.saveSnapshotToRoom(mcs.getValue(), selectedLocation);
+        if (cs.hasFieldsSet() && cs.getLocationId() != null) {
+            Log.i(TAG, "openNewRiskDetailPageFragment2: ++ Inserting CS" + cs.toString());
+            vm.makeApiCalls(selectedLocation);
+            Calendar calendar = Calendar.getInstance();
+            cs.setLastUpdated(calendar);
+            vm.insertCovidSnapshot(cs);
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
+
+            Bundle bundle = makeRiskDetailPageBundle(cs, selectedLocation);
+            riskDetailPageFragment.setArguments(bundle);
+
+            transaction.replace(R.id.fragContainer, riskDetailPageFragment, Constants.FRAGMENT_RDPF);
+            transaction.addToBackStack(null);
+            transaction.commit();
+            vm.setMutableCovidSnapshot(cs);
         }
-
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
-        CovidSnapshot snapshot = mcs.getValue();
-
-        HashMap<Integer, Double> riskMap = RiskCalculation.getRiskCalculationsMap(
-                snapshot.getCountyActiveCount(),
-                snapshot.getCountyTotalPopulation(),
-                Constants.GROUP_SIZES);
-        Log.i(TAG, "onViewCreated: riskMap" + riskMap.toString());
-
-        Bundle bundle = new Bundle();
-        StringBuilder currentLocationSB = new StringBuilder(selectedLocation.getCounty())
-                .append(Constants.COMMA_SPACE).append(selectedLocation.getState());
-        bundle.putString(Constants.CURRENT_LOCATION, String.valueOf(currentLocationSB));
-        bundle.putString(Constants.ACTIVE_COUNTY, snapshot.getCountyActiveCount().toString());
-        bundle.putString(Constants.ACTIVE_STATE, snapshot.getStateActiveCount().toString());
-        bundle.putString(Constants.ACTIVE_COUNTRY, snapshot.getCountryActiveCount().toString());
-        bundle.putString(Constants.TOTAL_COUNTY, snapshot.getCountyTotalPopulation().toString());
-        bundle.putString(Constants.TOTAL_STATE, snapshot.getStateTotalPopulation().toString());
-        bundle.putString(Constants.TOTAL_COUNTRY, snapshot.getCountryTotalPopulation().toString());
-        bundle.putSerializable(Constants.RISK_MAP,riskMap);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        bundle.putString(Constants.LAST_UPDATED, sdf.format(lastSavedCovidSnapshot.getLastUpdated().getTime()));
-        riskDetailPageFragment.setArguments(bundle);
-        transaction.replace(R.id.fragContainer, riskDetailPageFragment, Constants.FRAGMENT_RDPF);
-        transaction.addToBackStack(null);
-
-        // Commit the transaction
-        transaction.commit();
-        mcs.setValue(new CovidSnapshot());
-        //  selectedLocation = new Location();
-    }
-
-    public void rerunApis(Location location) {
-        // Create a new Location Selection Fragment
-        LocationManualSelectionFragment lmsf = new LocationManualSelectionFragment();
-        Bundle bundle = new Bundle();
-        // If this exists in bundle, it will automatically run the APIs
-        bundle.putSerializable(Constants.API_LOCATION, location);
-        lmsf.setArguments(bundle);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.fragContainer, lmsf, Constants.FRAGMENT_LMSF)
-                .hide(lmsf)
-                .addToBackStack(null).commit();
     }
 
     public void openLocationSelectionFragment() {
@@ -219,9 +177,9 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
 
         // Add the fragment to the 'fragment_container' FrameLayout
         getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragContainer, locationManualSelectionFragment, Constants.FRAGMENT_LMSF)
-                .addToBackStack(null).commit();
+            .beginTransaction()
+            .replace(R.id.fragContainer, locationManualSelectionFragment, Constants.FRAGMENT_LMSF)
+            .addToBackStack(null).commit();
     }
 
     @Override
@@ -261,7 +219,6 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
         if (tLmsf != null && tLmsf.isVisible()) {
             LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
             Bundle bundle = new Bundle();
-//            bundle.putSerializable(Constants.LOCATIONS_MAP_BY_STATE, mapOfLocationsByState);
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
@@ -295,7 +252,41 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
 
     @Override
     public void onSubmitButtonClicked(MutableLiveData<CovidSnapshot> mcs, Location selectedLocation) {
-        openNewRiskDetailPageFragment(mcs, selectedLocation);
+        Log.i(TAG, "onSubmitButtonClicked - cs: " + Objects.requireNonNull(mcs.getValue()).toString());
+        openNewRiskDetailPageFragment(mcs.getValue(), selectedLocation);
+    }
+
+    private Bundle makeRiskDetailPageBundle(CovidSnapshot snapshot, Location location) {
+        Bundle bundle = new Bundle();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        HashMap<Integer, Double> countyRiskMap = RiskCalculation.getRiskCalculationsMap(
+                snapshot.getCountyActiveCount(),
+                snapshot.getCountyTotalPopulation(),
+                Constants.GROUP_SIZES);
+        HashMap<Integer, Double> stateRiskMap = RiskCalculation.getRiskCalculationsMap(
+                snapshot.getStateActiveCount(),
+                snapshot.getStateTotalPopulation(),
+                Constants.GROUP_SIZES);
+        HashMap<Integer, Double> countryRiskMap = RiskCalculation.getRiskCalculationsMap(
+                snapshot.getCountryActiveCount(),
+                snapshot.getCountryTotalPopulation(),
+                Constants.GROUP_SIZES);
+        StringBuilder locationSb = new StringBuilder(location.getCounty())
+                .append(Constants.COMMA_SPACE).append(location.getState());
+
+        bundle.putString(Constants.CURRENT_LOCATION, locationSb.toString());
+        bundle.putString(Constants.ACTIVE_COUNTY, snapshot.getCountyActiveCount().toString());
+        bundle.putString(Constants.ACTIVE_STATE, snapshot.getStateActiveCount().toString());
+        bundle.putString(Constants.ACTIVE_COUNTRY, snapshot.getCountryActiveCount().toString());
+        bundle.putString(Constants.TOTAL_COUNTY, snapshot.getCountyTotalPopulation().toString());
+        bundle.putString(Constants.TOTAL_STATE, snapshot.getStateTotalPopulation().toString());
+        bundle.putString(Constants.TOTAL_COUNTRY, snapshot.getCountryTotalPopulation().toString());
+        bundle.putSerializable(Constants.COUNTY_RISK_MAP, countyRiskMap);
+        bundle.putSerializable(Constants.STATE_RISK_MAP, stateRiskMap);
+        bundle.putSerializable(Constants.COUNTRY_RISK_MAP, countryRiskMap);
+        bundle.putString(Constants.LAST_UPDATED, sdf.format(snapshot.getLastUpdated().getTime()));
+
+        return bundle;
     }
 
     private boolean hasBeenUpdatedThisHour() {
@@ -309,6 +300,6 @@ public class MainActivity extends FragmentActivity implements RiskDetailPageFrag
         nowHour.clear();
         nowHour.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
         nowHour.set(Calendar.HOUR_OF_DAY, now.get(Calendar.HOUR_OF_DAY));
-        return !nowHour.equals(lastSavedHour);
+        return nowHour.equals(lastSavedHour);
     }
 }
