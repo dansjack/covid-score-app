@@ -1,5 +1,6 @@
 package com.nsc.covidscore;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
@@ -57,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements
 
     private final List<Location> locationsNavList = new ArrayList<>();
     private final List<CovidSnapshot> covidSnapshotNavList = new ArrayList<>();
-    private ConnectivityManager cm;
 
     @Override
     public void onAttachFragment(@NonNull Fragment fragment) {
@@ -133,16 +133,16 @@ public class MainActivity extends AppCompatActivity implements
         });
 
         // Check Internet Connectivity
-        cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         cm.registerDefaultNetworkCallback(new ConnectivityManager.NetworkCallback() {
             @Override
-            public void onAvailable(Network network) {
+            public void onAvailable(@NonNull Network network) {
                 vm.setConnectionStatus(true);
                 isConnected = true;
             }
             @Override
-            public void onLost(Network network) {
+            public void onLost(@NonNull Network network) {
                 vm.setConnectionStatus(false);
                 isConnected = false;
             }
@@ -184,13 +184,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    public void openAboutFragment() {
-        AboutFragment aboutFragment = new AboutFragment();
-
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragContainer, aboutFragment, Constants.FRAGMENT_ABOUT).commit();
-    }
-
     public void locationSelectToRiskFragment() {
         // Used when navigating from LocationManualSelectFragment to RiskDetailPageFragment
         RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
@@ -224,20 +217,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    public void rerunApis(Location location) {
-        // Create a new Location Selection Fragment
-        LocationManualSelectionFragment lmsf = new LocationManualSelectionFragment();
-        Bundle bundle = new Bundle();
-        // If this exists in bundle, it will automatically run the APIs
-        bundle.putSerializable(Constants.API_LOCATION, location);
-        lmsf.setArguments(bundle);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.fragContainer, lmsf, Constants.FRAGMENT_LMSF)
-                .hide(lmsf)
-                .addToBackStack(null).commit();
-    }
-
     public void openLocationSelectionFragment() {
         // Create a new Location Selection Fragment to be placed in the activity layout
         LocationManualSelectionFragment locationManualSelectionFragment = new LocationManualSelectionFragment();
@@ -250,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem menuItem) {
         // The action bar home/up action should open or close the drawer.
         if (drawerToggle.onOptionsItemSelected(menuItem)) {
             return true;
@@ -260,45 +239,31 @@ public class MainActivity extends AppCompatActivity implements
 
     private void setupDrawerContent(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        selectDrawerItem(menuItem);
-                        return true;
-                    }
+                menuItem -> {
+                    selectDrawerItem(menuItem);
+                    return true;
                 });
     }
 
+    @SuppressLint("NonConstantResourceId")
     public void selectDrawerItem(MenuItem menuItem) {
         // Create a new fragment and specify the fragment to show based on nav item clicked
-        Fragment fragment = null;
+        Fragment fragment;
         Class fragmentClass = null;
         switch(menuItem.getItemId()) {
             case R.id.nav_location_fragment_1:
                 if (locationsNavList.size() >= 1 && covidSnapshotNavList.size() >= 1) {
-                    if (hasBeenUpdatedThisHour(covidSnapshotNavList.get(0))) {
-                        openNewRiskDetailPageFragment(covidSnapshotNavList.get(0), locationsNavList.get(0));
-                    } else {
-                        rerunApis(locationsNavList.get(0));
-                    }
+                    openNewRiskDetailPageFragment(covidSnapshotNavList.get(0), locationsNavList.get(0));
                 }
                 break;
             case R.id.nav_location_fragment_2:
                 if (locationsNavList.size() >= 2 && covidSnapshotNavList.size() >= 2) {
-                    if (hasBeenUpdatedThisHour(covidSnapshotNavList.get(1))) {
-                        openNewRiskDetailPageFragment(covidSnapshotNavList.get(1), locationsNavList.get(1));
-                    } else {
-                        rerunApis(locationsNavList.get(1));
-                    }
+                    openNewRiskDetailPageFragment(covidSnapshotNavList.get(1), locationsNavList.get(1));
                 }
                 break;
             case R.id.nav_location_fragment_3:
                 if (locationsNavList.size() >= 3 && covidSnapshotNavList.size() >= 3) {
-                    if (hasBeenUpdatedThisHour(covidSnapshotNavList.get(2))) {
-                        openNewRiskDetailPageFragment(covidSnapshotNavList.get(2), locationsNavList.get(2));
-                    } else {
-                        rerunApis(locationsNavList.get(2));
-                    }
+                    openNewRiskDetailPageFragment(covidSnapshotNavList.get(2), locationsNavList.get(2));
                 }
                 break;
             case R.id.nav_about_fragment:
@@ -320,8 +285,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // Highlight the selected item has been done by NavigationView
         menuItem.setChecked(true);
-        // Set action bar title - This only triggers when navigating using the drawer - elsewise the title won't change
-        // setTitle(menuItem.getTitle());
+
         // Close the navigation drawer
         mDrawer.closeDrawers();
     }
@@ -349,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements
 
     // Synchronize state when screen is restored or rotated
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         // Pass any configuration change to the drawer toggles
         drawerToggle.onConfigurationChanged(newConfig);
@@ -431,15 +395,16 @@ public class MainActivity extends AppCompatActivity implements
 
     private Bundle makeRiskDetailPageBundle(CovidSnapshot snapshot, Location location) {
         Bundle bundle = new Bundle();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
+                java.util.Locale.getDefault());
         HashMap<Integer, Double> riskMap = RiskCalculation.getRiskCalculationsMap(
                 snapshot.getCountyActiveCount(),
                 snapshot.getCountyTotalPopulation(),
                 Constants.GROUP_SIZES);
-        StringBuilder locationSb = new StringBuilder(location.getCounty())
-                .append(Constants.COMMA_SPACE).append(location.getState());
 
-        bundle.putString(Constants.CURRENT_LOCATION, locationSb.toString());
+        String locationSb = location.getCounty() +
+                Constants.COMMA_SPACE + location.getState();
+        bundle.putString(Constants.CURRENT_LOCATION, locationSb);
         bundle.putString(Constants.ACTIVE_COUNTY, snapshot.getCountyActiveCount().toString());
         bundle.putString(Constants.ACTIVE_STATE, snapshot.getStateActiveCount().toString());
         bundle.putString(Constants.ACTIVE_COUNTRY, snapshot.getCountryActiveCount().toString());
@@ -471,24 +436,4 @@ public class MainActivity extends AppCompatActivity implements
         return nowHour.equals(lastSavedHour);
     }
 
-    /**
-     * Note: This parameterized method version is for use with nav drawer items
-     * Compare most recently saved CovidSnapshot to current time - if the snapshot is more than
-     * an hour old, and the phone has connectivity, we change behavior
-     * @return true if the CovidSnapshot is recent within the hour, false otherwise
-     * @param covidSnapshot snapshot to check
-     */
-    private boolean hasBeenUpdatedThisHour(CovidSnapshot covidSnapshot) {
-        Calendar lastSaved = covidSnapshot.getLastUpdated();
-        Calendar lastSavedHour = Calendar.getInstance();
-        lastSavedHour.clear();
-        lastSavedHour.set(lastSaved.get(Calendar.YEAR), lastSaved.get(Calendar.MONTH), lastSaved.get(Calendar.DAY_OF_MONTH));
-        lastSavedHour.set(Calendar.HOUR_OF_DAY, lastSaved.get(Calendar.HOUR_OF_DAY));
-        Calendar now = Calendar.getInstance();
-        Calendar nowHour = Calendar.getInstance();
-        nowHour.clear();
-        nowHour.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
-        nowHour.set(Calendar.HOUR_OF_DAY, now.get(Calendar.HOUR_OF_DAY));
-        return nowHour.equals(lastSavedHour);
-    }
 }
