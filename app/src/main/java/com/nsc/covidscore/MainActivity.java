@@ -400,6 +400,11 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onSubmitButtonClicked(MutableLiveData<CovidSnapshot> mcs, Location selectedLocation) {
         Log.i(TAG, "onSubmitButtonClicked - cs: " + Objects.requireNonNull(mcs.getValue()).toString());
+
+        //TODO: fix highlighted drawer item when selected from drawer
+        // This only fixes the issue when location manually selected
+        nvDrawer.setCheckedItem(R.id.nav_location_fragment_1);
+
         openNewRiskDetailPageFragment(mcs.getValue(), selectedLocation);
     }
 
