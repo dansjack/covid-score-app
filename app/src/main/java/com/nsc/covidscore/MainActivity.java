@@ -259,6 +259,7 @@ public class MainActivity extends AppCompatActivity implements
         // Create a new fragment and specify the fragment to show based on nav item clicked
         Fragment fragment;
         Class fragmentClass = null;
+        String fragmentTag = "";
         switch(menuItem.getItemId()) {
             case R.id.nav_location_fragment_1:
                 if (locationsNavList.size() >= 1 && covidSnapshotNavList.size() >= 1) {
@@ -277,9 +278,11 @@ public class MainActivity extends AppCompatActivity implements
                 break;
             case R.id.nav_about_fragment:
                 fragmentClass = AboutFragment.class;
+                fragmentTag = Constants.FRAGMENT_ABOUT;
                 break;
             default:
                 fragmentClass = LocationManualSelectionFragment.class;
+                fragmentTag = Constants.FRAGMENT_LMSF;
         }
         try {
             fragment = (Fragment) fragmentClass.newInstance();
@@ -287,7 +290,7 @@ public class MainActivity extends AppCompatActivity implements
             // Insert the fragment by replacing any existing fragment
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragContainer, fragment)
+                    .replace(R.id.fragContainer, fragment, fragmentTag)
                     .commit();
         } catch(NullPointerException e) {
             // already handled new fragment
@@ -365,14 +368,12 @@ public class MainActivity extends AppCompatActivity implements
         super.onBackPressed();
         LocationManualSelectionFragment tLmsf = (LocationManualSelectionFragment)
                 getSupportFragmentManager().findFragmentByTag(Constants.FRAGMENT_LMSF);
-        if (tLmsf != null && tLmsf.isVisible()) {
+
+        AboutFragment tAbout = (AboutFragment)
+                getSupportFragmentManager().findFragmentByTag(Constants.FRAGMENT_ABOUT);
+        if ((tLmsf != null && tLmsf.isVisible()) || (tAbout != null && tAbout.isVisible())) {
             LocationManualSelectionFragment locationManualSelectionFragment =
                     new LocationManualSelectionFragment();
-            Bundle bundle = new Bundle();
-
-            // In case this activity was started with special instructions from an
-            // Intent, pass the Intent's extras to the fragment as arguments
-            locationManualSelectionFragment.setArguments(bundle);
 
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
