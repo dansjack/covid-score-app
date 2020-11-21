@@ -4,6 +4,7 @@ import android.view.Gravity;
 
 import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.espresso.PerformException;
+import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.contrib.DrawerActions;
 import androidx.test.espresso.contrib.NavigationViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -19,6 +20,7 @@ import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.DrawerMatchers.isClosed;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -203,10 +205,82 @@ public class MainActivityTest {
 //    }
 
     @Test
-    public void t4_testAboutPage() throws InterruptedException {
-        onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
-        onView(withId(R.id.nvView)).perform(NavigationViewActions.navigateTo(R.id.nav_about_fragment));
+    public void t4_testAboutPageExpandable() throws InterruptedException {
+        onView(withId(R.id.drawer_layout))
+                .check(matches(isDisplayed()))
+                .perform(DrawerActions.open());
+        onView(withId(R.id.nvView))
+                .perform(NavigationViewActions.navigateTo(R.id.nav_about_fragment));
+
+        onView(withId(R.id.riskExplanationTextView))
+                .perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.riskExplanationTextView))
+                .perform(click());
+
+        onView(withId(R.id.censusLink)).perform(click());
+        Thread.sleep(1000);
+    }
+
+    @Test
+    public void t5_testAboutDiseaseLink() throws InterruptedException {
+        onView(withId(R.id.drawer_layout))
+                .check(matches(isDisplayed()))
+                .perform(DrawerActions.open());
+        onView(withId(R.id.nvView))
+                .perform(NavigationViewActions.navigateTo(R.id.nav_about_fragment));
+
+        Thread.sleep(1000);
+        onView(withId(R.id.diseaseGithubLink)).perform(click());
+    }
+
+    @Test
+    public void t6_testAboutAppGithubLink() throws InterruptedException {
+        onView(withId(R.id.drawer_layout))
+                .check(matches(isDisplayed()))
+                .perform(DrawerActions.open());
+        onView(withId(R.id.nvView))
+                .perform(NavigationViewActions.navigateTo(R.id.nav_about_fragment));
+
+        onView(withId(R.id.atlanticLink))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()));
+
+        Thread.sleep(1000);
+        onView(withId(R.id.appGithubLink)).perform(click());
+    }
+
+    @Test
+    public void t7_testAboutGTechLink() throws InterruptedException {
+        onView(withId(R.id.drawer_layout))
+                .check(matches(isDisplayed()))
+                .perform(DrawerActions.open());
+        onView(withId(R.id.nvView))
+                .perform(NavigationViewActions.navigateTo(R.id.nav_about_fragment));
+
         Thread.sleep(1000);
 
+        onView(withId(R.id.atlanticLink))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()));
+
+        onView(withId(R.id.gTechLink)).perform(click());
+    }
+
+    @Test
+    public void t8_testAboutAtlanticLink() throws InterruptedException {
+        onView(withId(R.id.drawer_layout))
+                .check(matches(isDisplayed()))
+                .perform(DrawerActions.open());
+        onView(withId(R.id.nvView))
+                .perform(NavigationViewActions.navigateTo(R.id.nav_about_fragment));
+
+        Thread.sleep(1000);
+
+        onView(withId(R.id.atlanticLink))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()));
+
+        onView(withId(R.id.atlanticLink)).perform(click());
     }
 }
