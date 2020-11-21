@@ -33,6 +33,7 @@ public class Constants {
     public static final String TOTAL_COUNTRY = "totalCountry";
     public static final String TOTAL_STATE = "totalState";
     public static final String COMPARE_MAP_LIST = "compareMapList";
+    public static final String LOCATION_LIST = "locationList";
 
     public static final String DAYS_01 = "1";
     public static final String DAYS_30 = "30";

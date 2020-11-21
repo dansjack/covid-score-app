@@ -231,11 +231,12 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void openCompareFragment() {
-        if (covidSnapshotNavList != null && !covidSnapshotNavList.isEmpty()) {
+        if ((covidSnapshotNavList != null && !covidSnapshotNavList.isEmpty())
+                && (locationsNavList != null && !locationsNavList.isEmpty())) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             CompareFragment compareFragment = new CompareFragment();
 
-            Bundle bundle = makeCompareBundle(covidSnapshotNavList);
+            Bundle bundle = makeCompareBundle(covidSnapshotNavList, locationsNavList);
             compareFragment.setArguments(bundle);
 
             transaction.replace(R.id.fragContainer, compareFragment, Constants.FRAGMENT_COMPARE);
@@ -296,13 +297,13 @@ public class MainActivity extends AppCompatActivity implements
                 }
                 break;
             case R.id.nav_about_fragment:
+                fragmentClass = AboutFragment.class;
+                fragmentTag = Constants.FRAGMENT_ABOUT;
+                break;
+            case R.id.nav_compare_fragment:
                 if (!covidSnapshotNavList.isEmpty()) {
                     openCompareFragment();
                 }
-                break;
-            case R.id.nav_compare_fragment:
-                fragmentClass = CompareFragment.class;
-                fragmentTag = Constants.FRAGMENT_COMPARE;
                 break;
             default:
                 fragmentClass = LocationManualSelectionFragment.class;
@@ -433,7 +434,7 @@ public class MainActivity extends AppCompatActivity implements
         openNewRiskDetailPageFragment(mcs.getValue(), selectedLocation);
     }
 
-    private Bundle makeCompareBundle(List<CovidSnapshot> snapshots) {
+    private Bundle makeCompareBundle(List<CovidSnapshot> snapshots, List<Location> locations) {
         Bundle bundle = new Bundle();
         ArrayList<HashMap<Integer, Double>> riskMaps = new ArrayList<>();
         for (CovidSnapshot cs : snapshots) {
@@ -443,7 +444,14 @@ public class MainActivity extends AppCompatActivity implements
                     Constants.GROUP_SIZES);
             riskMaps.add(countyRiskMap);
         }
+        ArrayList<String> locationStrings = new ArrayList<>();
+        for (Location location : locations) {
+            String locationSb = location.getCounty() +
+                    Constants.COMMA_SPACE + location.getState();
+            locationStrings.add(locationSb);
+        }
         bundle.putSerializable(Constants.COMPARE_MAP_LIST, riskMaps);
+        bundle.putSerializable(Constants.LOCATION_LIST, locationStrings);
         return bundle;
     }
 
