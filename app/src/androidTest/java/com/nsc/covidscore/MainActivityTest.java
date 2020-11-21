@@ -201,4 +201,12 @@ public class MainActivityTest {
 //        onView(withId(R.id.submit_btn)).perform(click());
 //        onView(withId(R.id.loadingTextView)).check(matches(withText(R.string.loading_data)));
 //    }
+
+    @Test
+    public void t4_testAboutPage() throws InterruptedException {
+        onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
+        onView(withId(R.id.nvView)).perform(NavigationViewActions.navigateTo(R.id.nav_about_fragment));
+        Thread.sleep(1000);
+
+    }
 }
