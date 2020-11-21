@@ -60,6 +60,7 @@
     <string name="determineRiskHeadingText">Determining Risk</string>
 
     <string name="store_location">Store A Location</string>
+    <string name="compareAppHeading">\"Compare Locations\"</string>
 
     <string-array name="group_sizes">
         <item>10</item>

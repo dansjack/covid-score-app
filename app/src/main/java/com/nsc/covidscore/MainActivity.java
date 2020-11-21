@@ -70,6 +70,10 @@ public class MainActivity extends AppCompatActivity implements
             LocationManualSelectionFragment lmsFragment = (LocationManualSelectionFragment) fragment;
             lmsFragment.setOnSubmitButtonListener(this);
         }
+        if (fragment instanceof CompareFragment) {
+            CompareFragment cFragment = (CompareFragment) fragment;
+            // if we need a listener for the CompareFragment
+        }
     }
 
     @Override
@@ -84,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Find drawer view
-        mDrawer = (DrawerLayout)findViewById(R.id.drawer_layout);
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerToggle = setupDrawerToggle();
 
         // Setup toggle to display hamburger icon with nice animation
@@ -118,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements
         // This will hold latest copy of last 3 locationIds
         vm.getLatestLocationsLatestCovidSnapshots().observe(this, snapshotListFromDb -> {
             if (snapshotListFromDb != null && snapshotListFromDb.size() <= 3) {
+                // TODO: set compare option visible on Nav
                 locationsNavList.clear();
                 covidSnapshotNavList.clear();
                 for (int i = 0; i < snapshotListFromDb.size(); i++) {
@@ -225,6 +230,20 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    public void openCompareFragment() {
+        if (covidSnapshotNavList != null && !covidSnapshotNavList.isEmpty()) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            CompareFragment compareFragment = new CompareFragment();
+
+            Bundle bundle = makeCompareBundle(covidSnapshotNavList);
+            compareFragment.setArguments(bundle);
+
+            transaction.replace(R.id.fragContainer, compareFragment, Constants.FRAGMENT_COMPARE);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
+    }
+
     public void openLocationSelectionFragment() {
         // Create a new Location Selection Fragment to be placed in the activity layout
         LocationManualSelectionFragment locationManualSelectionFragment =
@@ -277,8 +296,13 @@ public class MainActivity extends AppCompatActivity implements
                 }
                 break;
             case R.id.nav_about_fragment:
-                fragmentClass = AboutFragment.class;
-                fragmentTag = Constants.FRAGMENT_ABOUT;
+                if (!covidSnapshotNavList.isEmpty()) {
+                    openCompareFragment();
+                }
+                break;
+            case R.id.nav_compare_fragment:
+                fragmentClass = CompareFragment.class;
+                fragmentTag = Constants.FRAGMENT_COMPARE;
                 break;
             default:
                 fragmentClass = LocationManualSelectionFragment.class;
@@ -407,6 +431,20 @@ public class MainActivity extends AppCompatActivity implements
         Log.i(TAG, "onSubmitButtonClicked - cs: " + Objects.requireNonNull(mcs.getValue()).toString());
 
         openNewRiskDetailPageFragment(mcs.getValue(), selectedLocation);
+    }
+
+    private Bundle makeCompareBundle(List<CovidSnapshot> snapshots) {
+        Bundle bundle = new Bundle();
+        ArrayList<HashMap<Integer, Double>> riskMaps = new ArrayList<>();
+        for (CovidSnapshot cs : snapshots) {
+            HashMap<Integer, Double> countyRiskMap = RiskCalculation.getRiskCalculationsMap(
+                    cs.getCountyActiveCount(),
+                    cs.getCountyTotalPopulation(),
+                    Constants.GROUP_SIZES);
+            riskMaps.add(countyRiskMap);
+        }
+        bundle.putSerializable(Constants.COMPARE_MAP_LIST, riskMaps);
+        return bundle;
     }
 
     private Bundle makeRiskDetailPageBundle(CovidSnapshot snapshot, Location location) {
