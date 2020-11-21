@@ -1,5 +1,12 @@
 <resources>
     <string name="app_name">Covid Score</string>
+    <string name="settings">Settings</string>
+    <string name="manage_locations">Manage Locations</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
     <string name="app_welcome">Welcome</string>
     <string name="location_entry_text">Please enter a location:</string>
     <string name="state">Select state</string>
@@ -51,6 +58,8 @@
     <string name="no_internet">No Internet Connection Available</string>
     <string name="aboutList">&#8226; State data from Worldometer\n&#8226; All other data from Johns Hopkins University</string>
     <string name="determineRiskHeadingText">Determining Risk</string>
+
+    <string name="store_location">Store A Location</string>
 
     <string-array name="group_sizes">
         <item>10</item>
