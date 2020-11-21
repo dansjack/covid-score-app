@@ -1,5 +1,12 @@
 <resources>
     <string name="app_name">Covid Score</string>
+    <string name="settings">Settings</string>
+    <string name="manage_locations">Manage Locations</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
     <string name="app_welcome">Welcome</string>
     <string name="location_entry_text">Please enter a location:</string>
     <string name="state">Select state</string>
@@ -56,6 +63,8 @@
     <string name="atlanticText">• The Atlantic - The COVID Tracking Project</string>
     <string name="atlanticLink">Link to The Atlantic\'s COVID Tracking Project</string>
     <string name="gTechLink">Link to Georgia Teach\'s COVID-19 Event Risk Assessment Planning Tool</string>
+
+    <string name="store_location">Store A Location</string>
 
     <string-array name="group_sizes">
         <item>10</item>
