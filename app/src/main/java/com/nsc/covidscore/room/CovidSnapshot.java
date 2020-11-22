@@ -1,5 +1,7 @@
 package com.nsc.covidscore.room;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -134,6 +136,19 @@ public class CovidSnapshot extends Observable {
     }
 
     public boolean hasFieldsSet() {
+        Log.i("CovidSnapshot", String.valueOf("hasFieldsSet: countyActiveCount != null: " + countyActiveCount != null));
+        Log.i("CovidSnapshot", String.valueOf("hasFieldsSet: stateActiveCount != null: " + stateActiveCount != null));
+        Log.i("CovidSnapshot", String.valueOf("hasFieldsSet: countryActiveCount != null: " + countryActiveCount != null));
+
+        Log.i("CovidSnapshot", String.valueOf("\nhasFieldsSet: countyTotalPopulation != null: " + countyTotalPopulation != null));
+        Log.i("CovidSnapshot", String.valueOf("hasFieldsSet: stateTotalPopulation != null: " + stateTotalPopulation != null));
+        Log.i("CovidSnapshot", String.valueOf("hasFieldsSet: countryTotalPopulation != null: " + countryTotalPopulation != null));
+
+        Log.i("CovidSnapshot", String.valueOf("\nhasFieldsSet: countryActiveCount != null: " + countryActiveCount != null));
+        Log.i("CovidSnapshot", "hasFieldsSet: countryActiveCount != 0: " + String.valueOf(countryActiveCount));
+
+        Log.i("CovidSnapshot", String.valueOf("hasFieldsSet: locationId != null: " + locationId != null));
+        Log.i("CovidSnapshot", String.valueOf("\n\nBREAK\n\n"));
         boolean countsNotNull = countyActiveCount != null && (stateActiveCount != null && countryActiveCount != null);
         boolean populationsNotNull = countyTotalPopulation != null && (stateTotalPopulation != null && countryTotalPopulation != null);
         // TODO: change this if the pandemic ends :)
