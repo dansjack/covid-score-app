@@ -231,8 +231,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void openCompareFragment() {
-        if ((covidSnapshotNavList != null && !covidSnapshotNavList.isEmpty())
-                && (locationsNavList != null && !locationsNavList.isEmpty())) {
+        if (covidSnapshotNavList != null
+                && locationsNavList != null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             CompareFragment compareFragment = new CompareFragment();
 
@@ -301,9 +301,7 @@ public class MainActivity extends AppCompatActivity implements
                 fragmentTag = Constants.FRAGMENT_ABOUT;
                 break;
             case R.id.nav_compare_fragment:
-                if (!covidSnapshotNavList.isEmpty()) {
-                    openCompareFragment();
-                }
+                openCompareFragment();
                 break;
             default:
                 fragmentClass = LocationManualSelectionFragment.class;

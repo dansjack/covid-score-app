@@ -38,9 +38,26 @@ public class MainActivityTest {
             new ActivityScenarioRule<>(MainActivity.class);
 
     @Test
+    public void t0_noComparingNoLocations() throws InterruptedException {
+        Thread.sleep(8000); // time for app to load
+
+        onView(withId(R.id.drawer_layout))
+                .check(matches(isClosed(Gravity.LEFT)))
+                .perform(DrawerActions.open());
+        onView(withId(R.id.nvView)).perform(NavigationViewActions
+                .navigateTo(R.id.nav_compare_fragment)); // start compare fragment
+
+        Thread.sleep(5000);
+
+        onView(withId(R.id.comparing_tv))
+                .check(matches(isDisplayed()))
+                .check(matches(withText(R.string.nothing_to_compare)));
+    }
+
+    @Test
     public void t1_canSelectLocationAndViewRisk() throws InterruptedException {
         try {
-            Thread.sleep(8000); // Time for app to load
+            Thread.sleep(2000); // Time for app to load
             try { // Are we in the LocationManualSelectionFragment?
                 onView(withId(R.id.state_spinner)).check(matches(isDisplayed()));
             } catch (NoMatchingViewException | PerformException ex) {
