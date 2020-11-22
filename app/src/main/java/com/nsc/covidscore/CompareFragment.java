@@ -145,7 +145,7 @@ public class CompareFragment extends Fragment {
         }
 
         Description description = new Description();
-        description.setText(res.getString(R.string.comparison_description));
+        description.setText(res.getString(R.string.risk_graph_label));
 
         setAxes();
         riskComparisonChart.setData(new LineData(riskLineSet));
