@@ -27,6 +27,7 @@ public class CovidSnapshotUnitTest {
     private static CovidSnapshot TEST_SNAPSHOT14;
     private static CovidSnapshot TEST_SNAPSHOT15;
     private static CovidSnapshot TEST_SNAPSHOT16;
+    private static CovidSnapshot TEST_SNAPSHOT17;
 
     @BeforeClass
     public static void beforeClass() {
@@ -85,9 +86,11 @@ public class CovidSnapshotUnitTest {
 
         TEST_SNAPSHOT12 = new CovidSnapshot();
         TEST_SNAPSHOT12.setCovidSnapshotId(999);
+        TEST_SNAPSHOT12.setLocationId(2);
 
         TEST_SNAPSHOT13 = new CovidSnapshot();
         TEST_SNAPSHOT13.setLocationId(999);
+        TEST_SNAPSHOT13.setCovidSnapshotId(2);
 
         TEST_SNAPSHOT14 = new CovidSnapshot(20, 1, 2, 3, calendar);
 
@@ -95,17 +98,18 @@ public class CovidSnapshotUnitTest {
         TEST_SNAPSHOT15.setCovidSnapshotId(222);
         TEST_SNAPSHOT16 = new CovidSnapshot(288, 1, 2, 3, calendar);
         TEST_SNAPSHOT16.setCovidSnapshotId(222);
+        TEST_SNAPSHOT17 = new CovidSnapshot();
 
 
     }
 
     @Test
     public void snapshotEqualsTest() {
-        System.out.println(TEST_SNAPSHOT2.equals(TEST_SNAPSHOT2));
         assertTrue(TEST_SNAPSHOT2.equals(TEST_SNAPSHOT2));
         assertFalse(TEST_SNAPSHOT2.equals(TEST_SNAPSHOT14));
         assertFalse(TEST_SNAPSHOT2.equals(TEST_SNAPSHOT15));
         assertFalse(TEST_SNAPSHOT2.equals(TEST_SNAPSHOT16));
+        assertFalse(TEST_SNAPSHOT17.equals(TEST_SNAPSHOT2));
     }
 
     @Test
@@ -172,5 +176,6 @@ public class CovidSnapshotUnitTest {
         assertTrue(TEST_SNAPSHOT2.idsEqual(TEST_SNAPSHOT11));
         assertFalse(TEST_SNAPSHOT2.idsEqual(TEST_SNAPSHOT12));
         assertFalse(TEST_SNAPSHOT2.idsEqual(TEST_SNAPSHOT13));
+        assertFalse(TEST_SNAPSHOT2.idsEqual(TEST_SNAPSHOT17));
     }
 }
