@@ -49,7 +49,7 @@ public class MainActivityTest {
             onView(withId(R.id.activeCounty)).check(matches(not(withText(""))));
             onView(withId(R.id.select_location_btn)).perform(click());
         }
-        
+
         // select state
         onView(withId(R.id.state_spinner)).perform(click());
         onData(allOf(is(instanceOf(String.class)), is("California"))).perform(click());

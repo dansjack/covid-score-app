@@ -14,6 +14,13 @@ public class CovidSnapshotUnitTest {
     private static CovidSnapshot TEST_SNAPSHOT1;
     private static CovidSnapshot TEST_SNAPSHOT2;
     private static CovidSnapshot TEST_SNAPSHOT3;
+    private static CovidSnapshot TEST_SNAPSHOT4;
+    private static CovidSnapshot TEST_SNAPSHOT5;
+    private static CovidSnapshot TEST_SNAPSHOT6;
+    private static CovidSnapshot TEST_SNAPSHOT7;
+    private static CovidSnapshot TEST_SNAPSHOT8;
+    private static CovidSnapshot TEST_SNAPSHOT9;
+    private static CovidSnapshot TEST_SNAPSHOT10;
 
     @BeforeClass
     public static void beforeClass() {
@@ -29,18 +36,54 @@ public class CovidSnapshotUnitTest {
         TEST_SNAPSHOT2.setCountyTotalPopulation(2);
         TEST_SNAPSHOT2.setStateTotalPopulation(2);
         TEST_SNAPSHOT2.setCountryTotalPopulation(2);
-
-        TEST_SNAPSHOT3 = new CovidSnapshot(3, 2, 3, 4, calendar);
-        TEST_SNAPSHOT3.setCovidSnapshotId(3);
         TEST_SNAPSHOT2.setCountyTotalPopulation(3);
         TEST_SNAPSHOT2.setStateTotalPopulation(3);
         TEST_SNAPSHOT2.setCountryTotalPopulation(3);
+
+        TEST_SNAPSHOT3 = new CovidSnapshot(3, 2, 3, 4, calendar);
+        TEST_SNAPSHOT3.setCovidSnapshotId(3);
+
+        TEST_SNAPSHOT4 = new CovidSnapshot();
+
+        TEST_SNAPSHOT5 = new CovidSnapshot();
+        TEST_SNAPSHOT5.setStateActiveCount(1);
+        TEST_SNAPSHOT5.setCountryActiveCount(1);
+
+        TEST_SNAPSHOT6 = new CovidSnapshot();
+        TEST_SNAPSHOT6.setCountyActiveCount(1);
+        TEST_SNAPSHOT6.setCountryActiveCount(1);
+
+        TEST_SNAPSHOT7 = new CovidSnapshot();
+        TEST_SNAPSHOT7.setCountyActiveCount(1);
+        TEST_SNAPSHOT7.setStateActiveCount(1);
+
+        TEST_SNAPSHOT8 = new CovidSnapshot();
+        TEST_SNAPSHOT8.setCountyActiveCount(1);
+
+        TEST_SNAPSHOT9 = new CovidSnapshot();
+        TEST_SNAPSHOT9.setStateActiveCount(1);
+
+        TEST_SNAPSHOT10 = new CovidSnapshot();
+        TEST_SNAPSHOT10.setCountyActiveCount(1);
+
     }
 
     @Test
     public void snapshotMethodsTest() {
         assertFalse(TEST_SNAPSHOT1.equals(TEST_SNAPSHOT2));
         assertFalse(TEST_SNAPSHOT1.hasSameData(TEST_SNAPSHOT2));
+        assertFalse(TEST_SNAPSHOT1.hasFieldsSet());
+    }
 
+    @Test
+    public void snapshotCountsNotNullTest() {
+        assertTrue(TEST_SNAPSHOT1.countsNotNull());
+        assertFalse(TEST_SNAPSHOT4.countsNotNull());
+        assertFalse(TEST_SNAPSHOT5.countsNotNull());
+        assertFalse(TEST_SNAPSHOT6.countsNotNull());
+        assertFalse(TEST_SNAPSHOT7.countsNotNull());
+        assertFalse(TEST_SNAPSHOT8.countsNotNull());
+        assertFalse(TEST_SNAPSHOT9.countsNotNull());
+        assertFalse(TEST_SNAPSHOT10.countsNotNull());
     }
 }
