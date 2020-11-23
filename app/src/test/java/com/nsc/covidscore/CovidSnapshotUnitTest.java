@@ -48,23 +48,32 @@ public class CovidSnapshotUnitTest {
         TEST_SNAPSHOT5 = new CovidSnapshot();
         TEST_SNAPSHOT5.setStateActiveCount(1);
         TEST_SNAPSHOT5.setCountryActiveCount(1);
+        TEST_SNAPSHOT5.setStateTotalPopulation(1);
+        TEST_SNAPSHOT5.setCountryTotalPopulation(1);
 
         TEST_SNAPSHOT6 = new CovidSnapshot();
         TEST_SNAPSHOT6.setCountyActiveCount(1);
         TEST_SNAPSHOT6.setCountryActiveCount(1);
+        TEST_SNAPSHOT6.setCountyTotalPopulation(1);
+        TEST_SNAPSHOT6.setCountryTotalPopulation(1);
 
         TEST_SNAPSHOT7 = new CovidSnapshot();
         TEST_SNAPSHOT7.setCountyActiveCount(1);
         TEST_SNAPSHOT7.setStateActiveCount(1);
+        TEST_SNAPSHOT7.setCountyTotalPopulation(1);
+        TEST_SNAPSHOT7.setStateTotalPopulation(1);
 
         TEST_SNAPSHOT8 = new CovidSnapshot();
         TEST_SNAPSHOT8.setCountyActiveCount(1);
+        TEST_SNAPSHOT8.setCountyTotalPopulation(1);
 
         TEST_SNAPSHOT9 = new CovidSnapshot();
         TEST_SNAPSHOT9.setStateActiveCount(1);
+        TEST_SNAPSHOT9.setStateTotalPopulation(1);
 
         TEST_SNAPSHOT10 = new CovidSnapshot();
         TEST_SNAPSHOT10.setCountyActiveCount(1);
+        TEST_SNAPSHOT10.setCountryTotalPopulation(1);
 
     }
 
@@ -85,5 +94,17 @@ public class CovidSnapshotUnitTest {
         assertFalse(TEST_SNAPSHOT8.countsNotNull());
         assertFalse(TEST_SNAPSHOT9.countsNotNull());
         assertFalse(TEST_SNAPSHOT10.countsNotNull());
+    }
+
+    @Test
+    public void snapshotPopulationsNotNull() {
+        assertTrue(TEST_SNAPSHOT1.populationsNotNull());
+        assertFalse(TEST_SNAPSHOT4.populationsNotNull());
+        assertFalse(TEST_SNAPSHOT5.populationsNotNull());
+        assertFalse(TEST_SNAPSHOT6.populationsNotNull());
+        assertFalse(TEST_SNAPSHOT7.populationsNotNull());
+        assertFalse(TEST_SNAPSHOT8.populationsNotNull());
+        assertFalse(TEST_SNAPSHOT9.populationsNotNull());
+        assertFalse(TEST_SNAPSHOT10.populationsNotNull());
     }
 }
