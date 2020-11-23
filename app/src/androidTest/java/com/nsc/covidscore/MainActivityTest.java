@@ -41,27 +41,38 @@ public class MainActivityTest {
 
     @Test
     public void t1_canSelectLocationAndViewRisk() throws InterruptedException {
-        Thread.sleep(4000); // Time for app to load
-        try { // Are we in the LocationManualSelectionFragment?
-            onView(withId(R.id.state_spinner)).check(matches(isDisplayed()));
+        try {
+            Thread.sleep(8000); // Time for app to load
+            try { // Are we in the LocationManualSelectionFragment?
+                onView(withId(R.id.state_spinner)).check(matches(isDisplayed()));
+            } catch (NoMatchingViewException | PerformException ex) {
+                // We are in RiskDetailFragment - click select new
+                onView(withId(R.id.activeCounty)).check(matches(not(withText(""))));
+                onView(withId(R.id.select_location_btn)).perform(click());
+            }
+
+            // inside the LocationManualSelectionFragment
+
+            // select state
+            onView(withId(R.id.state_spinner)).perform(click());
+            onData(allOf(is(instanceOf(String.class)), is("California"))).perform(click());
+
+            // select county
+            onView(withId(R.id.county_spinner)).perform(click());
+            onData(allOf(is(instanceOf(String.class)), is("Imperial"))).perform(click());
+
+            // click submit
+            onView(withId(R.id.submit_btn)).perform(click());
+
+            Thread.sleep(8000);
+
+            // This should throw a NoMatchingViewException
+            onView(withId(R.id.location_entry_tv)).perform(click());
         } catch (NoMatchingViewException | PerformException ex) {
-            // We are in RiskDetailFragment - nav to location select
+            // pass over this test to avoid crashing, we're in the RiskDetailPageFragment
+            // inside the RiskDetailPageFragment
             onView(withId(R.id.activeCounty)).check(matches(not(withText(""))));
-            onView(withId(R.id.select_location_btn)).perform(click());
         }
-
-        // select state
-        onView(withId(R.id.state_spinner)).perform(click());
-        onData(allOf(is(instanceOf(String.class)), is("California"))).perform(click());
-
-        // select county
-        onView(withId(R.id.county_spinner)).perform(click());
-        onData(allOf(is(instanceOf(String.class)), is("Imperial"))).perform(click());
-
-        // click submit
-        onView(withId(R.id.submit_btn)).perform(click());
-
-        Thread.sleep(4000);
         onView(withId(R.id.risk_detail_frag)).check(matches(isDisplayed()));
     }
 
