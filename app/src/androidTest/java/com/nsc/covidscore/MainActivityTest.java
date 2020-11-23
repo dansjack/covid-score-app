@@ -52,6 +52,18 @@ public class MainActivityTest {
         onView(withId(R.id.comparing_tv))
                 .check(matches(isDisplayed()))
                 .check(matches(withText(R.string.nothing_to_compare)));
+
+        onView(withId(R.id.compare_location_1))
+                .check(matches(not(isDisplayed())));
+
+        onView(withId(R.id.compare_location_2))
+                .check(matches(not(isDisplayed())));
+
+        onView(withId(R.id.compare_location_3))
+                .check(matches(not(isDisplayed())));
+
+        onView(withId(R.id.comparisonGraph))
+                .check(matches(not(isDisplayed())));
     }
 
     @Test
@@ -194,11 +206,16 @@ public class MainActivityTest {
                 .check(matches(withText(R.string.need_more_locations)));
 
         onView(withId(R.id.compare_location_1))
-                .check(matches(isDisplayed()))
-                .check(matches(withText("Imperial, California")));
+                .check(matches(not(isDisplayed())));
+
+        onView(withId(R.id.compare_location_2))
+                .check(matches(not(isDisplayed())));
+
+        onView(withId(R.id.compare_location_3))
+                .check(matches(not(isDisplayed())));
 
         onView(withId(R.id.comparisonGraph))
-                .check(matches(isDisplayed()));
+                .check(matches(not(isDisplayed())));
     }
 
     public void t5_canCompareLocations() throws InterruptedException {
