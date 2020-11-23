@@ -213,6 +213,7 @@ public class MainActivityTest {
 
     @Test
     public void t5_testAboutDiseaseLink() throws InterruptedException {
+        Thread.sleep(1000);
         onView(withId(R.id.drawer_layout))
                 .check(matches(isDisplayed()))
                 .perform(DrawerActions.open());
@@ -225,6 +226,7 @@ public class MainActivityTest {
 
     @Test
     public void t6_testAboutAppGithubLink() throws InterruptedException {
+        Thread.sleep(1000);
         onView(withId(R.id.drawer_layout))
                 .check(matches(isDisplayed()))
                 .perform(DrawerActions.open());
@@ -241,6 +243,7 @@ public class MainActivityTest {
 
     @Test
     public void t7_testAboutGTechLink() throws InterruptedException {
+        Thread.sleep(1000);
         onView(withId(R.id.drawer_layout))
                 .check(matches(isDisplayed()))
                 .perform(DrawerActions.open());
@@ -258,6 +261,7 @@ public class MainActivityTest {
 
     @Test
     public void t8_testAboutAtlanticLink() throws InterruptedException {
+        Thread.sleep(1000);
         onView(withId(R.id.drawer_layout))
                 .check(matches(isDisplayed()))
                 .perform(DrawerActions.open());
