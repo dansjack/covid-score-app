@@ -21,11 +21,17 @@ public class CovidSnapshotUnitTest {
     private static CovidSnapshot TEST_SNAPSHOT8;
     private static CovidSnapshot TEST_SNAPSHOT9;
     private static CovidSnapshot TEST_SNAPSHOT10;
+    private static CovidSnapshot TEST_SNAPSHOT11;
+    private static CovidSnapshot TEST_SNAPSHOT12;
+    private static CovidSnapshot TEST_SNAPSHOT13;
+    private static CovidSnapshot TEST_SNAPSHOT14;
+    private static CovidSnapshot TEST_SNAPSHOT15;
+    private static CovidSnapshot TEST_SNAPSHOT16;
 
     @BeforeClass
     public static void beforeClass() {
         Calendar calendar = Calendar.getInstance();
-        TEST_SNAPSHOT1 = new CovidSnapshot(1, 0, 0, 0, calendar);
+        TEST_SNAPSHOT1 = new CovidSnapshot(999, 0, 0, 0, calendar);
         TEST_SNAPSHOT1.setCovidSnapshotId(1);
         TEST_SNAPSHOT1.setCountyTotalPopulation(0);
         TEST_SNAPSHOT1.setStateTotalPopulation(0);
@@ -75,6 +81,31 @@ public class CovidSnapshotUnitTest {
         TEST_SNAPSHOT10.setCountyActiveCount(1);
         TEST_SNAPSHOT10.setCountryTotalPopulation(1);
 
+        TEST_SNAPSHOT11 = TEST_SNAPSHOT2;
+
+        TEST_SNAPSHOT12 = new CovidSnapshot();
+        TEST_SNAPSHOT12.setCovidSnapshotId(999);
+
+        TEST_SNAPSHOT13 = new CovidSnapshot();
+        TEST_SNAPSHOT13.setLocationId(999);
+
+        TEST_SNAPSHOT14 = new CovidSnapshot(20, 1, 2, 3, calendar);
+
+        TEST_SNAPSHOT15 = new CovidSnapshot(2, 1, 2, 3, calendar);
+        TEST_SNAPSHOT15.setCovidSnapshotId(222);
+        TEST_SNAPSHOT16 = new CovidSnapshot(288, 1, 2, 3, calendar);
+        TEST_SNAPSHOT16.setCovidSnapshotId(222);
+
+
+    }
+
+    @Test
+    public void snapshotEqualsTest() {
+        System.out.println(TEST_SNAPSHOT2.equals(TEST_SNAPSHOT2));
+        assertTrue(TEST_SNAPSHOT2.equals(TEST_SNAPSHOT2));
+        assertFalse(TEST_SNAPSHOT2.equals(TEST_SNAPSHOT14));
+        assertFalse(TEST_SNAPSHOT2.equals(TEST_SNAPSHOT15));
+        assertFalse(TEST_SNAPSHOT2.equals(TEST_SNAPSHOT16));
     }
 
     @Test
@@ -134,5 +165,12 @@ public class CovidSnapshotUnitTest {
         assertTrue(TEST_SNAPSHOT1.countsNotNull());
         assertFalse(TEST_SNAPSHOT4.countsNotNull());
         assertFalse(TEST_SNAPSHOT6.countsNotNull());
+    }
+
+    @Test
+    public void snapshotIdsEqualTest() {
+        assertTrue(TEST_SNAPSHOT2.idsEqual(TEST_SNAPSHOT11));
+        assertFalse(TEST_SNAPSHOT2.idsEqual(TEST_SNAPSHOT12));
+        assertFalse(TEST_SNAPSHOT2.idsEqual(TEST_SNAPSHOT13));
     }
 }

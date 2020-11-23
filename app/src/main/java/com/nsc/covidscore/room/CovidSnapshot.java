@@ -145,10 +145,13 @@ public class CovidSnapshot extends Observable {
         return (countsNotNull() && populationsNotNull()) && (countryActiveCount != 0 && locationId != null);
     }
 
+    public boolean idsEqual(CovidSnapshot other) {
+        return this.covidSnapshotId.equals(other.covidSnapshotId) && this.locationId.equals(other.locationId);
+    }
+
     public boolean equals(CovidSnapshot other) {
         if (this.covidSnapshotId == null) { return false; }
-        boolean idsEqual = (this.covidSnapshotId.equals(other.covidSnapshotId)) && (this.locationId.equals(other.locationId));
-        return idsEqual && this.hasSameData(other);
+        return idsEqual(other) && this.hasSameData(other);
     }
 
     public boolean hasSameData(CovidSnapshot other) {
