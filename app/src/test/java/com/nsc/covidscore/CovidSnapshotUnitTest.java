@@ -52,7 +52,7 @@ public class CovidSnapshotUnitTest {
         TEST_SNAPSHOT5.setCountryTotalPopulation(1);
 
         TEST_SNAPSHOT6 = new CovidSnapshot();
-        TEST_SNAPSHOT6.setCountyActiveCount(1);
+        TEST_SNAPSHOT6.setCountyActiveCount(0);
         TEST_SNAPSHOT6.setCountryActiveCount(1);
         TEST_SNAPSHOT6.setCountyTotalPopulation(1);
         TEST_SNAPSHOT6.setCountryTotalPopulation(1);
@@ -106,5 +106,13 @@ public class CovidSnapshotUnitTest {
         assertFalse(TEST_SNAPSHOT8.populationsNotNull());
         assertFalse(TEST_SNAPSHOT9.populationsNotNull());
         assertFalse(TEST_SNAPSHOT10.populationsNotNull());
+    }
+
+    @Test
+    public void snapshotCountryNotZero() {
+        assertTrue(TEST_SNAPSHOT1.countsNotNull());
+        assertFalse(TEST_SNAPSHOT4.countsNotNull());
+        assertFalse(TEST_SNAPSHOT6.countsNotNull());
+
     }
 }
