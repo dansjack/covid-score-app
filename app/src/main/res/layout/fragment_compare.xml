@@ -51,6 +51,7 @@
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/comparisonGraph"
+        android:visibility="gone"
         android:layout_height="0dp"
         android:layout_width="match_parent"
         android:padding="@dimen/text_margin"

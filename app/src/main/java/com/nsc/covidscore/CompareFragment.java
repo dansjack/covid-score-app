@@ -88,15 +88,14 @@ public class CompareFragment extends Fragment {
                 return;
             }
 
-            TextView location1 = v.findViewById(R.id.compare_location_1);
-            location1.setVisibility(View.VISIBLE);
-            location1.setText(locationStrings.get(0));
-            locationsTextViews.add(location1);
-
             if (count == 1) {
                 comparing.setText(res.getString(R.string.need_more_locations));
                 return;
             }
+            TextView location1 = v.findViewById(R.id.compare_location_1);
+            location1.setVisibility(View.VISIBLE);
+            location1.setText(locationStrings.get(0));
+            locationsTextViews.add(location1);
 
             TextView location2 = v.findViewById(R.id.compare_location_2);
             location2.setVisibility(View.VISIBLE);
@@ -118,6 +117,7 @@ public class CompareFragment extends Fragment {
         ArrayList<ILineDataSet> riskLineSet = new ArrayList<>();
 
         if (lineCount >= 2) {
+            riskComparisonChart.setVisibility(View.VISIBLE);
             LineDataSet countyRiskDataSet1 =
                     new LineDataSet(getEntryList(countyRiskMaps.get(0)),locationStrings.get(0));
             countyRiskDataSet1.setCircleColor(R.color.black_overlay);
@@ -136,7 +136,7 @@ public class CompareFragment extends Fragment {
         }
         if (lineCount == 3) {
             LineDataSet countyRiskDataSet3 =
-                    new LineDataSet(getEntryList(countyRiskMaps.get(0)),locationStrings.get(2));
+                    new LineDataSet(getEntryList(countyRiskMaps.get(2)),locationStrings.get(2));
             countyRiskDataSet3.setCircleColor(R.color.black_overlay);
             countyRiskDataSet3.setAxisDependency(YAxis.AxisDependency.LEFT);
             countyRiskDataSet3.setLineWidth(5);
