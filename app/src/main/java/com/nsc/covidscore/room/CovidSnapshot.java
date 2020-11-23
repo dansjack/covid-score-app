@@ -133,8 +133,6 @@ public class CovidSnapshot extends Observable {
     }
 
     public boolean countsNotNull() {
-        // False
-        //  stateActiveCount != null == false && countryActiveCount != null == false
         return countyActiveCount != null && stateActiveCount != null && countryActiveCount != null;
     }
 
@@ -142,13 +140,9 @@ public class CovidSnapshot extends Observable {
         return countyTotalPopulation != null && stateTotalPopulation != null && countryTotalPopulation != null;
     }
 
-    public boolean countryNotZero() {
-        return countryActiveCount != null && countryActiveCount != 0;
-    }
-
     public boolean hasFieldsSet() {
         // TODO: change this if the pandemic ends :)
-        return (countsNotNull() && populationsNotNull()) && (countryNotZero() && locationId != null);
+        return (countsNotNull() && populationsNotNull()) && (countryActiveCount != 0 && locationId != null);
     }
 
     public boolean equals(CovidSnapshot other) {

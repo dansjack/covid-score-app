@@ -85,6 +85,27 @@ public class CovidSnapshotUnitTest {
     }
 
     @Test
+    public void snapshotHasFieldsSetTest() {
+        //  1. All true DONE
+        //  2. countsNotNull = true && populationsNotNull = true && countryActiveCount != 0 = true
+        //  3. countsNotNull = true && populationsNotNull = true && locationId != null = true
+        //  4. countsNotNull = true && populationsNotNull = true
+        //  5. countsNotNull = true && countryActiveCount != 0 = true && locationId != null = true
+        //  6. countsNotNull = true && countryActiveCount != 0 = true
+        //  7. countsNotNull = true && locationId != null = true
+        //  8. countsNotNull = true
+        //  9. populationsNotNull = true && countryActiveCount != 0 = true && locationId != null = true
+        //  10. populationsNotNull = true && countryActiveCount != 0 = true
+        //  11. populationsNotNull = true && locationId != null = true
+        //  12. populationsNotNull = true
+        //  13. countryActiveCount != 0 = true && locationId != null = true
+        //  14. countryActiveCount != 0
+        //  15. locationId != null = true
+        //  16. All false
+        assertTrue(TEST_SNAPSHOT2.hasFieldsSet());
+    }
+
+    @Test
     public void snapshotCountsNotNullTest() {
         assertTrue(TEST_SNAPSHOT1.countsNotNull());
         assertFalse(TEST_SNAPSHOT4.countsNotNull());
@@ -113,6 +134,5 @@ public class CovidSnapshotUnitTest {
         assertTrue(TEST_SNAPSHOT1.countsNotNull());
         assertFalse(TEST_SNAPSHOT4.countsNotNull());
         assertFalse(TEST_SNAPSHOT6.countsNotNull());
-
     }
 }
