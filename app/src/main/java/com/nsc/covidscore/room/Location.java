@@ -105,9 +105,15 @@ public class Location implements Serializable {
         return county.toLowerCase() + "," + state.toLowerCase();
     }
 
+    public String toDrawerItemTitleFormat() {
+        return county + ", " + state;
+    }
+
     public boolean hasFieldsSet() {
-        boolean notNull = (this.county != null && this.state != null) && (this.countyFips != null && this.stateFips != null);
-        boolean notEmpty = (!this.county.isEmpty() && !this.state.isEmpty()) && (!this.countyFips.isEmpty() && !this.stateFips.isEmpty());
+        boolean notNull = (this.county != null && this.state != null) &&
+                (this.countyFips != null && this.stateFips != null);
+        boolean notEmpty = (!this.county.isEmpty() && !this.state.isEmpty()) &&
+                (!this.countyFips.isEmpty() && !this.stateFips.isEmpty());
         return notNull && notEmpty;
     }
 

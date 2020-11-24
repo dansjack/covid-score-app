@@ -127,8 +127,8 @@ public class MainActivity extends AppCompatActivity implements
 
                     covidSnapshotNavList.add(snapshotListFromDb.get(i));
 
+                    nvDrawer.getMenu().getItem(i).setTitle(recentLocation.toDrawerItemTitleFormat());
                     nvDrawer.getMenu().getItem(i).setVisible(true);
-                    nvDrawer.getMenu().getItem(i).setTitle(recentLocation.toApiFormat());
                 }
                 nvDrawer.getMenu().getItem(0).setChecked(true);
             }
@@ -217,6 +217,7 @@ public class MainActivity extends AppCompatActivity implements
 
             Bundle bundle = makeRiskDetailPageBundle(cs, selectedLocation);
             riskDetailPageFragment.setArguments(bundle);
+
 
             transaction.replace(R.id.fragContainer, riskDetailPageFragment, Constants.FRAGMENT_RDPF);
             transaction.addToBackStack(null);

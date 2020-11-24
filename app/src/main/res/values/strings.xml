@@ -46,6 +46,7 @@
     <string name="versionText">0.5.0</string>
     <string name="versionLabel">Version</string>
     <string name="appTitle">CovidScore</string>
+    <string name="aboutTitle">About</string>
     <string name="censusAttributionText">Note: This app uses the Census Bureau Data API but is not endorsed or certified by the Census Bureau.</string>
     <string name="aboutAppHeading">About The App</string>
     <string name="aboutPopulationLabel">Population</string>
