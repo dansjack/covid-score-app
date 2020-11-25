@@ -3,12 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto" >
 
-    <!-- New location should appear as action button if possible -->
+    <!-- New location icon should appear as action button -->
     <item
         android:id="@+id/action_newLocation"
         android:title="@string/select_location"
         android:icon="@drawable/ic_baseline_add_location_24"
-        app:showAsAction="ifRoom"
-        android:onClick="onNewLocationActionSelected"/>
+        app:showAsAction="always"/>
 
 </menu>

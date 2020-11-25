@@ -197,20 +197,21 @@ public class MainActivity extends AppCompatActivity implements
         return super.onCreateOptionsMenu(appBarMenu);
     }
 
-    public boolean onNewLocationActionSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_newLocation:
-                openLocationSelectionFragment();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
+    /**
+     * Incorporates drawer toggle into onOptionsItemSelected so the action bar home/up action
+     * should open/close the drawer.
+     * Calls openLocationSelectionFragment() if new location action item selected
+     * @param menuItem item clicked
+     * @return true if selected
+     */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem menuItem) {
         // The action bar home/up action should open or close the drawer.
         if (drawerToggle.onOptionsItemSelected(menuItem)) {
+            return true;
+        }
+        else if (menuItem.getItemId()==R.id.action_newLocation) {
+            openLocationSelectionFragment();
             return true;
         }
         return super.onOptionsItemSelected(menuItem);
