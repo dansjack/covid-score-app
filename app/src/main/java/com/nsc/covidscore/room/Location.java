@@ -63,7 +63,9 @@ public class Location implements Serializable {
 
     // CONSTRUCTOR
 
-    public Location() {}
+    public Location() {
+        propertyChangeSupport = new PropertyChangeSupport(this);
+    }
 
     public Location(Integer locationId, String county, String state, String countyFips, String stateFips) {
         propertyChangeSupport = new PropertyChangeSupport(this);
@@ -109,11 +111,25 @@ public class Location implements Serializable {
         return county + ", " + state;
     }
 
+    public boolean fipsSet() {
+        return this.countyFips != null && this.stateFips != null;
+    }
+
+    public boolean fipsNotEmpty() {
+        return !this.countyFips.isEmpty() && !this.stateFips.isEmpty();
+    }
+
+    public boolean locationNamesSet() {
+        return this.county != null && this.state != null;
+    }
+
+    public boolean locationNamesNotEmpty() {
+        return !this.county.isEmpty() && !this.state.isEmpty();
+    }
+
     public boolean hasFieldsSet() {
-        boolean notNull = (this.county != null && this.state != null) &&
-                (this.countyFips != null && this.stateFips != null);
-        boolean notEmpty = (!this.county.isEmpty() && !this.state.isEmpty()) &&
-                (!this.countyFips.isEmpty() && !this.stateFips.isEmpty());
+        boolean notNull = locationNamesSet() && fipsSet();
+        boolean notEmpty = locationNamesNotEmpty() && fipsNotEmpty();
         return notNull && notEmpty;
     }
 

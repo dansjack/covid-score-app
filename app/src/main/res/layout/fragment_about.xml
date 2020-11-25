@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,7 +7,11 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -285,6 +288,87 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/aboutText" />
+
+            <TextView
+                android:id="@+id/learnMoreHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/dp24"
+                android:paddingBottom="@dimen/dp12"
+                android:text="@string/learnMoreText"
+                android:textSize="@dimen/sp30"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/div3"
+                app:layout_constraintTop_toBottomOf="@id/div3" />
+
+            <TextView
+                android:id="@+id/gTechLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dp12"
+                android:text="@string/gTechText"
+                android:textSize="@dimen/sp18"
+                app:layout_constraintEnd_toEndOf="@+id/learnMoreHeading"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/div7" />
+
+            <TextView
+                android:id="@+id/atlanticLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dp12"
+                android:text="@string/atlanticText"
+                android:textSize="@dimen/sp18"
+                app:layout_constraintEnd_toEndOf="@+id/gTechLabel"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/gTechLabel" />
+
+            <ImageButton
+                android:id="@+id/gTechLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:backgroundTint="@android:color/black"
+                android:contentDescription="@string/gTechLink"
+                android:paddingHorizontal="@dimen/dp12"
+                app:layout_constraintBottom_toBottomOf="@+id/gTechLabel"
+                app:layout_constraintStart_toEndOf="@+id/gTechLabel"
+                app:layout_constraintTop_toTopOf="@+id/gTechLabel"
+                app:srcCompat="@drawable/ic_link" />
+
+            <ImageButton
+                android:id="@+id/atlanticLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:backgroundTint="@android:color/black"
+                android:contentDescription="@string/atlanticLink"
+                android:paddingHorizontal="@dimen/dp12"
+                app:layout_constraintBottom_toBottomOf="@id/atlanticLabel"
+                app:layout_constraintStart_toEndOf="@+id/atlanticLabel"
+                app:layout_constraintTop_toBottomOf="@+id/gTechLabel"
+                app:srcCompat="@drawable/ic_link" />
+
+            <View
+                android:id="@+id/div7"
+                android:layout_width="409dp"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/learnMoreHeading" />
+
+            <View
+                android:id="@+id/div8"
+                android:layout_width="409dp"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/gTechLabel" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

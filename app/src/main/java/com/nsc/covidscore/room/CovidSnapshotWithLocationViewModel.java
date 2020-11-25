@@ -150,7 +150,7 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
         Requests.getState(context, location.toApiFormat(), new VolleyJsonCallback() {
             @Override
             public void getJsonData(JSONObject response) throws JSONException {
-                Integer activeState = (Integer) response.get(Constants.RESPONSE_ACTIVE);
+                Integer activeState = (Integer) response.get(Constants.RESPONSE_CASES);
                 covidSnapshot.setStateActiveCount(activeState);
                 mutableCovidSnapshot.getValue().setStateActiveCount(activeState);
                 if (covidSnapshot.hasFieldsSet()) {
