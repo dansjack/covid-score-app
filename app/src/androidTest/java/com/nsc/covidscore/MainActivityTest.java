@@ -40,9 +40,38 @@ public class MainActivityTest {
             new ActivityScenarioRule<>(MainActivity.class);
 
     @Test
+    public void t0_noComparingNoLocations() throws InterruptedException {
+        Thread.sleep(8000); // time for app to load
+
+        onView(withId(R.id.drawer_layout))
+                .check(matches(isClosed(Gravity.LEFT)))
+                .perform(DrawerActions.open());
+        onView(withId(R.id.nvView)).perform(NavigationViewActions
+                .navigateTo(R.id.nav_compare_fragment)); // start compare fragment
+
+        Thread.sleep(5000);
+
+        onView(withId(R.id.comparing_tv))
+                .check(matches(isDisplayed()))
+                .check(matches(withText(R.string.nothing_to_compare)));
+
+        onView(withId(R.id.compare_location_1))
+                .check(matches(not(isDisplayed())));
+
+        onView(withId(R.id.compare_location_2))
+                .check(matches(not(isDisplayed())));
+
+        onView(withId(R.id.compare_location_3))
+                .check(matches(not(isDisplayed())));
+
+        onView(withId(R.id.comparisonGraph))
+                .check(matches(not(isDisplayed())));
+    }
+
+    @Test
     public void t1_canSelectLocationAndViewRisk() throws InterruptedException {
         try {
-            Thread.sleep(8000); // Time for app to load
+            Thread.sleep(2000); // Time for app to load
             try { // Are we in the LocationManualSelectionFragment?
                 onView(withId(R.id.state_spinner)).check(matches(isDisplayed()));
             } catch (NoMatchingViewException | PerformException ex) {
@@ -135,7 +164,6 @@ public class MainActivityTest {
                 .navigateTo(R.id.nav_about_fragment)); // start nav_about_fragment
         Thread.sleep(1000);
 
-
         //TODO: this test currently relies on the tests above selecting locations to complete
         onView(withId(R.id.drawer_layout))
                 .check(matches(isClosed(Gravity.LEFT)))
@@ -160,6 +188,87 @@ public class MainActivityTest {
 //                .navigateTo(R.id.nav_location_fragment_3));
 //        Thread.sleep(1000);
 
+    }
+
+    @Test
+    public void t4_noComparingOneLocation() throws InterruptedException {
+        Thread.sleep(2000);
+
+        //TODO: this test currently relies on the tests above selecting locations to complete
+        onView(withId(R.id.drawer_layout))
+                .check(matches(isClosed(Gravity.LEFT)))
+                .perform(DrawerActions.open());
+        onView(withId(R.id.nvView)).perform(NavigationViewActions
+                .navigateTo(R.id.nav_compare_fragment)); // start compare fragment
+
+        Thread.sleep(1000);
+
+        onView(withId(R.id.comparing_tv))
+                .check(matches(isDisplayed()))
+                .check(matches(withText(R.string.need_more_locations)));
+
+        onView(withId(R.id.compare_location_1))
+                .check(matches(not(isDisplayed())));
+
+        onView(withId(R.id.compare_location_2))
+                .check(matches(not(isDisplayed())));
+
+        onView(withId(R.id.compare_location_3))
+                .check(matches(not(isDisplayed())));
+
+        onView(withId(R.id.comparisonGraph))
+                .check(matches(not(isDisplayed())));
+    }
+
+    public void t5_canCompareLocations() throws InterruptedException {
+        Thread.sleep(2000);
+
+        try { // Are we in the LocationManualSelectionFragment?
+            onView(withId(R.id.state_spinner)).check(matches(isDisplayed()));
+        } catch (NoMatchingViewException | PerformException ex) {
+            // We are in RiskDetailFragment - click select new
+            onView(withId(R.id.activeCounty)).check(matches(not(withText(""))));
+            onView(withId(R.id.select_location_btn)).perform(click());
+        }
+
+        // inside the LocationManualSelectionFragment
+        // Add 2nd Location
+        // select state
+        onView(withId(R.id.state_spinner)).perform(click());
+        onData(allOf(is(instanceOf(String.class)), is("Washington"))).perform(click());
+
+        // select county
+        onView(withId(R.id.county_spinner)).perform(click());
+        onData(allOf(is(instanceOf(String.class)), is("King"))).perform(click());
+
+        // click submit
+        onView(withId(R.id.submit_btn)).perform(click());
+
+        Thread.sleep(3000);
+
+        //TODO: this test currently relies on the tests above selecting locations to complete
+        onView(withId(R.id.drawer_layout))
+                .check(matches(isClosed(Gravity.LEFT)))
+                .perform(DrawerActions.open());
+        onView(withId(R.id.nvView)).perform(NavigationViewActions
+                .navigateTo(R.id.nav_compare_fragment)); // start compare fragment
+
+        Thread.sleep(1000);
+
+        onView(withId(R.id.comparing_tv))
+                .check(matches(isDisplayed()))
+                .check(matches(withText(R.string.comparing_text)));
+
+        onView(withId(R.id.compare_location_1))
+                .check(matches(isDisplayed()))
+                .check(matches(withText("King, Washington")));
+
+        onView(withId(R.id.compare_location_2))
+                .check(matches(isDisplayed()))
+                .check(matches(withText("Imperial, California")));
+
+        onView(withId(R.id.comparisonGraph))
+                .check(matches(isDisplayed()));
     }
 
     // This test works locally - uncomment and try it!

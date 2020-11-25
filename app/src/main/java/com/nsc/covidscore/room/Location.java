@@ -107,6 +107,10 @@ public class Location implements Serializable {
         return county.toLowerCase() + "," + state.toLowerCase();
     }
 
+    public String toDrawerItemTitleFormat() {
+        return county + ", " + state;
+    }
+
     public boolean fipsSet() {
         return this.countyFips != null && this.stateFips != null;
     }

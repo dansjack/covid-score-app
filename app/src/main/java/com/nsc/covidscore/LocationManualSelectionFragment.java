@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
@@ -95,6 +96,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     @Override
     public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
+
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("");
 
         MainActivity main = (MainActivity) getActivity();
 

@@ -1,5 +1,6 @@
 package com.nsc.covidscore;
 
+import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
@@ -90,6 +92,7 @@ public class RiskDetailPageFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_risk_detail, container, false);
         super.onCreate(savedInstanceState);
+
         Log.d(TAG, "onCreateView invoked");
         return v;
     }
@@ -133,6 +136,8 @@ public class RiskDetailPageFragment extends Fragment {
 
         if (bundle != null) {
             currentLocation = bundle.getString(Constants.CURRENT_LOCATION);
+
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(currentLocation);
 
             activeCounty = bundle.getString(Constants.ACTIVE_COUNTY);
             activeState = bundle.getString(Constants.ACTIVE_STATE);
@@ -178,7 +183,7 @@ public class RiskDetailPageFragment extends Fragment {
 
             lastUpdatedV.setText(lastUpdated);
 
-            Log.i(TAG, "onCreateView: Bundle received from LocationManualSelectionFragment");
+            Log.i(TAG, "onViewCreated: Bundle received from LocationManualSelectionFragment");
         }
 
         riskTrendChart = v.findViewById(R.id.lineGraph);
@@ -210,10 +215,15 @@ public class RiskDetailPageFragment extends Fragment {
         riskLineSet.add(stateRiskDataSet);
         riskLineSet.add(countryRiskDataSet);
 
+        Description description = new Description();
+        description.setText(currentLocation);
+
         setAxes();
         riskTrendChart.setData(new LineData(riskLineSet));
         riskTrendChart.getDescription().setEnabled(true);
         riskTrendChart.setPinchZoom(true);
+        riskTrendChart.setDoubleTapToZoomEnabled(false);
+        riskTrendChart.setDescription(description);
         riskTrendChart.invalidate();
     }
 

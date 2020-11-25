@@ -43,9 +43,10 @@
         that we display to you.</string>
     <string name="aboutDataHeading">Data Sources</string>
     <string name="githubLabel">Check us out on GitHub</string>
-    <string name="versionText">0.4.0</string>
+    <string name="versionText">0.5.0</string>
     <string name="versionLabel">Version</string>
     <string name="appTitle">CovidScore</string>
+    <string name="aboutTitle">About</string>
     <string name="censusAttributionText">Note: This app uses the Census Bureau Data API but is not endorsed or certified by the Census Bureau.</string>
     <string name="aboutAppHeading">About The App</string>
     <string name="aboutPopulationLabel">Population</string>
@@ -65,6 +66,13 @@
     <string name="gTechLink">Link to Georgia Teach\'s COVID-19 Event Risk Assessment Planning Tool</string>
 
     <string name="store_location">Store A Location</string>
+    <string name="compareAppHeading">Compare Locations</string>
+    <string name="comparing_text">Comparing the Locations:</string>
+    <string name="risk_graph_label">Group Size vs. Exposure Risk</string>
+    <string name="nothing_to_compare">Nothing to compare. Try selecting a few locations!</string>
+    <string name="need_more_locations">Need more than one location to compare. Try selecting another!</string>
+    <string name="comparison_description">Comparison Chart</string>
+
 
     <string-array name="group_sizes">
         <item>10</item>
