@@ -2,11 +2,13 @@ package com.nsc.covidscore;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -188,6 +190,32 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu appBarMenu){
+        // inflate menu/add item to appbar
+        getMenuInflater().inflate(R.menu.appbar_view, appBarMenu);
+        return super.onCreateOptionsMenu(appBarMenu);
+    }
+
+    public boolean onNewLocationActionSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_newLocation:
+                openLocationSelectionFragment();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem menuItem) {
+        // The action bar home/up action should open or close the drawer.
+        if (drawerToggle.onOptionsItemSelected(menuItem)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(menuItem);
+    }
+
     public void locationSelectToRiskFragment() {
         // Used when navigating from LocationManualSelectFragment to RiskDetailPageFragment
         RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
@@ -236,15 +264,6 @@ public class MainActivity extends AppCompatActivity implements
             .beginTransaction()
             .replace(R.id.fragContainer, locationManualSelectionFragment, Constants.FRAGMENT_LMSF)
             .addToBackStack(null).commit();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem menuItem) {
-        // The action bar home/up action should open or close the drawer.
-        if (drawerToggle.onOptionsItemSelected(menuItem)) {
-            return true;
-        }
-        return super.onOptionsItemSelected(menuItem);
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
