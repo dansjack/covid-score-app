@@ -123,14 +123,20 @@ public class Location implements Serializable {
         return this.county != null && this.state != null;
     }
 
+    public boolean locationNotNull() {
+        return locationNamesSet() && fipsSet();
+    }
+
+    public boolean locationNotEmpty() {
+        return locationNamesNotEmpty() && fipsNotEmpty();
+    }
+
     public boolean locationNamesNotEmpty() {
         return !this.county.isEmpty() && !this.state.isEmpty();
     }
 
     public boolean hasFieldsSet() {
-        boolean notNull = locationNamesSet() && fipsSet();
-        boolean notEmpty = locationNamesNotEmpty() && fipsNotEmpty();
-        return notNull && notEmpty;
+        return locationNotNull() || locationNotEmpty();
     }
 
     public boolean equals(Location other) {
@@ -141,6 +147,7 @@ public class Location implements Serializable {
         return this.state.toLowerCase().equals(other.state.toLowerCase()) &&
                 this.county.toLowerCase().equals(other.county.toLowerCase());
     }
+
 
     @Override
     public String toString() {

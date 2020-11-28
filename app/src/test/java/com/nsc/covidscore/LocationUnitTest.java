@@ -23,6 +23,7 @@ public class LocationUnitTest {
     private static Location TEST_LOCATION9;
     private static Location TEST_LOCATION10;
     private static Location TEST_LOCATION11;
+    private static Location TEST_LOCATION12;
 
     private static Calendar calendar;
 
@@ -56,6 +57,21 @@ public class LocationUnitTest {
         TEST_LOCATION10 = new Location(null, "Washington");
 
         TEST_LOCATION11 = new Location("King", null);
+
+        TEST_LOCATION12 = new Location("", "", "", "");
+    }
+
+    @Test
+    public void locationHasFieldsSetTest() {
+        // FALSE FALSE
+        // TRUE FALSE
+        System.out.println(TEST_LOCATION8.locationNotNull());
+        System.out.println(TEST_LOCATION8.locationNotEmpty());
+        // FALSE TRUE
+        System.out.println(TEST_LOCATION10.locationNotNull());
+        // TRUE TRUE
+        System.out.println(TEST_LOCATION3.locationNotNull());
+        System.out.println(TEST_LOCATION3.locationNotEmpty());
     }
 
 
