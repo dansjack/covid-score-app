@@ -136,7 +136,7 @@ public class Location implements Serializable {
     }
 
     public boolean hasFieldsSet() {
-        return locationNotNull() || locationNotEmpty();
+        return locationNotNull() && locationNotEmpty();
     }
 
     public boolean equals(Location other) {

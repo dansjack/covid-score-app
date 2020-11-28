@@ -58,20 +58,28 @@ public class LocationUnitTest {
 
         TEST_LOCATION11 = new Location("King", null);
 
-        TEST_LOCATION12 = new Location("", "", "", "");
+        TEST_LOCATION12 = new Location();
+        TEST_LOCATION12.setCountyFips("01");
+        TEST_LOCATION12.setStateFips("01");
     }
 
     @Test
     public void locationHasFieldsSetTest() {
+        assertFalse(TEST_LOCATION8.hasFieldsSet());
+        assertFalse(TEST_LOCATION10.hasFieldsSet());
+        assertTrue(TEST_LOCATION3.hasFieldsSet());
+    }
+
+    @Test
+    public void locationNotNullTest() {
         // FALSE FALSE
+        assertFalse(TEST_LOCATION10.locationNotNull());
         // TRUE FALSE
-        System.out.println(TEST_LOCATION8.locationNotNull());
-        System.out.println(TEST_LOCATION8.locationNotEmpty());
+        assertFalse(TEST_LOCATION5.locationNotNull());
         // FALSE TRUE
-        System.out.println(TEST_LOCATION10.locationNotNull());
+        assertFalse(TEST_LOCATION12.locationNotNull());
         // TRUE TRUE
-        System.out.println(TEST_LOCATION3.locationNotNull());
-        System.out.println(TEST_LOCATION3.locationNotEmpty());
+        assertTrue(TEST_LOCATION3.locationNotNull());
     }
 
 
