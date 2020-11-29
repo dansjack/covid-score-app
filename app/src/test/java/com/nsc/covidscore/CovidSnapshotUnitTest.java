@@ -225,13 +225,12 @@ public class CovidSnapshotUnitTest {
         assertFalse(TEST_SNAPSHOT2.equals(TEST_SNAPSHOT22));
         // F F
         assertFalse(TEST_SNAPSHOT2.equals(TEST_SNAPSHOT14));
+        assertFalse(TEST_SNAPSHOT23.equals(TEST_SNAPSHOT14));
     }
 
     @Test
     public void snapshotMethodsTest() {
-//        assertFalse(TEST_SNAPSHOT1.equals(TEST_SNAPSHOT2));
         assertFalse(TEST_SNAPSHOT1.hasSameData(TEST_SNAPSHOT2));
-//        assertFalse(TEST_SNAPSHOT1.hasFieldsSet());
     }
 
     @Test
