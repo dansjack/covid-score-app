@@ -27,6 +27,8 @@ public class LocationUnitTest {
     private static Location TEST_LOCATION13;
     private static Location TEST_LOCATION14;
     private static Location TEST_LOCATION15;
+    private static Location TEST_LOCATION16;
+    private static Location TEST_LOCATION17;
 
     private static Calendar calendar;
 
@@ -66,8 +68,17 @@ public class LocationUnitTest {
         TEST_LOCATION12.setStateFips("01");
 
         TEST_LOCATION13 = new Location("", "", "", "");
+        TEST_LOCATION13.setLocationId(2);
+
         TEST_LOCATION14 = new Location("King", "Washington", "", "");
+
         TEST_LOCATION15 = new Location("", "", "01", "01");
+
+        TEST_LOCATION16 = new Location("", "", "", "");
+        TEST_LOCATION16.setLocationId(1);
+
+        TEST_LOCATION17 = new Location("a", "b", "c", "d");
+        TEST_LOCATION17.setLocationId(2);
     }
 
     @Test
@@ -104,12 +115,22 @@ public class LocationUnitTest {
     @Test
     public void locationBoolMethodsTest() {
         assertTrue(TEST_LOCATION1.hasFieldsSet());
-        assertTrue(TEST_LOCATION1.equals(TEST_LOCATION1));
-        assertFalse(TEST_LOCATION1.equals(TEST_LOCATION2));
         assertTrue(TEST_LOCATION1.hasSameData(TEST_LOCATION1));
         assertFalse(TEST_LOCATION1.hasSameData(TEST_LOCATION2));
 
         TEST_LOCATION2.setAllState(TEST_LOCATION1);
+    }
+
+    @Test
+    public void locationEqualsTest() {
+        // TRUE TRUE
+        assertTrue(TEST_LOCATION1.equals(TEST_LOCATION1));
+        // TRUE FALSE
+        assertFalse(TEST_LOCATION13.equals(TEST_LOCATION16));
+        // FALSE TRUE
+        assertFalse(TEST_LOCATION13.equals(TEST_LOCATION17));
+        // FALSE FALSE
+        assertFalse(TEST_LOCATION1.equals(TEST_LOCATION17));
     }
 
     @Test

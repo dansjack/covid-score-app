@@ -124,11 +124,11 @@ public class Location implements Serializable {
     }
 
     public boolean locationNotNull() {
-        return locationNamesSet() && fipsSet();
+        return this.locationNamesSet() && this.fipsSet();
     }
 
     public boolean locationNotEmpty() {
-        return locationNamesNotEmpty() && fipsNotEmpty();
+        return this.locationNamesNotEmpty() && this.fipsNotEmpty();
     }
 
     public boolean locationNamesNotEmpty() {
@@ -136,11 +136,15 @@ public class Location implements Serializable {
     }
 
     public boolean hasFieldsSet() {
-        return locationNotNull() && locationNotEmpty();
+        return this.locationNotNull() && this.locationNotEmpty();
     }
 
     public boolean equals(Location other) {
-        return this.hasSameData(other) && this.locationId.equals(other.locationId);
+        return this.hasSameData(other) && this.hasSameLocationId(other);
+    }
+
+    public boolean hasSameLocationId(Location other) {
+        return this.locationId.equals(other.locationId);
     }
 
     public boolean hasSameData(Location other) {
