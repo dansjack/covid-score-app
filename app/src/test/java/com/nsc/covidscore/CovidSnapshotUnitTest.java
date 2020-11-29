@@ -41,6 +41,8 @@ public class CovidSnapshotUnitTest {
     private static CovidSnapshot TEST_SNAPSHOT28;
     private static CovidSnapshot TEST_SNAPSHOT29;
     private static CovidSnapshot TEST_SNAPSHOT30;
+    private static CovidSnapshot TEST_SNAPSHOT31;
+    private static CovidSnapshot TEST_SNAPSHOT32;
 
     @BeforeClass
     public static void beforeClass() {
@@ -129,7 +131,7 @@ public class CovidSnapshotUnitTest {
         TEST_SNAPSHOT19.setCountryActiveCount(1);
 
         TEST_SNAPSHOT20 = new CovidSnapshot();
-        TEST_SNAPSHOT20.setCountyTotalPopulation(1);
+        TEST_SNAPSHOT20.setCountyTotalPopulation(0);
         TEST_SNAPSHOT20.setStateTotalPopulation(1);
         TEST_SNAPSHOT20.setCountryTotalPopulation(1);
         TEST_SNAPSHOT20.setCountyActiveCount(1);
@@ -139,19 +141,25 @@ public class CovidSnapshotUnitTest {
 
         TEST_SNAPSHOT21 = new CovidSnapshot();
         TEST_SNAPSHOT21.setCountyTotalPopulation(1);
-        TEST_SNAPSHOT21.setStateTotalPopulation(1);
+        TEST_SNAPSHOT21.setStateTotalPopulation(0);
         TEST_SNAPSHOT21.setCountryTotalPopulation(1);
         TEST_SNAPSHOT21.setCountyActiveCount(1);
         TEST_SNAPSHOT21.setStateActiveCount(1);
         TEST_SNAPSHOT21.setCountryActiveCount(0);
 
         TEST_SNAPSHOT22 = new CovidSnapshot();
+        TEST_SNAPSHOT22.setCountyTotalPopulation(1);
+        TEST_SNAPSHOT22.setStateTotalPopulation(1);
+        TEST_SNAPSHOT22.setCountryTotalPopulation(0);
         TEST_SNAPSHOT22.setCountryActiveCount(0);
         TEST_SNAPSHOT22.setLocationId(2);
         TEST_SNAPSHOT22.setCovidSnapshotId(2);
 
         TEST_SNAPSHOT23 = new CovidSnapshot();
-        TEST_SNAPSHOT23.setCountryActiveCount(0);
+        TEST_SNAPSHOT23.setCountryActiveCount(1);
+        TEST_SNAPSHOT23.setCountyTotalPopulation(0);
+        TEST_SNAPSHOT23.setStateTotalPopulation(0);
+        TEST_SNAPSHOT23.setCountryTotalPopulation(1);
 
         TEST_SNAPSHOT24 = new CovidSnapshot(2, 1, 2, 3, calendar);
         TEST_SNAPSHOT24.setCovidSnapshotId(20);
@@ -173,6 +181,18 @@ public class CovidSnapshotUnitTest {
         TEST_SNAPSHOT29 = new CovidSnapshot(2, 1, 0, 0, calendar);
 
         TEST_SNAPSHOT30 = new CovidSnapshot(2, 0, 0, 3, calendar);
+
+        TEST_SNAPSHOT31 = new CovidSnapshot(999, 0, 0, 0, calendar);
+        TEST_SNAPSHOT31.setCovidSnapshotId(1);
+        TEST_SNAPSHOT31.setCountyTotalPopulation(0);
+        TEST_SNAPSHOT31.setStateTotalPopulation(1);
+        TEST_SNAPSHOT31.setCountryTotalPopulation(0);
+
+        TEST_SNAPSHOT32 = new CovidSnapshot(999, 0, 0, 0, calendar);
+        TEST_SNAPSHOT32.setCovidSnapshotId(1);
+        TEST_SNAPSHOT32.setCountyTotalPopulation(1);
+        TEST_SNAPSHOT32.setStateTotalPopulation(0);
+        TEST_SNAPSHOT32.setCountryTotalPopulation(0);
     }
 
     @Test
@@ -198,19 +218,37 @@ public class CovidSnapshotUnitTest {
     @Test
     public void hasSamePopulationsTest() {
         // T T T
+        assertTrue(TEST_SNAPSHOT1.hasSamePopulations(TEST_SNAPSHOT1));
+        // T T F
+        assertFalse(TEST_SNAPSHOT1.hasSamePopulations(TEST_SNAPSHOT23));
+        // T F T
+        assertFalse(TEST_SNAPSHOT1.hasSamePopulations(TEST_SNAPSHOT31));
+        // T F F
+        assertFalse(TEST_SNAPSHOT1.hasSamePopulations(TEST_SNAPSHOT20));
+        // F T T
+        assertFalse(TEST_SNAPSHOT1.hasSamePopulations(TEST_SNAPSHOT32));
+        // F T F
+        assertFalse(TEST_SNAPSHOT1.hasSamePopulations(TEST_SNAPSHOT21));
+        // F F T
+        assertFalse(TEST_SNAPSHOT1.hasSamePopulations(TEST_SNAPSHOT22));
+        // F F F
+        assertFalse(TEST_SNAPSHOT1.hasSamePopulations(TEST_SNAPSHOT2));
+    }
+
+    @Test
+    public void snapshotHasSameDataTest() {
+        // T T T
         // T T F
         // T F T
         // T F F
         // F T T
         // F T F
-        // F T F
         // F F T
         // F F F
-
     }
 
     @Test
-    public void hasSameLocationTest() {
+    public void snapshotHasSameLocationTest() {
         assertTrue(TEST_SNAPSHOT1.hasSameLocation(TEST_SNAPSHOT1));
         assertFalse(TEST_SNAPSHOT1.hasSameLocation(TEST_SNAPSHOT2));
     }
