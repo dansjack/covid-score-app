@@ -43,6 +43,12 @@ public class CovidSnapshotUnitTest {
     private static CovidSnapshot TEST_SNAPSHOT30;
     private static CovidSnapshot TEST_SNAPSHOT31;
     private static CovidSnapshot TEST_SNAPSHOT32;
+    private static CovidSnapshot TEST_SNAPSHOT33;
+    private static CovidSnapshot TEST_SNAPSHOT34;
+    private static CovidSnapshot TEST_SNAPSHOT35;
+    private static CovidSnapshot TEST_SNAPSHOT36;
+    private static CovidSnapshot TEST_SNAPSHOT37;
+    private static CovidSnapshot TEST_SNAPSHOT38;
 
     @BeforeClass
     public static void beforeClass() {
@@ -193,6 +199,36 @@ public class CovidSnapshotUnitTest {
         TEST_SNAPSHOT32.setCountyTotalPopulation(1);
         TEST_SNAPSHOT32.setStateTotalPopulation(0);
         TEST_SNAPSHOT32.setCountryTotalPopulation(0);
+
+        TEST_SNAPSHOT33 = new CovidSnapshot(999, 0, 0, 0, calendar);
+        TEST_SNAPSHOT33.setCovidSnapshotId(1);
+        TEST_SNAPSHOT33.setCountyTotalPopulation(1);
+        TEST_SNAPSHOT33.setStateTotalPopulation(0);
+        TEST_SNAPSHOT33.setCountryTotalPopulation(0);
+
+        TEST_SNAPSHOT34 = new CovidSnapshot(999, 10, 0, 0, calendar);
+        TEST_SNAPSHOT34.setCovidSnapshotId(1);
+        TEST_SNAPSHOT34.setCountyTotalPopulation(1);
+        TEST_SNAPSHOT34.setStateTotalPopulation(0);
+        TEST_SNAPSHOT34.setCountryTotalPopulation(0);
+
+        TEST_SNAPSHOT35 = new CovidSnapshot(998, 0, 0, 0, calendar);
+        TEST_SNAPSHOT35.setCovidSnapshotId(1);
+        TEST_SNAPSHOT35.setCountyTotalPopulation(1);
+        TEST_SNAPSHOT35.setStateTotalPopulation(0);
+        TEST_SNAPSHOT35.setCountryTotalPopulation(0);
+
+        TEST_SNAPSHOT36 = new CovidSnapshot(998, 0, 0, 0, calendar);
+        TEST_SNAPSHOT36.setCovidSnapshotId(1);
+        TEST_SNAPSHOT36.setCountyTotalPopulation(0);
+        TEST_SNAPSHOT36.setStateTotalPopulation(0);
+        TEST_SNAPSHOT36.setCountryTotalPopulation(0);
+
+        TEST_SNAPSHOT37 = new CovidSnapshot(998, 10, 0, 0, calendar);
+        TEST_SNAPSHOT37.setCovidSnapshotId(1);
+        TEST_SNAPSHOT37.setCountyTotalPopulation(0);
+        TEST_SNAPSHOT37.setStateTotalPopulation(0);
+        TEST_SNAPSHOT37.setCountryTotalPopulation(0);
     }
 
     @Test
@@ -238,13 +274,23 @@ public class CovidSnapshotUnitTest {
     @Test
     public void snapshotHasSameDataTest() {
         // T T T
+        assertTrue(TEST_SNAPSHOT1.hasSameData(TEST_SNAPSHOT1));
         // T T F
+        assertFalse(TEST_SNAPSHOT1.hasSameData(TEST_SNAPSHOT34));
         // T F T
+        assertFalse(TEST_SNAPSHOT1.hasSameData(TEST_SNAPSHOT33));
         // T F F
+        assertFalse(TEST_SNAPSHOT1.hasSameData(TEST_SNAPSHOT34));
         // F T T
+        assertFalse(TEST_SNAPSHOT1.hasSameData(TEST_SNAPSHOT36));
         // F T F
+        assertFalse(TEST_SNAPSHOT1.hasSameData(TEST_SNAPSHOT37));
         // F F T
+        assertFalse(TEST_SNAPSHOT1.hasSameData(TEST_SNAPSHOT35));
         // F F F
+        assertFalse(TEST_SNAPSHOT23.hasSameData(TEST_SNAPSHOT1));
+        assertFalse(TEST_SNAPSHOT1.hasSameData(TEST_SNAPSHOT23));
+        assertFalse(TEST_SNAPSHOT1.hasSameData(TEST_SNAPSHOT2));
     }
 
     @Test
