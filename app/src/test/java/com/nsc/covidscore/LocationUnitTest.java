@@ -24,6 +24,9 @@ public class LocationUnitTest {
     private static Location TEST_LOCATION10;
     private static Location TEST_LOCATION11;
     private static Location TEST_LOCATION12;
+    private static Location TEST_LOCATION13;
+    private static Location TEST_LOCATION14;
+    private static Location TEST_LOCATION15;
 
     private static Calendar calendar;
 
@@ -61,6 +64,10 @@ public class LocationUnitTest {
         TEST_LOCATION12 = new Location();
         TEST_LOCATION12.setCountyFips("01");
         TEST_LOCATION12.setStateFips("01");
+
+        TEST_LOCATION13 = new Location("", "", "", "");
+        TEST_LOCATION14 = new Location("King", "Washington", "", "");
+        TEST_LOCATION15 = new Location("", "", "01", "01");
     }
 
     @Test
@@ -82,7 +89,17 @@ public class LocationUnitTest {
         assertTrue(TEST_LOCATION3.locationNotNull());
     }
 
-
+    @Test
+    public void locationNotEmptyTest() {
+        // FALSE FALSE
+        assertFalse(TEST_LOCATION13.locationNotEmpty());
+        // TRUE FALSE
+        assertFalse(TEST_LOCATION14.locationNotEmpty());
+        // FALSE TRUE
+        assertFalse(TEST_LOCATION15.locationNotEmpty());
+        // TRUE TRUE
+        assertTrue(TEST_LOCATION1.locationNotEmpty());
+    }
 
     @Test
     public void locationBoolMethodsTest() {
