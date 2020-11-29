@@ -83,7 +83,6 @@ public class LocationUnitTest {
         TEST_LOCATION17.setLocationId(2);
 
         TEST_LOCATION18 = new Location("King", "Alabama", "", "");
-//        TEST_LOCATION17.setLocationId(2);
     }
 
     @Test
@@ -129,6 +128,11 @@ public class LocationUnitTest {
         assertFalse(TEST_LOCATION1.hasSameData(TEST_LOCATION17));
     }
 
+    @Test
+    public void locationSetAllStateTest() {
+        TEST_LOCATION2.setAllState(TEST_LOCATION1);
+        TEST_LOCATION1.hasSameData(TEST_LOCATION1);
+    }
     @Test
     public void locationEqualsTest() {
         // TRUE TRUE
