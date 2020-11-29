@@ -29,6 +29,12 @@ public class CovidSnapshotUnitTest {
     private static CovidSnapshot TEST_SNAPSHOT16;
     private static CovidSnapshot TEST_SNAPSHOT17;
     private static CovidSnapshot TEST_SNAPSHOT18;
+    private static CovidSnapshot TEST_SNAPSHOT19;
+    private static CovidSnapshot TEST_SNAPSHOT20;
+    private static CovidSnapshot TEST_SNAPSHOT21;
+    private static CovidSnapshot TEST_SNAPSHOT22;
+    private static CovidSnapshot TEST_SNAPSHOT23;
+    private static CovidSnapshot TEST_SNAPSHOT24;
 
     @BeforeClass
     public static void beforeClass() {
@@ -108,16 +114,59 @@ public class CovidSnapshotUnitTest {
         TEST_SNAPSHOT18.setStateTotalPopulation(1);
         TEST_SNAPSHOT18.setCountryTotalPopulation(1);
 
+        TEST_SNAPSHOT19 = new CovidSnapshot();
+        TEST_SNAPSHOT19.setCountyTotalPopulation(1);
+        TEST_SNAPSHOT19.setStateTotalPopulation(1);
+        TEST_SNAPSHOT19.setCountryTotalPopulation(1);
+        TEST_SNAPSHOT19.setCountyActiveCount(1);
+        TEST_SNAPSHOT19.setStateActiveCount(1);
+        TEST_SNAPSHOT19.setCountryActiveCount(1);
 
+        TEST_SNAPSHOT20 = new CovidSnapshot();
+        TEST_SNAPSHOT20.setCountyTotalPopulation(1);
+        TEST_SNAPSHOT20.setStateTotalPopulation(1);
+        TEST_SNAPSHOT20.setCountryTotalPopulation(1);
+        TEST_SNAPSHOT20.setCountyActiveCount(1);
+        TEST_SNAPSHOT20.setStateActiveCount(1);
+        TEST_SNAPSHOT20.setCountryActiveCount(0);
+        TEST_SNAPSHOT20.setLocationId(1);
+
+        TEST_SNAPSHOT21 = new CovidSnapshot();
+        TEST_SNAPSHOT21.setCountyTotalPopulation(1);
+        TEST_SNAPSHOT21.setStateTotalPopulation(1);
+        TEST_SNAPSHOT21.setCountryTotalPopulation(1);
+        TEST_SNAPSHOT21.setCountyActiveCount(1);
+        TEST_SNAPSHOT21.setStateActiveCount(1);
+        TEST_SNAPSHOT21.setCountryActiveCount(0);
+
+        TEST_SNAPSHOT22 = new CovidSnapshot();
+        TEST_SNAPSHOT22.setCountryActiveCount(0);
+        TEST_SNAPSHOT22.setLocationId(2);
+        TEST_SNAPSHOT22.setCovidSnapshotId(2);
+
+        TEST_SNAPSHOT23 = new CovidSnapshot();
+        TEST_SNAPSHOT23.setCountryActiveCount(0);
+
+        TEST_SNAPSHOT24 = new CovidSnapshot(2, 1, 2, 3, calendar);
+        TEST_SNAPSHOT24.setCovidSnapshotId(20);
+        TEST_SNAPSHOT24.setCountyTotalPopulation(2);
+        TEST_SNAPSHOT24.setStateTotalPopulation(2);
+        TEST_SNAPSHOT24.setCountryTotalPopulation(2);
+        TEST_SNAPSHOT24.setCountyTotalPopulation(3);
+        TEST_SNAPSHOT24.setStateTotalPopulation(3);
+        TEST_SNAPSHOT24.setCountryTotalPopulation(3);
     }
 
     @Test
     public void snapshotEqualsTest() {
+        // T T
         assertTrue(TEST_SNAPSHOT2.equals(TEST_SNAPSHOT2));
+        // T F
+        assertFalse(TEST_SNAPSHOT2.equals(TEST_SNAPSHOT22));
+        // F T
+        assertFalse(TEST_SNAPSHOT2.equals(TEST_SNAPSHOT22));
+        // F F
         assertFalse(TEST_SNAPSHOT2.equals(TEST_SNAPSHOT14));
-        assertFalse(TEST_SNAPSHOT2.equals(TEST_SNAPSHOT15));
-        assertFalse(TEST_SNAPSHOT2.equals(TEST_SNAPSHOT16));
-        assertFalse(TEST_SNAPSHOT17.equals(TEST_SNAPSHOT2));
     }
 
     @Test
@@ -144,12 +193,19 @@ public class CovidSnapshotUnitTest {
         //  T T T
         assertTrue(TEST_SNAPSHOT2.hasFieldsSet());
         //  T T F
+        assertFalse(TEST_SNAPSHOT19.hasFieldsSet());
         //  T F T
+        assertFalse(TEST_SNAPSHOT20.hasFieldsSet());
         //  T F F
+        assertFalse(TEST_SNAPSHOT21.hasFieldsSet());
         //  F T T
+        assertFalse(TEST_SNAPSHOT3.hasFieldsSet());
         //  F T F
+        assertFalse(TEST_SNAPSHOT5.hasFieldsSet());
         //  F F T
+        assertFalse(TEST_SNAPSHOT22.hasFieldsSet());
         //  F F F
+        assertFalse(TEST_SNAPSHOT23.hasFieldsSet());
 
     }
 

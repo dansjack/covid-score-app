@@ -146,7 +146,7 @@ public class CovidSnapshot extends Observable {
 
     public boolean hasFieldsSet() {
         // TODO: change this if the pandemic ends :)
-        return this.fieldsNotNull() && countryActiveCount != 0 && locationId != null;
+        return this.fieldsNotNull() && (countryActiveCount != 0 && locationId != null);
     }
 
     public boolean idsEqual(CovidSnapshot other) {
