@@ -28,6 +28,7 @@ public class CovidSnapshotUnitTest {
     private static CovidSnapshot TEST_SNAPSHOT15;
     private static CovidSnapshot TEST_SNAPSHOT16;
     private static CovidSnapshot TEST_SNAPSHOT17;
+    private static CovidSnapshot TEST_SNAPSHOT18;
 
     @BeforeClass
     public static void beforeClass() {
@@ -96,9 +97,16 @@ public class CovidSnapshotUnitTest {
 
         TEST_SNAPSHOT15 = new CovidSnapshot(2, 1, 2, 3, calendar);
         TEST_SNAPSHOT15.setCovidSnapshotId(222);
+
         TEST_SNAPSHOT16 = new CovidSnapshot(288, 1, 2, 3, calendar);
         TEST_SNAPSHOT16.setCovidSnapshotId(222);
+
         TEST_SNAPSHOT17 = new CovidSnapshot();
+
+        TEST_SNAPSHOT18 = new CovidSnapshot();
+        TEST_SNAPSHOT18.setCountyTotalPopulation(1);
+        TEST_SNAPSHOT18.setStateTotalPopulation(1);
+        TEST_SNAPSHOT18.setCountryTotalPopulation(1);
 
 
     }
@@ -120,24 +128,29 @@ public class CovidSnapshotUnitTest {
     }
 
     @Test
+    public void snapshotFieldsNotNullTest() {
+        // T T
+        assertTrue(TEST_SNAPSHOT1.fieldsNotNull());
+        // T F
+        assertFalse(TEST_SNAPSHOT3.fieldsNotNull());
+        // F T
+        assertFalse(TEST_SNAPSHOT18.fieldsNotNull());
+        // F F
+        assertFalse(TEST_SNAPSHOT4.fieldsNotNull());
+    }
+
+    @Test
     public void snapshotHasFieldsSetTest() {
-        //  1. All true DONE
-        //  2. countsNotNull = true && populationsNotNull = true && countryActiveCount != 0 = true
-        //  3. countsNotNull = true && populationsNotNull = true && locationId != null = true
-        //  4. countsNotNull = true && populationsNotNull = true
-        //  5. countsNotNull = true && countryActiveCount != 0 = true && locationId != null = true
-        //  6. countsNotNull = true && countryActiveCount != 0 = true
-        //  7. countsNotNull = true && locationId != null = true
-        //  8. countsNotNull = true
-        //  9. populationsNotNull = true && countryActiveCount != 0 = true && locationId != null = true
-        //  10. populationsNotNull = true && countryActiveCount != 0 = true
-        //  11. populationsNotNull = true && locationId != null = true
-        //  12. populationsNotNull = true
-        //  13. countryActiveCount != 0 = true && locationId != null = true
-        //  14. countryActiveCount != 0
-        //  15. locationId != null = true
-        //  16. All false
+        //  T T T
         assertTrue(TEST_SNAPSHOT2.hasFieldsSet());
+        //  T T F
+        //  T F T
+        //  T F F
+        //  F T T
+        //  F T F
+        //  F F T
+        //  F F F
+
     }
 
     @Test

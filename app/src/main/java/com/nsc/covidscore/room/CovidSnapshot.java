@@ -140,9 +140,13 @@ public class CovidSnapshot extends Observable {
         return countyTotalPopulation != null && stateTotalPopulation != null && countryTotalPopulation != null;
     }
 
+    public boolean fieldsNotNull() {
+        return this.countsNotNull() && this.populationsNotNull();
+    }
+
     public boolean hasFieldsSet() {
         // TODO: change this if the pandemic ends :)
-        return (countsNotNull() && populationsNotNull()) && (countryActiveCount != 0 && locationId != null);
+        return this.fieldsNotNull() && countryActiveCount != 0 && locationId != null;
     }
 
     public boolean idsEqual(CovidSnapshot other) {
