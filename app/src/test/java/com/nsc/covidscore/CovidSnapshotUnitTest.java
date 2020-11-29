@@ -229,6 +229,12 @@ public class CovidSnapshotUnitTest {
         TEST_SNAPSHOT37.setCountyTotalPopulation(0);
         TEST_SNAPSHOT37.setStateTotalPopulation(0);
         TEST_SNAPSHOT37.setCountryTotalPopulation(0);
+
+        TEST_SNAPSHOT38 = new CovidSnapshot(999, 10, 0, 0, calendar);
+        TEST_SNAPSHOT38.setCovidSnapshotId(1);
+        TEST_SNAPSHOT38.setCountyTotalPopulation(0);
+        TEST_SNAPSHOT38.setStateTotalPopulation(0);
+        TEST_SNAPSHOT38.setCountryTotalPopulation(0);
     }
 
     @Test
@@ -276,7 +282,7 @@ public class CovidSnapshotUnitTest {
         // T T T
         assertTrue(TEST_SNAPSHOT1.hasSameData(TEST_SNAPSHOT1));
         // T T F
-        assertFalse(TEST_SNAPSHOT1.hasSameData(TEST_SNAPSHOT34));
+        assertFalse(TEST_SNAPSHOT1.hasSameData(TEST_SNAPSHOT38));
         // T F T
         assertFalse(TEST_SNAPSHOT1.hasSameData(TEST_SNAPSHOT33));
         // T F F
