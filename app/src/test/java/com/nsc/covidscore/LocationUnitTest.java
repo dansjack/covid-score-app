@@ -29,6 +29,8 @@ public class LocationUnitTest {
     private static Location TEST_LOCATION15;
     private static Location TEST_LOCATION16;
     private static Location TEST_LOCATION17;
+    private static Location TEST_LOCATION18;
+    private static Location TEST_LOCATION19;
 
     private static Calendar calendar;
 
@@ -79,6 +81,9 @@ public class LocationUnitTest {
 
         TEST_LOCATION17 = new Location("a", "b", "c", "d");
         TEST_LOCATION17.setLocationId(2);
+
+        TEST_LOCATION18 = new Location("King", "Alabama", "", "");
+//        TEST_LOCATION17.setLocationId(2);
     }
 
     @Test
@@ -113,12 +118,15 @@ public class LocationUnitTest {
     }
 
     @Test
-    public void locationBoolMethodsTest() {
-        assertTrue(TEST_LOCATION1.hasFieldsSet());
+    public void locationHasSameDataTest() {
+        // TRUE TRUE
         assertTrue(TEST_LOCATION1.hasSameData(TEST_LOCATION1));
+        // TRUE FALSE
+        assertFalse(TEST_LOCATION1.hasSameData(TEST_LOCATION18));
+        // FALSE TRUE
         assertFalse(TEST_LOCATION1.hasSameData(TEST_LOCATION2));
-
-        TEST_LOCATION2.setAllState(TEST_LOCATION1);
+        // FALSE FALSE
+        assertFalse(TEST_LOCATION1.hasSameData(TEST_LOCATION17));
     }
 
     @Test
