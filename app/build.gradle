@@ -2,6 +2,10 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply from: '../jacoco.gradle'
 
+def apikeyPropertiesFile = rootProject.file("apikey.properties")
+def apikeyProperties = new Properties()
+apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -12,7 +16,7 @@ android {
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
-
+        buildConfigField("String", "CENSUS_API_KEY", apikeyProperties['CENSUS_API_KEY'])
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
