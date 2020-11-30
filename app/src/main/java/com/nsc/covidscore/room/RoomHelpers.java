@@ -23,6 +23,6 @@ public class RoomHelpers {
      * @return true if the new snapshot is a new unique location, else false
      */
     public static boolean shouldInsertSnapshot(LiveData<CovidSnapshot> currentSnapshot, CovidSnapshot newSnapshot) {
-        return currentSnapshot.getValue() == null || !currentSnapshot.getValue().hasSameData(newSnapshot) && newSnapshot.getLocationId() != null;
+        return currentSnapshot.getValue() == null || !currentSnapshot.getValue().hasSameData(newSnapshot);
     }
 }
