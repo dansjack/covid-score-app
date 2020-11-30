@@ -47,9 +47,7 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
         fillLocationsMaps();
     }
 
-    public HashMap<String, List<Location>> getMapOfLocationsByState() {
-        return mapOfLocationsByState;
-    }
+    public HashMap<String, List<Location>> getMapOfLocationsByState() { return mapOfLocationsByState; }
 
     public HashMap<Integer, Location> getMapOfLocationsById() {
         return mapOfLocationsById;
@@ -63,12 +61,18 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
 
     public LiveData<CovidSnapshot> getLatestCovidSnapshot() { return repo.getLatestSnapshot(); }
 
-    // Returns a list of up to 3 LiveData objects (CovidSnapshots)
-    // directly from AppDatabase via CovidSnapshotDao.
+    /**
+     * This populates the Nav Bar & the Compare Fragment, and currently returns a List of 3 objects
+     * @return a list of LiveData objects (CovidSnapshots) directly from AppDatabase via CovidSnapshotDao
+     */
     public LiveData<List<CovidSnapshot>> getLatestLocationsLatestCovidSnapshots() {
         return repo.getLatestLocationsLatestSnapshots();
     }
 
+    /**
+     * This relatively expensive operation is called in the ViewModel constructor so that it can be run
+     * only once per execution, and the maps can be accessed from any fragment
+     */
     private void fillLocationsMaps() {
         String jsonString;
         JSONArray jsonArray;
@@ -105,6 +109,10 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
         }
     }
 
+    /**
+     * used to save/check internet connection
+     * @param connected
+     */
     public void setConnectionStatus(boolean connected) {
         isConnected = connected;
     }
@@ -121,6 +129,10 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
         this.mutableCovidSnapshot.setValue(covidSnapshot);
     }
 
+    /**
+     * Sends all API requests for data for this location, which are stored in the mutableCovidSnapshot field
+     * @param location County, State, and FIPS information for API calls
+     */
     public void makeApiCalls(Location location) {
         Log.i(TAG, "makeApiCalls: CALLED " + location.toString());
         CovidSnapshot covidSnapshot = new CovidSnapshot();
