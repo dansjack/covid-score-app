@@ -24,7 +24,7 @@ public class CovidSnapshotWithLocationRepository {
 
     void insertCovidSnapshot(CovidSnapshot covidSnapshot) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            if ((currentSnapshot.getValue() == null || !currentSnapshot.getValue().hasSameData(covidSnapshot)) && covidSnapshot.getLocationId() != null) {
+            if (RoomHelpers.shouldInsertSnapshot(currentSnapshot, covidSnapshot)) {
                 Calendar calendar = Calendar.getInstance();
                 covidSnapshot.setLastUpdated(calendar);
                 covidSnapshotDao.insert(covidSnapshot);

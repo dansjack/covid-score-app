@@ -157,7 +157,7 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
                 Integer activeCounty = confirmed - deaths;
                 covidSnapshot.setCountyActiveCount(activeCounty);
                 mutableCovidSnapshot.getValue().setCountyActiveCount(activeCounty);
-                setSnapshot(covidSnapshot);
+                RoomHelpers.setSnapshot(mutableCovidSnapshot, covidSnapshot);
                 Log.d(TAG, "req: getActiveCounty " + activeCounty);
             }
 
@@ -171,7 +171,7 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
                 Integer activeState = (Integer) response.get(Constants.RESPONSE_CASES);
                 covidSnapshot.setStateActiveCount(activeState);
                 mutableCovidSnapshot.getValue().setStateActiveCount(activeState);
-                setSnapshot(covidSnapshot);
+                RoomHelpers.setSnapshot(mutableCovidSnapshot, covidSnapshot);
                 Log.d(TAG, "req: getActiveState " + activeState);
             }
 
@@ -203,7 +203,7 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
 
                 Integer countryActiveCount = totalCountry - deathCountry - recoveredCountry;
                 covidSnapshot.setCountryActiveCount(countryActiveCount);
-                setSnapshot(covidSnapshot);
+                RoomHelpers.setSnapshot(mutableCovidSnapshot, covidSnapshot);
                 Log.i(TAG, "req: getCountryHistorical " + response);
             }
 
@@ -215,26 +215,20 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
         Requests.getCountyPopulation(context, location, response -> {
             covidSnapshot.setCountyTotalPopulation(Integer.parseInt(response));
             mutableCovidSnapshot.getValue().setCountyTotalPopulation(Integer.parseInt(response));
-            setSnapshot(covidSnapshot);
+            RoomHelpers.setSnapshot(mutableCovidSnapshot, covidSnapshot);
             Log.d(TAG, "req: getCountyPopulation  " + response);
         });
         Requests.getStatePopulation(context, location, response -> {
             covidSnapshot.setStateTotalPopulation(Integer.parseInt(response));
             mutableCovidSnapshot.getValue().setStateTotalPopulation(Integer.parseInt(response));
-            setSnapshot(covidSnapshot);
+            RoomHelpers.setSnapshot(mutableCovidSnapshot, covidSnapshot);
             Log.d(TAG, "req: getStatePopulation  " + response);
         });
         Requests.getCountryPopulation(context, response -> {
             covidSnapshot.setCountryTotalPopulation(Integer.parseInt(response));
             mutableCovidSnapshot.getValue().setCountryTotalPopulation(Integer.parseInt(response));
-            setSnapshot(covidSnapshot);
+            RoomHelpers.setSnapshot(mutableCovidSnapshot, covidSnapshot);
             Log.d(TAG, "req: getCountryPopulation " + response);
         });
-    }
-
-    public void setSnapshot(CovidSnapshot snapshot) {
-        if (snapshot.hasFieldsSet()) {
-            mutableCovidSnapshot.setValue(snapshot);
-        }
     }
 }
