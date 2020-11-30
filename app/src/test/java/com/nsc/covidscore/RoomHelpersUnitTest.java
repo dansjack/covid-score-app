@@ -58,6 +58,7 @@ public class RoomHelpersUnitTest {
 
     @Test
     public void roomShouldInsertSnapshotTest() {
+        new RoomHelpers();
         // F F
         assertFalse(RoomHelpers.shouldInsertSnapshot(TEST_MCS4, TEST_CS3));
         // F T
