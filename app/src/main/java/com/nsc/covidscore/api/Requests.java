@@ -35,6 +35,14 @@ public class Requests {
         RequestSingleton.getInstance(context.getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
+    /**
+     * <p>Returns cumulative COVID stats for a U.S. state within a callback</p>
+     * <p>The data comes from Worldometer through the
+     * <a href="https://github.com/disease-sh/API">NovelCOVID api</a></p>
+     * @param location the county and state the user selected, separated by a comma.
+     *                 e.g. "king,washington"
+     * @param cb callback class (see VolleyJsonCallback interface)
+     */
     public static void getState(Context context, String location, final VolleyJsonCallback cb) {
         final String county = location.split(",")[0];
         final String state = location.split(",")[1];

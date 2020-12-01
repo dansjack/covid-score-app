@@ -140,9 +140,13 @@ public class CovidSnapshot extends Observable {
         return countyTotalPopulation != null && stateTotalPopulation != null && countryTotalPopulation != null;
     }
 
+    public boolean fieldsNotNull() {
+        return this.countsNotNull() && this.populationsNotNull();
+    }
+
     public boolean hasFieldsSet() {
         // TODO: change this if the pandemic ends :)
-        return (countsNotNull() && populationsNotNull()) && (countryActiveCount != 0 && locationId != null);
+        return this.fieldsNotNull() && (countryActiveCount != 0 && locationId != null);
     }
 
     public boolean idsEqual(CovidSnapshot other) {
@@ -154,12 +158,24 @@ public class CovidSnapshot extends Observable {
         return idsEqual(other) && this.hasSameData(other);
     }
 
+    public boolean hasSameLocation(CovidSnapshot other) {
+        return this.locationId.equals(other.locationId);
+    }
+
+    public boolean hasSameCounts(CovidSnapshot other) {
+        return this.countyActiveCount.equals(other.countyActiveCount) &&
+                this.stateActiveCount.equals(other.stateActiveCount) &&
+                this.countryActiveCount.equals(other.countryActiveCount);
+    }
+
+    public boolean hasSamePopulations(CovidSnapshot other) {
+        return this.countyTotalPopulation.equals(other.countyTotalPopulation) &&
+                this.stateTotalPopulation.equals(other.stateTotalPopulation) &&
+                this.countryTotalPopulation.equals(other.countryTotalPopulation);
+    }
+
     public boolean hasSameData(CovidSnapshot other) {
         if (this.locationId == null || other.locationId == null) { return false; }
-        boolean locationsMatch = this.locationId.equals(other.locationId);
-        boolean countsMatch = ((this.countyActiveCount.equals(other.countyActiveCount)) && (this.stateActiveCount.equals(other.stateActiveCount))) && (this.countryActiveCount.equals(other.countryActiveCount));
-        boolean populationsMatch = ((this.countyTotalPopulation.equals(other.countyTotalPopulation)) && this.stateTotalPopulation.equals(other.stateTotalPopulation)) && this.countryTotalPopulation.equals(other.countryTotalPopulation);
-
-        return locationsMatch && populationsMatch && countsMatch;
+        return this.hasSameLocation(other) && this.hasSamePopulations(other) && this.hasSameCounts(other);
     }
 }

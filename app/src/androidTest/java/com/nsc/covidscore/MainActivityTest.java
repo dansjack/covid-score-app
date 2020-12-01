@@ -314,13 +314,14 @@ public class MainActivityTest {
 //    }
 
     @Test
-    public void t4_testAboutPageExpandable() throws InterruptedException {
+    public void t6_testAboutPageExpandable() throws InterruptedException {
+        Thread.sleep(1000);
         onView(withId(R.id.drawer_layout))
                 .check(matches(isDisplayed()))
                 .perform(DrawerActions.open());
         onView(withId(R.id.nvView))
                 .perform(NavigationViewActions.navigateTo(R.id.nav_about_fragment));
-
+        Thread.sleep(1000);
         onView(withId(R.id.riskExplanationTextView))
                 .perform(click());
         Thread.sleep(1000);
@@ -332,7 +333,7 @@ public class MainActivityTest {
     }
 
     @Test
-    public void t5_testAboutDiseaseLink() throws InterruptedException {
+    public void t7_testAboutDiseaseLink() throws InterruptedException {
         Thread.sleep(1000);
         onView(withId(R.id.drawer_layout))
                 .check(matches(isDisplayed()))
@@ -345,7 +346,7 @@ public class MainActivityTest {
     }
 
     @Test
-    public void t6_testAboutAppGithubLink() throws InterruptedException {
+    public void t8_testAboutAppGithubLink() throws InterruptedException {
         Thread.sleep(1000);
         onView(withId(R.id.drawer_layout))
                 .check(matches(isDisplayed()))
@@ -362,7 +363,7 @@ public class MainActivityTest {
     }
 
     @Test
-    public void t7_testAboutGTechLink() throws InterruptedException {
+    public void t9_testAboutGTechLink() throws InterruptedException {
         Thread.sleep(1000);
         onView(withId(R.id.drawer_layout))
                 .check(matches(isDisplayed()))
@@ -380,7 +381,7 @@ public class MainActivityTest {
     }
 
     @Test
-    public void t8_testAboutAtlanticLink() throws InterruptedException {
+    public void t10_testAboutAtlanticLink() throws InterruptedException {
         Thread.sleep(1000);
         onView(withId(R.id.drawer_layout))
                 .check(matches(isDisplayed()))
