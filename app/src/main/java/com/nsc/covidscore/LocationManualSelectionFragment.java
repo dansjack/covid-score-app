@@ -81,8 +81,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_location_selection, container, false);
-
         setInitialSpinners(v);
+
         Log.d(TAG, "onCreateView invoked");
         return v;
     }
@@ -133,6 +133,9 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                 loadingTextView.setText(R.string.no_internet);
             }
         });
+
+        resetWelcomeText(v, vm);
+
         Log.d(TAG, "onViewCreated invoked");
     }
 
@@ -162,6 +165,23 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    /**
+     * Removes welcome text value if there is a stored snapshot
+     * @param v the current view to change;
+     * @param vm the current vm to check
+     */
+    private void resetWelcomeText(View v, CovidSnapshotWithLocationViewModel vm){
+        final TextView welcome_tv = v.findViewById(R.id.fullscreen_content);
+
+        vm.getLatestCovidSnapshot().observe(getViewLifecycleOwner(), covidSnapshotFromDb -> {
+            if(covidSnapshotFromDb!=null){
+                welcome_tv.setText("");
+            } else {
+                welcome_tv.setText(R.string.app_welcome);
+            }
+        });
     }
 
     @Override
