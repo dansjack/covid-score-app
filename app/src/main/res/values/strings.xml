@@ -1,5 +1,12 @@
 <resources>
     <string name="app_name">Covid Score</string>
+    <string name="settings">Settings</string>
+    <string name="manage_locations">Manage Locations</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
     <string name="app_welcome">Welcome</string>
     <string name="location_entry_text">Please enter a location:</string>
     <string name="state">Select state</string>
@@ -36,9 +43,10 @@
         that we display to you.</string>
     <string name="aboutDataHeading">Data Sources</string>
     <string name="githubLabel">Check us out on GitHub</string>
-    <string name="versionText">0.4.0</string>
+    <string name="versionText">0.5.0</string>
     <string name="versionLabel">Version</string>
     <string name="appTitle">CovidScore</string>
+    <string name="aboutTitle">About</string>
     <string name="censusAttributionText">Note: This app uses the Census Bureau Data API but is not endorsed or certified by the Census Bureau.</string>
     <string name="aboutAppHeading">About The App</string>
     <string name="aboutPopulationLabel">Population</string>
@@ -51,6 +59,20 @@
     <string name="no_internet">No Internet Connection Available</string>
     <string name="aboutList">&#8226; State data from Worldometer\n&#8226; All other data from Johns Hopkins University</string>
     <string name="determineRiskHeadingText">Determining Risk</string>
+    <string name="learnMoreText">COVID-19 Resources</string>
+    <string name="gTechText">• Georgia Tech - COVID-19 Event Risk Assessment Planning Tool</string>
+    <string name="atlanticText">• The Atlantic - The COVID Tracking Project</string>
+    <string name="atlanticLink">Link to The Atlantic\'s COVID Tracking Project</string>
+    <string name="gTechLink">Link to Georgia Teach\'s COVID-19 Event Risk Assessment Planning Tool</string>
+
+    <string name="store_location">Store A Location</string>
+    <string name="compareAppHeading">Compare Locations</string>
+    <string name="comparing_text">Comparing the Locations:</string>
+    <string name="risk_graph_label">Group Size vs. Exposure Risk</string>
+    <string name="nothing_to_compare">Nothing to compare. Try selecting a few locations!</string>
+    <string name="need_more_locations">Need more than one location to compare. Try selecting another!</string>
+    <string name="comparison_description">Comparison Chart</string>
+
 
     <string-array name="group_sizes">
         <item>10</item>

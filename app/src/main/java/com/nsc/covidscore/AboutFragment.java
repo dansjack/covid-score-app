@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -39,6 +40,10 @@ public class AboutFragment extends Fragment {
         ImageButton censusLink = view.findViewById(R.id.censusLink);
         ImageButton appLink = view.findViewById(R.id.appGithubLink);
         ImageButton diseaseLink = view.findViewById(R.id.diseaseGithubLink);
+        ImageButton gTechLink = view.findViewById(R.id.gTechLink);
+        ImageButton atlanticLink = view.findViewById(R.id.atlanticLink);
+
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.aboutTitle);
 
         censusLink.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.census.gov/data/developers/data-sets/popest-popproj/popest.html"));
@@ -52,6 +57,16 @@ public class AboutFragment extends Fragment {
 
         diseaseLink.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/disease-sh/API"));
+            startActivity(intent);
+        });
+
+        gTechLink.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://covid19risk.biosci.gatech.edu/"));
+            startActivity(intent);
+        });
+
+        atlanticLink.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://covidtracking.com/"));
             startActivity(intent);
         });
 

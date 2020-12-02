@@ -47,25 +47,32 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
         fillLocationsMaps();
     }
 
-    public HashMap<String, List<Location>> getMapOfLocationsByState() {
-        return mapOfLocationsByState;
-    }
+    public HashMap<String, List<Location>> getMapOfLocationsByState() { return mapOfLocationsByState; }
 
     public HashMap<Integer, Location> getMapOfLocationsById() {
         return mapOfLocationsById;
     }
 
     public void insertCovidSnapshot(CovidSnapshot covidSnapshot) {
-        // TODO: fix the timing issue in Main so we can add this back
         if (covidSnapshot.getLocationId() != null) {
             repo.insertCovidSnapshot(covidSnapshot);
         }
     }
 
-//    public LiveData<CovidSnapshot> getLatestCovidSnapshotByLocation(Location location) { return repo.getLatestCovidSnapshotByLocation(location); }
-
     public LiveData<CovidSnapshot> getLatestCovidSnapshot() { return repo.getLatestSnapshot(); }
 
+    /**
+     * This populates the Nav Bar & the Compare Fragment, and currently returns a List of 3 objects
+     * @return a list of LiveData objects (CovidSnapshots) directly from AppDatabase via CovidSnapshotDao
+     */
+    public LiveData<List<CovidSnapshot>> getLatestLocationsLatestCovidSnapshots() {
+        return repo.getLatestLocationsLatestSnapshots();
+    }
+
+    /**
+     * This relatively expensive operation is called in the ViewModel constructor so that it can be run
+     * only once per execution, and the maps can be accessed from any fragment
+     */
     private void fillLocationsMaps() {
         String jsonString;
         JSONArray jsonArray;
@@ -102,6 +109,10 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
         }
     }
 
+    /**
+     * used to save/check internet connection
+     * @param connected
+     */
     public void setConnectionStatus(boolean connected) {
         isConnected = connected;
     }
@@ -118,6 +129,21 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
         this.mutableCovidSnapshot.setValue(covidSnapshot);
     }
 
+    /**
+     * Fills a CovidSnapshot instance with data from two APIs, disease.sh and U.S. Census Bureau,
+     * once all data has been retrieved.
+     * The following endpoints are called:
+     *  disease.sh
+     *      - county COVID-19 data (Johns Hopkins University)
+     *      - state COVID-19 data (Worldometer)
+     *      - country COVID-19 data (Johns Hopkins University)
+     *      - country historical COVID-19 data (Johns Hopkins University)
+     *  U.S. Census Bureau
+     *      - county population data
+     *      - state population data
+     *      - country population data
+     * @param location the Location instance to retrieve COVID-19 and Population stats for
+     */
     public void makeApiCalls(Location location) {
         Log.i(TAG, "makeApiCalls: CALLED " + location.toString());
         CovidSnapshot covidSnapshot = new CovidSnapshot();
@@ -134,9 +160,7 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
                 Integer activeCounty = confirmed - deaths;
                 covidSnapshot.setCountyActiveCount(activeCounty);
                 mutableCovidSnapshot.getValue().setCountyActiveCount(activeCounty);
-                if (covidSnapshot.hasFieldsSet()) {
-                    mutableCovidSnapshot.setValue(covidSnapshot);
-                }
+                RoomHelpers.setSnapshot(mutableCovidSnapshot, covidSnapshot);
                 Log.d(TAG, "req: getActiveCounty " + activeCounty);
             }
 
@@ -147,12 +171,10 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
         Requests.getState(context, location.toApiFormat(), new VolleyJsonCallback() {
             @Override
             public void getJsonData(JSONObject response) throws JSONException {
-                Integer activeState = (Integer) response.get(Constants.RESPONSE_ACTIVE);
+                Integer activeState = (Integer) response.get(Constants.RESPONSE_CASES);
                 covidSnapshot.setStateActiveCount(activeState);
                 mutableCovidSnapshot.getValue().setStateActiveCount(activeState);
-                if (covidSnapshot.hasFieldsSet()) {
-                    mutableCovidSnapshot.setValue(covidSnapshot);
-                }
+                RoomHelpers.setSnapshot(mutableCovidSnapshot, covidSnapshot);
                 Log.d(TAG, "req: getActiveState " + activeState);
             }
 
@@ -184,9 +206,7 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
 
                 Integer countryActiveCount = totalCountry - deathCountry - recoveredCountry;
                 covidSnapshot.setCountryActiveCount(countryActiveCount);
-                if (covidSnapshot.hasFieldsSet()) {
-                    mutableCovidSnapshot.setValue(covidSnapshot);
-                }
+                RoomHelpers.setSnapshot(mutableCovidSnapshot, covidSnapshot);
                 Log.i(TAG, "req: getCountryHistorical " + response);
             }
 
@@ -198,25 +218,19 @@ public class CovidSnapshotWithLocationViewModel extends AndroidViewModel {
         Requests.getCountyPopulation(context, location, response -> {
             covidSnapshot.setCountyTotalPopulation(Integer.parseInt(response));
             mutableCovidSnapshot.getValue().setCountyTotalPopulation(Integer.parseInt(response));
-            if (covidSnapshot.hasFieldsSet()) {
-                mutableCovidSnapshot.setValue(covidSnapshot);
-            }
+            RoomHelpers.setSnapshot(mutableCovidSnapshot, covidSnapshot);
             Log.d(TAG, "req: getCountyPopulation  " + response);
         });
         Requests.getStatePopulation(context, location, response -> {
             covidSnapshot.setStateTotalPopulation(Integer.parseInt(response));
             mutableCovidSnapshot.getValue().setStateTotalPopulation(Integer.parseInt(response));
-            if (covidSnapshot.hasFieldsSet()) {
-                mutableCovidSnapshot.setValue(covidSnapshot);
-            }
+            RoomHelpers.setSnapshot(mutableCovidSnapshot, covidSnapshot);
             Log.d(TAG, "req: getStatePopulation  " + response);
         });
         Requests.getCountryPopulation(context, response -> {
             covidSnapshot.setCountryTotalPopulation(Integer.parseInt(response));
             mutableCovidSnapshot.getValue().setCountryTotalPopulation(Integer.parseInt(response));
-            if (covidSnapshot.hasFieldsSet()) {
-                mutableCovidSnapshot.setValue(covidSnapshot);
-            }
+            RoomHelpers.setSnapshot(mutableCovidSnapshot, covidSnapshot);
             Log.d(TAG, "req: getCountryPopulation " + response);
         });
     }

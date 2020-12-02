@@ -1,5 +1,6 @@
 package com.nsc.covidscore;
 
+import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
@@ -90,6 +92,7 @@ public class RiskDetailPageFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_risk_detail, container, false);
         super.onCreate(savedInstanceState);
+
         Log.d(TAG, "onCreateView invoked");
         return v;
     }
@@ -133,6 +136,8 @@ public class RiskDetailPageFragment extends Fragment {
 
         if (bundle != null) {
             currentLocation = bundle.getString(Constants.CURRENT_LOCATION);
+
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(currentLocation);
 
             activeCounty = bundle.getString(Constants.ACTIVE_COUNTY);
             activeState = bundle.getString(Constants.ACTIVE_STATE);
@@ -178,7 +183,7 @@ public class RiskDetailPageFragment extends Fragment {
 
             lastUpdatedV.setText(lastUpdated);
 
-            Log.i(TAG, "onCreateView: Bundle received from LocationManualSelectionFragment");
+            Log.i(TAG, "onViewCreated: Bundle received from LocationManualSelectionFragment");
         }
 
         riskTrendChart = v.findViewById(R.id.lineGraph);
@@ -186,11 +191,13 @@ public class RiskDetailPageFragment extends Fragment {
 
     }
 
+    /**
+     * Set all data into lines for group size vs. risk relationship chart
+     */
     private void setRiskChart() {
-        //Draws graph for risks vs. group size relationship
-        LineDataSet countyRiskDataSet = new LineDataSet(getCountyEntryList(),"County");
-        LineDataSet stateRiskDataSet = new LineDataSet(getStateEntryList(), "State");
-        LineDataSet countryRiskDataSet = new LineDataSet(getCountryEntryList(), "Country");
+        LineDataSet countyRiskDataSet = new LineDataSet(getEntryList(countyRiskMap),"County");
+        LineDataSet stateRiskDataSet = new LineDataSet(getEntryList(stateRiskMap), "State");
+        LineDataSet countryRiskDataSet = new LineDataSet(getEntryList(countryRiskMap), "Country");
 
         countyRiskDataSet.setCircleColor(R.color.black_overlay);
         countyRiskDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
@@ -210,42 +217,35 @@ public class RiskDetailPageFragment extends Fragment {
         riskLineSet.add(stateRiskDataSet);
         riskLineSet.add(countryRiskDataSet);
 
+        Description description = new Description();
+        description.setText(currentLocation);
+
         setAxes();
         riskTrendChart.setData(new LineData(riskLineSet));
         riskTrendChart.getDescription().setEnabled(true);
         riskTrendChart.setPinchZoom(true);
+        riskTrendChart.setDoubleTapToZoomEnabled(false);
+        riskTrendChart.setDescription(description);
         riskTrendChart.invalidate();
     }
 
-    private ArrayList<Entry> getCountyEntryList() {
+    /**
+     * Creates a List of Entries to be plotted on the Chart
+     * @param riskMap   map of (group size, risk %) for a location
+     * @return          List of Entries for Chart
+     */
+    private static ArrayList<Entry> getEntryList(HashMap<Integer, Double> riskMap) {
         ArrayList<Entry> riskVals = new ArrayList<>();
         riskVals.add(new Entry(0f, 0f));
-        for (int i = 0; i < groupSizesArray.length; i++) {
-            riskVals.add(new Entry((float) Constants.GROUP_SIZES[i], countyRiskMap.get(Constants.GROUP_SIZES[i]).floatValue()));
+        for (int i = 0; i < riskMap.size(); i++) {
+            riskVals.add(new Entry((float) Constants.GROUP_SIZES[i], riskMap.get(Constants.GROUP_SIZES[i]).floatValue()));
         }
         return riskVals;
     };
 
-    private ArrayList<Entry> getStateEntryList()
-    {
-        ArrayList<Entry> riskVals = new ArrayList<>();
-        riskVals.add(new Entry(0f, 0f));
-        for (int i = 0; i < groupSizesArray.length; i++) {
-            riskVals.add(new Entry((float) Constants.GROUP_SIZES[i], stateRiskMap.get(Constants.GROUP_SIZES[i]).floatValue()));
-        }
-        return riskVals;
-    };
-
-    private ArrayList<Entry> getCountryEntryList()
-    {
-        ArrayList<Entry> riskVals = new ArrayList<>();
-        riskVals.add(new Entry(0f, 0f));
-        for (int i = 0; i < groupSizesArray.length; i++) {
-            riskVals.add(new Entry((float) Constants.GROUP_SIZES[i], countryRiskMap.get(Constants.GROUP_SIZES[i]).floatValue()));
-        }
-        return riskVals;
-    };
-
+    /**
+     * sets basic data for Chart
+     */
     private void setAxes() {
         XAxis xAxis = riskTrendChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -282,6 +282,6 @@ public class RiskDetailPageFragment extends Fragment {
     }
 
     public interface OnSelectLocationButtonListener {
-        public void onLocationButtonClicked();
+        void onLocationButtonClicked();
     }
 }

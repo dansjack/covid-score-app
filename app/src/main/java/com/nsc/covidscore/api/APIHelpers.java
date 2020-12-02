@@ -9,6 +9,11 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 public class APIHelpers {
+    /**
+     * Handle the String response for a Volley request and pass it to a callback function
+     * @param response the string response returned from the Volley request
+     * @param cb the callback method used to access the response data after its been processed
+     */
     public static void handleStringResponse(String response, VolleyStringCallback cb) {
         try {
             JSONArray jsonArray = new JSONArray(response);
@@ -18,6 +23,15 @@ public class APIHelpers {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Handle the JSON response for a Volley request and pass it to a callback function
+     * @param type the type of response expected: COUNTY, COUNTY_HISTORICAL, PROVINCE, or COUNTY_HISTORICAL
+     * @param response the string response returned from the Volley request
+     * @param county the county name
+     * @param state the state name
+     * @param cb the callback method used to access the response data after its been processed
+     */
     public static void handleJsonResponse(
             String type, String response, String county, String state, VolleyJsonCallback cb) {
         try {

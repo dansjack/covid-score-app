@@ -6,7 +6,6 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 
 public class CovidSnapshotWithLocationRepository {
@@ -25,7 +24,7 @@ public class CovidSnapshotWithLocationRepository {
 
     void insertCovidSnapshot(CovidSnapshot covidSnapshot) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            if ((currentSnapshot.getValue() == null || !currentSnapshot.getValue().hasSameData(covidSnapshot)) && covidSnapshot.getLocationId() != null) {
+            if (RoomHelpers.shouldInsertSnapshot(currentSnapshot, covidSnapshot)) {
                 Calendar calendar = Calendar.getInstance();
                 covidSnapshot.setLastUpdated(calendar);
                 covidSnapshotDao.insert(covidSnapshot);
@@ -37,16 +36,16 @@ public class CovidSnapshotWithLocationRepository {
         currentSnapshot = covidSnapshotDao.getLatest();
     }
 
-//    LiveData<CovidSnapshot> getLatestCovidSnapshotByLocation(Location location) {
-//        return covidSnapshotDao.findLatestByLocationId(location.getLocationId());
-//    }
-
     LiveData<CovidSnapshot> getLatestSnapshot() {
         return covidSnapshotDao.getLatest();
     }
 
-//    LiveData<CovidSnapshot> getSavedCovidSnapshot() {
-//        return currentSnapshot;
-//    }
+    /**
+     * @return a list of up to 3 LiveData objects (CovidSnapshots) directly from AppDatabase
+     *  via CovidSnapshotDao.
+     */
+    LiveData<List<CovidSnapshot>> getLatestLocationsLatestSnapshots() {
+        return covidSnapshotDao.getLastThreeLocationsLatestSnapshots();
+    }
 
 }

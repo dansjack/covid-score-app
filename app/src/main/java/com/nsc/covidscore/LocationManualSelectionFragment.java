@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
@@ -47,18 +48,24 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
         // Required empty public constructor
     }
 
-    // onAttach method fires 1st, before creation of fragment or any views
-    // It is called when the Fragment instance is associated with an Activity.
-    // This does not mean the Activity is fully initialized.
+    /**
+     * onAttach fires 1st, before creation of fragment or any views
+     * It is called when the Fragment instance is associated with an Activity.
+     * This does not mean the Activity is fully initialized.
+     * @param context from activity; attach to fragment
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         Log.d(TAG, "onAttach invoked");
     }
 
-    // This event fires 2nd, before views are created for the fragment
-    // The onCreate method is called when the Fragment instance is being created, or re-created.
-    // Use onCreate for any standard setup that does not require the activity to be fully created
+    /**
+     * onCreate fires 2nd, before views are created for the fragment
+     * The onCreate method is called when the Fragment instance is being created, or re-created.
+     * Use onCreate for any standard setup that does not require the activity to be fully created
+     * @param savedInstanceState state from current session
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,18 +81,23 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_location_selection, container, false);
-
         setInitialSpinners(v);
+
         Log.d(TAG, "onCreateView invoked");
         return v;
     }
 
-    //     This event is triggered soon after onCreateView().
-    //     onViewCreated() is only called if the view returned from onCreateView() is non-null.
-    //     Any view setup should occur here.  E.g., view lookups and attaching view listeners.
+    /**
+     *  This event is triggered soon after onCreateView(). onViewCreated() is only called
+     *  if the view returned from onCreateView() is non-null. Any view setup should occur here.
+     *  E.g., view lookups and attaching view listeners.
+     */
+
     @Override
     public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
+
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("");
 
         MainActivity main = (MainActivity) getActivity();
 
@@ -105,7 +117,11 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                         vm.makeApiCalls(selectedLocation);
                         mutableCovidSnapshot.observe(getViewLifecycleOwner(), covidSnapshot -> {
                             if (!justForApiCalls && (covidSnapshot != null && covidSnapshot.hasFieldsSet())) {
+                                CovidSnapshot mcsValue = mutableCovidSnapshot.getValue();
+                                mcsValue.setLastUpdated(null);
+                                mutableCovidSnapshot.setValue(mcsValue);
                                 callback.onSubmitButtonClicked(mutableCovidSnapshot, selectedLocation);
+                                mutableCovidSnapshot.removeObservers(getViewLifecycleOwner());
                             }
                         });
                     }
@@ -117,6 +133,9 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
                 loadingTextView.setText(R.string.no_internet);
             }
         });
+
+        resetWelcomeText(v, vm);
+
         Log.d(TAG, "onViewCreated invoked");
     }
 
@@ -146,6 +165,23 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    /**
+     * Removes welcome text value if there is a stored snapshot
+     * @param v the current view to change;
+     * @param vm the current vm to check
+     */
+    private void resetWelcomeText(View v, CovidSnapshotWithLocationViewModel vm){
+        final TextView welcome_tv = v.findViewById(R.id.fullscreen_content);
+
+        vm.getLatestCovidSnapshot().observe(getViewLifecycleOwner(), covidSnapshotFromDb -> {
+            if(covidSnapshotFromDb!=null){
+                welcome_tv.setText("");
+            } else {
+                welcome_tv.setText(R.string.app_welcome);
+            }
+        });
     }
 
     @Override
@@ -226,8 +262,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
         void onSubmitButtonClicked(MutableLiveData<CovidSnapshot> mcs, Location selectedLocation);
     }
 
-    public void clearCovidSnapshot() {
-        CovidSnapshot clear = new CovidSnapshot();
-        vm.setMutableCovidSnapshot(clear);
-    }
+//    public void clearCovidSnapshot() {
+//        CovidSnapshot clear = new CovidSnapshot();
+//        vm.setMutableCovidSnapshot(clear);
+//    }
 }

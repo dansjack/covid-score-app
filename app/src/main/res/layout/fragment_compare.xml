@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp"
+    android:background="@color/colorPrimaryLight"
+    android:padding="@dimen/text_margin"
+    android:orientation="vertical"
+    tools:context=".LocationManualSelectionFragment">
+
+    <TextView
+        android:id="@+id/comparing_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:textSize="20sp"
+        android:text="@string/comparing_text"
+        android:textStyle="bold"
+        android:layout_weight="1.5"/>
+
+    <TextView
+        android:id="@+id/compare_location_1"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/text_margin"
+        android:textSize="@dimen/std_text_size"
+        android:layout_weight="1"
+        />
+
+    <TextView
+        android:id="@+id/compare_location_2"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/text_margin"
+        android:textSize="@dimen/std_text_size"
+        android:layout_weight="1"
+        />
+
+    <TextView
+        android:id="@+id/compare_location_3"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/text_margin"
+        android:textSize="@dimen/std_text_size"
+        android:layout_weight="1.5"
+        />
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/comparisonGraph"
+        android:visibility="gone"
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:padding="@dimen/text_margin"
+        android:layout_weight="20"/>
+
+</LinearLayout>

@@ -63,7 +63,9 @@ public class Location implements Serializable {
 
     // CONSTRUCTOR
 
-    public Location() {}
+    public Location() {
+        propertyChangeSupport = new PropertyChangeSupport(this);
+    }
 
     public Location(Integer locationId, String county, String state, String countyFips, String stateFips) {
         propertyChangeSupport = new PropertyChangeSupport(this);
@@ -105,20 +107,51 @@ public class Location implements Serializable {
         return county.toLowerCase() + "," + state.toLowerCase();
     }
 
+    public String toDrawerItemTitleFormat() {
+        return county + ", " + state;
+    }
+
+    public boolean fipsSet() {
+        return this.countyFips != null && this.stateFips != null;
+    }
+
+    public boolean fipsNotEmpty() {
+        return !this.countyFips.isEmpty() && !this.stateFips.isEmpty();
+    }
+
+    public boolean locationNamesSet() {
+        return this.county != null && this.state != null;
+    }
+
+    public boolean locationNotNull() {
+        return this.locationNamesSet() && this.fipsSet();
+    }
+
+    public boolean locationNotEmpty() {
+        return this.locationNamesNotEmpty() && this.fipsNotEmpty();
+    }
+
+    public boolean locationNamesNotEmpty() {
+        return !this.county.isEmpty() && !this.state.isEmpty();
+    }
+
     public boolean hasFieldsSet() {
-        boolean notNull = (this.county != null && this.state != null) && (this.countyFips != null && this.stateFips != null);
-        boolean notEmpty = (!this.county.isEmpty() && !this.state.isEmpty()) && (!this.countyFips.isEmpty() && !this.stateFips.isEmpty());
-        return notNull && notEmpty;
+        return this.locationNotNull() && this.locationNotEmpty();
     }
 
     public boolean equals(Location other) {
-        return this.hasSameData(other) && this.locationId.equals(other.locationId);
+        return this.hasSameData(other) && this.hasSameLocationId(other);
+    }
+
+    public boolean hasSameLocationId(Location other) {
+        return this.locationId.equals(other.locationId);
     }
 
     public boolean hasSameData(Location other) {
         return this.state.toLowerCase().equals(other.state.toLowerCase()) &&
                 this.county.toLowerCase().equals(other.county.toLowerCase());
     }
+
 
     @Override
     public String toString() {
