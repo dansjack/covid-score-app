@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply from: '../jacoco.gradle'
 
-def apikeyPropertiesFile = rootProject.file("apikey.properties")
+def apikeyPropertiesFile = rootProject.file("apikeys.properties")
 def apikeyProperties = new Properties()
 apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
 
