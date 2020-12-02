@@ -262,8 +262,8 @@ public class LocationManualSelectionFragment extends Fragment implements Adapter
         void onSubmitButtonClicked(MutableLiveData<CovidSnapshot> mcs, Location selectedLocation);
     }
 
-    public void clearCovidSnapshot() {
-        CovidSnapshot clear = new CovidSnapshot();
-        vm.setMutableCovidSnapshot(clear);
-    }
+//    public void clearCovidSnapshot() {
+//        CovidSnapshot clear = new CovidSnapshot();
+//        vm.setMutableCovidSnapshot(clear);
+//    }
 }
