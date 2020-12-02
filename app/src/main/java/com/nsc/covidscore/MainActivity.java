@@ -19,6 +19,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -243,14 +244,24 @@ public class MainActivity extends AppCompatActivity implements
     public void openNewRiskDetailPageFragment(CovidSnapshot cs, Location selectedLocation) {
 
         if (cs.hasFieldsSet() && cs.getLocationId() != null) {
-            Log.i(TAG, "openNewRiskDetailPageFragment2: ++ Inserting CS" + cs.toString());
 
             if (cs.getLastUpdated() == null) { // new Snapshot needs to be added to DB
+                Log.i(TAG, "openNewRiskDetailPageFragment2: ++ Inserting CS" + cs.toString());
                 Calendar calendar = Calendar.getInstance();
                 cs.setLastUpdated(calendar);
                 vm.insertCovidSnapshot(cs);
             } else if (!hasBeenUpdatedThisHour(cs)) {
                 vm.makeApiCalls(selectedLocation);
+                MutableLiveData<CovidSnapshot> updatedCsV = vm.getMutableCovidSnapshot();
+                updatedCsV.observe(this, updatedCs -> {
+                    if ((updatedCs != null && updatedCs.hasFieldsSet())
+                    && updatedCs.getLocationId().equals(selectedLocation.getLocationId())) {
+                        Calendar now = Calendar.getInstance();
+                        updatedCs.setLastUpdated(now);
+                        vm.insertCovidSnapshot(updatedCs);
+                        updatedCsV.removeObservers(this);
+                    }
+                });
             }
 
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
