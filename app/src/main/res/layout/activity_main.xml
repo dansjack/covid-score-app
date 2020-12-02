@@ -16,8 +16,7 @@
         <!-- The ActionBar displayed at the top -->
         <include
             layout="@layout/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:id="@+id/toolbar" />
 
         <!-- This ConstraintLayout represents the contents of the screen  -->
         <androidx.constraintlayout.widget.ConstraintLayout
