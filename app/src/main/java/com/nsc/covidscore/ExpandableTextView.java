@@ -31,20 +31,20 @@ public class ExpandableTextView extends AppCompatTextView
     private boolean isCollapsing;
     private CharSequence mOriginalText;
 
-    public ExpandableTextView(Context context) {
-        super(context);
-        init();
-    }
+//    public ExpandableTextView(Context context) {
+//        super(context);
+//        init();
+//    }
 
     public ExpandableTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public ExpandableTextView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init();
-    }
+//    public ExpandableTextView(Context context, AttributeSet attrs, int defStyleAttr) {
+//        super(context, attrs, defStyleAttr);
+//        init();
+//    }
 
     private void init() {
         setMaxLines(COLLAPSED_MAX_LINES);

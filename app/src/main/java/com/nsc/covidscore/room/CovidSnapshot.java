@@ -8,7 +8,6 @@ import androidx.room.PrimaryKey;
 
 import com.nsc.covidscore.Constants;
 
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -133,26 +132,50 @@ public class CovidSnapshot extends Observable {
                 + " Last Updated: " + (lastUpdated != null ? date_format.format(lastUpdated.getTime()) : "null");
     }
 
+    public boolean countsNotNull() {
+        return countyActiveCount != null && stateActiveCount != null && countryActiveCount != null;
+    }
+
+    public boolean populationsNotNull() {
+        return countyTotalPopulation != null && stateTotalPopulation != null && countryTotalPopulation != null;
+    }
+
+    public boolean fieldsNotNull() {
+        return this.countsNotNull() && this.populationsNotNull();
+    }
+
     public boolean hasFieldsSet() {
-        boolean countsNotNull = countyActiveCount != null && (stateActiveCount != null && countryActiveCount != null);
-        boolean populationsNotNull = countyTotalPopulation != null && (stateTotalPopulation != null && countryTotalPopulation != null);
         // TODO: change this if the pandemic ends :)
-        boolean countryNotZero = countryActiveCount != null && countryActiveCount != 0;
-        return (countsNotNull && populationsNotNull) && (countryNotZero && locationId != null);
+        return this.fieldsNotNull() && (countryActiveCount != 0 && locationId != null);
+    }
+
+    public boolean idsEqual(CovidSnapshot other) {
+        return this.covidSnapshotId.equals(other.covidSnapshotId) && this.locationId.equals(other.locationId);
     }
 
     public boolean equals(CovidSnapshot other) {
         if (this.covidSnapshotId == null) { return false; }
-        boolean idsEqual = (this.covidSnapshotId.equals(other.covidSnapshotId)) && (this.locationId.equals(other.locationId));
-        return idsEqual && this.hasSameData(other);
+        return idsEqual(other) && this.hasSameData(other);
+    }
+
+    public boolean hasSameLocation(CovidSnapshot other) {
+        return this.locationId.equals(other.locationId);
+    }
+
+    public boolean hasSameCounts(CovidSnapshot other) {
+        return this.countyActiveCount.equals(other.countyActiveCount) &&
+                this.stateActiveCount.equals(other.stateActiveCount) &&
+                this.countryActiveCount.equals(other.countryActiveCount);
+    }
+
+    public boolean hasSamePopulations(CovidSnapshot other) {
+        return this.countyTotalPopulation.equals(other.countyTotalPopulation) &&
+                this.stateTotalPopulation.equals(other.stateTotalPopulation) &&
+                this.countryTotalPopulation.equals(other.countryTotalPopulation);
     }
 
     public boolean hasSameData(CovidSnapshot other) {
         if (this.locationId == null || other.locationId == null) { return false; }
-        boolean locationsMatch = this.locationId.equals(other.locationId);
-        boolean countsMatch = ((this.countyActiveCount.equals(other.countyActiveCount)) && (this.stateActiveCount.equals(other.stateActiveCount))) && (this.countryActiveCount.equals(other.countryActiveCount));
-        boolean populationsMatch = ((this.countyTotalPopulation.equals(other.countyTotalPopulation)) && this.stateTotalPopulation.equals(other.stateTotalPopulation)) && this.countryTotalPopulation.equals(other.countryTotalPopulation);
-
-        return locationsMatch && populationsMatch && countsMatch;
+        return this.hasSameLocation(other) && this.hasSamePopulations(other) && this.hasSameCounts(other);
     }
 }

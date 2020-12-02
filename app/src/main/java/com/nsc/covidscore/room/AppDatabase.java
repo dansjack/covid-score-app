@@ -30,13 +30,11 @@ public abstract class AppDatabase extends RoomDatabase {
         ctx = context;
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            AppDatabase.class,
-                            "covid_snapshot_database")
-                            .addCallback(appDatabaseCallback)
-                            .build();
-                }
+                INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
+                        AppDatabase.class,
+                        "covid_snapshot_database")
+                        .addCallback(appDatabaseCallback)
+                        .build();
             }
         }
         return INSTANCE;

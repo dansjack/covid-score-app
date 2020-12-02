@@ -79,6 +79,14 @@ public class CompareFragment extends Fragment {
         }
     }
 
+    /**
+     * The location text views default to "gone," so they will only be made visible and have text set to them if the
+     * information is passed in the Intent
+     * The main text view displays differently depending on how many locations are provided
+     * @param countyRiskMaps    a List of up to 3 maps of data points for one comparison line
+     * @param locationStrings   a list of location names corresponding to the countyRiskMaps, for the labels
+     * @param v                 the view
+     */
     private void setTextViewsFromBundle(List<HashMap<Integer, Double>> countyRiskMaps, List<String> locationStrings, View v) {
         TextView comparing = v.findViewById(R.id.comparing_tv);
         if (countyRiskMaps != null && locationStrings != null && countyRiskMaps.size() == locationStrings.size()) {
@@ -111,6 +119,9 @@ public class CompareFragment extends Fragment {
         }
     }
 
+    /**
+     * Once the data from the Intent has been set, the actual lines are constructed in the Chart
+     */
     private void setRiskChart() {
         int lineCount = locationStrings.size();
 
@@ -156,6 +167,11 @@ public class CompareFragment extends Fragment {
         riskComparisonChart.invalidate();
     }
 
+    /**
+     * Takes a riskMap from the Intent of (group size, risk %) and creates Entry objects for the Chart
+     * @param riskMap   the riskMap associated with one CovidSnapshot
+     * @return          a list of Entry objects, for plotting on the Chart
+     */
     private List<Entry> getEntryList(HashMap<Integer, Double> riskMap) {
         ArrayList<Entry> riskVals = new ArrayList<>();
         riskVals.add(new Entry(0f, 0f));
@@ -165,6 +181,9 @@ public class CompareFragment extends Fragment {
         return riskVals;
     }
 
+    /**
+     * Set basic properties of the Chart
+     */
     private void setAxes() {
         XAxis xAxis = riskComparisonChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -195,6 +214,5 @@ public class CompareFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
     }
-
 
 }
