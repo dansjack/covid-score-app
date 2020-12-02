@@ -72,6 +72,10 @@ public class MainActivity extends AppCompatActivity implements
             LocationManualSelectionFragment lmsFragment = (LocationManualSelectionFragment) fragment;
             lmsFragment.setOnSubmitButtonListener(this);
         }
+        if (fragment instanceof CompareFragment) {
+            CompareFragment cFragment = (CompareFragment) fragment;
+            // if we need a listener for the CompareFragment
+        }
     }
 
     @Override
@@ -86,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Find drawer view
-        mDrawer = (DrawerLayout)findViewById(R.id.drawer_layout);
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerToggle = setupDrawerToggle();
 
         // Setup toggle to display hamburger icon with nice animation
@@ -120,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements
         // This will hold latest copy of last 3 locationIds
         vm.getLatestLocationsLatestCovidSnapshots().observe(this, snapshotListFromDb -> {
             if (snapshotListFromDb != null && snapshotListFromDb.size() <= 3) {
+                // TODO: set compare option visible on Nav
                 locationsNavList.clear();
                 covidSnapshotNavList.clear();
                 for (int i = 0; i < snapshotListFromDb.size(); i++) {
@@ -217,8 +222,10 @@ public class MainActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(menuItem);
     }
 
+    /**
+     * Used when navigating from LocationManualSelectFragment to RiskDetailPageFragment
+     */
     public void locationSelectToRiskFragment() {
-        // Used when navigating from LocationManualSelectFragment to RiskDetailPageFragment
         RiskDetailPageFragment riskDetailPageFragment = new RiskDetailPageFragment();
 
         Bundle bundle = makeRiskDetailPageBundle(lastSavedCovidSnapshot, lastSavedLocation);
@@ -228,8 +235,13 @@ public class MainActivity extends AppCompatActivity implements
                 .add(R.id.fragContainer, riskDetailPageFragment, Constants.FRAGMENT_RDPF).commit();
     }
 
+    /**
+     * Used when opening the app with an existing CovidSnapshot
+     * @param cs                the CovidSnapshot from Room
+     * @param selectedLocation  the associated Location
+     */
     public void openNewRiskDetailPageFragment(CovidSnapshot cs, Location selectedLocation) {
-        // Used when opening the app with an existing CovidSnapshot
+
         if (cs.hasFieldsSet() && cs.getLocationId() != null) {
             Log.i(TAG, "openNewRiskDetailPageFragment2: ++ Inserting CS" + cs.toString());
 
@@ -255,8 +267,28 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    /**
+     * Opens new Compare Fragment with the information from the Nav Bar
+     */
+    public void openCompareFragment() {
+        if (covidSnapshotNavList != null
+                && locationsNavList != null) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            CompareFragment compareFragment = new CompareFragment();
+
+            Bundle bundle = makeCompareBundle(covidSnapshotNavList, locationsNavList);
+            compareFragment.setArguments(bundle);
+
+            transaction.replace(R.id.fragContainer, compareFragment, Constants.FRAGMENT_COMPARE);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
+    }
+
+    /**
+     * Create a new Location Selection Fragment to be placed in the activity layout
+     */
     public void openLocationSelectionFragment() {
-        // Create a new Location Selection Fragment to be placed in the activity layout
         LocationManualSelectionFragment locationManualSelectionFragment =
                 new LocationManualSelectionFragment();
 
@@ -300,6 +332,9 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.nav_about_fragment:
                 fragmentClass = AboutFragment.class;
                 fragmentTag = Constants.FRAGMENT_ABOUT;
+                break;
+            case R.id.nav_compare_fragment:
+                openCompareFragment();
                 break;
             default:
                 fragmentClass = LocationManualSelectionFragment.class;
@@ -430,6 +465,39 @@ public class MainActivity extends AppCompatActivity implements
         openNewRiskDetailPageFragment(mcs.getValue(), selectedLocation);
     }
 
+    /**
+     * Takes the lists of CovidSnapshots and Locations for the Nav Bar and creates the Bundle for a Compare Fragment
+     * @param snapshots     CovidSnapshots from the Nav Bar, which is populated from Room
+     * @param locations     Locations from Nav Bar, matched to the CovidSnapshots
+     * @return              a new Bundle for a new Compare Fragment
+     */
+    private Bundle makeCompareBundle(List<CovidSnapshot> snapshots, List<Location> locations) {
+        Bundle bundle = new Bundle();
+        ArrayList<HashMap<Integer, Double>> riskMaps = new ArrayList<>();
+        for (CovidSnapshot cs : snapshots) {
+            HashMap<Integer, Double> countyRiskMap = RiskCalculation.getRiskCalculationsMap(
+                    cs.getCountyActiveCount(),
+                    cs.getCountyTotalPopulation(),
+                    Constants.GROUP_SIZES);
+            riskMaps.add(countyRiskMap);
+        }
+        ArrayList<String> locationStrings = new ArrayList<>();
+        for (Location location : locations) {
+            String locationSb = location.getCounty() +
+                    Constants.COMMA_SPACE + location.getState();
+            locationStrings.add(locationSb);
+        }
+        bundle.putSerializable(Constants.COMPARE_MAP_LIST, riskMaps);
+        bundle.putSerializable(Constants.LOCATION_LIST, locationStrings);
+        return bundle;
+    }
+
+    /**
+     * Creates a Bundle for a Risk Detail Fragment for a given CovidSnapshot and its associated Location
+     * @param snapshot  selected CovidSnapshot
+     * @param location  associated Location
+     * @return          a new Bundle for a new Risk Detail Page Fragment
+     */
     private Bundle makeRiskDetailPageBundle(CovidSnapshot snapshot, Location location) {
         Bundle bundle = new Bundle();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
@@ -466,7 +534,7 @@ public class MainActivity extends AppCompatActivity implements
 
     /**
      * Compare most recently saved CovidSnapshot to current time - if the snapshot is more than
-     * an hour old, and the phone has connectivity, we change behavior
+     * an hour old, and the phone has connectivity, we rerun the APIs
      * @return true if the CovidSnapshot is recent within the hour, false otherwise
      */
     private boolean hasBeenUpdatedThisHour() {
@@ -484,6 +552,12 @@ public class MainActivity extends AppCompatActivity implements
         return nowHour.equals(lastSavedHour);
     }
 
+    /**
+     * Compare a given CovidSnapshot to current time - if the snapshot is more than
+     * an hour old, and the phone has connectivity, we rerun the APIs
+     * @param cs    the specified CovidSnapshot
+     * @return      true if the CovidSnapshot is recent within the hour, false otherwise
+     */
     private boolean hasBeenUpdatedThisHour(CovidSnapshot cs) {
         Calendar lastSaved = cs.getLastUpdated();
         Calendar lastSavedHour = Calendar.getInstance();
