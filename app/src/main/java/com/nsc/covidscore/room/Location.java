@@ -13,21 +13,18 @@ public class Location implements Serializable {
     private Integer locationId;
     public Integer getLocationId() { return locationId; }
     public void setLocationId(Integer locationId) {
-        propertyChangeSupport.firePropertyChange(Constants.LOCATION_ID_PK, this.locationId, locationId);
         this.locationId = locationId;
     }
 
     private String county;
     public String getCounty() { return county; }
     public void setCounty(String county) {
-        propertyChangeSupport.firePropertyChange(Constants.COUNTY, this.county, county);
         this.county = county;
     }
 
     private String state;
     public String getState() { return state; }
     public void setState(String state) {
-        propertyChangeSupport.firePropertyChange(Constants.STATE, this.state, state);
         this.state = state;
     }
 
@@ -43,54 +40,27 @@ public class Location implements Serializable {
         this.stateFips = stateFips;
     }
 
-    private Calendar lastUpdated;
-    public Calendar getLastUpdated() { return lastUpdated; }
-    public void setLastUpdated(Calendar lastUpdated) {
-        this.lastUpdated = lastUpdated;
-    }
-
-    // For Observer
-
-    protected PropertyChangeSupport propertyChangeSupport;
-
-//    public void setListener(PropertyChangeListener listener) {
-//        propertyChangeSupport.addPropertyChangeListener(listener);
-//    }
-//
-//    public void removeListener(PropertyChangeListener listener) {
-//        propertyChangeSupport.removePropertyChangeListener(listener);
-//    }
-
     // CONSTRUCTOR
 
-    public Location() {
-        propertyChangeSupport = new PropertyChangeSupport(this);
-    }
+    public Location() {}
 
     public Location(Integer locationId, String county, String state, String countyFips, String stateFips) {
-        propertyChangeSupport = new PropertyChangeSupport(this);
         this.locationId = locationId;
         this.county = county;
         this.state = state;
         this.countyFips = countyFips;
         this.stateFips = stateFips;
-        Calendar calendar = Calendar.getInstance();
-        this.lastUpdated = calendar;
     }
 
     public Location(String county, String state, String countyFips, String stateFips) {
-        propertyChangeSupport = new PropertyChangeSupport(this);
         this.county = county;
         this.state = state;
         this.countyFips = countyFips;
         this.stateFips = stateFips;
-        Calendar calendar = Calendar.getInstance();
-        this.lastUpdated = calendar;
     }
 
     @Ignore
     public Location(String county, String state) {
-        propertyChangeSupport = new PropertyChangeSupport(this);
         this.county = county;
         this.state = state;
     }
@@ -103,6 +73,8 @@ public class Location implements Serializable {
         this.stateFips = other.stateFips;
     }
 
+    // FORMATTING
+
     public String toApiFormat() {
         return county.toLowerCase() + "," + state.toLowerCase();
     }
@@ -110,6 +82,19 @@ public class Location implements Serializable {
     public String toDrawerItemTitleFormat() {
         return county + ", " + state;
     }
+
+    @Override
+    public String toString() {
+        return "Location{" +
+                "locationId=" + locationId +
+                ", county='" + county + '\'' +
+                ", state='" + state + '\'' +
+                ", countyFips='" + countyFips + '\'' +
+                ", stateFips='" + stateFips + '\'' +
+                '}';
+    }
+
+    // VALIDATION
 
     public boolean fipsSet() {
         return this.countyFips != null && this.stateFips != null;
@@ -123,6 +108,10 @@ public class Location implements Serializable {
         return this.county != null && this.state != null;
     }
 
+    public boolean locationNamesNotEmpty() {
+        return !this.county.isEmpty() && !this.state.isEmpty();
+    }
+
     public boolean locationNotNull() {
         return this.locationNamesSet() && this.fipsSet();
     }
@@ -131,17 +120,11 @@ public class Location implements Serializable {
         return this.locationNamesNotEmpty() && this.fipsNotEmpty();
     }
 
-    public boolean locationNamesNotEmpty() {
-        return !this.county.isEmpty() && !this.state.isEmpty();
-    }
-
     public boolean hasFieldsSet() {
         return this.locationNotNull() && this.locationNotEmpty();
     }
 
-    public boolean equals(Location other) {
-        return this.hasSameData(other) && this.hasSameLocationId(other);
-    }
+    // COMPARISON
 
     public boolean hasSameLocationId(Location other) {
         return this.locationId.equals(other.locationId);
@@ -152,15 +135,7 @@ public class Location implements Serializable {
                 this.county.toLowerCase().equals(other.county.toLowerCase());
     }
 
-
-    @Override
-    public String toString() {
-        return "Location{" +
-                "locationId=" + locationId +
-                ", county='" + county + '\'' +
-                ", state='" + state + '\'' +
-                ", countyFips='" + countyFips + '\'' +
-                ", stateFips='" + stateFips + '\'' +
-                '}';
+    public boolean equals(Location other) {
+        return this.hasSameData(other) && this.hasSameLocationId(other);
     }
 }
