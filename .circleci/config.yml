@@ -99,13 +99,13 @@ jobs:
   build_debug:
     <<: *android_config
     steps:
+      - *decode_apikeys_properties
       - checkout
       - *restore_cache
       - run:
           name: Download dependencies
           command: ./gradlew androidDependencies
       - *save_cache
-      - *decode_apikeys_properties
       - *export_gservices_key
       - *decode_gservices_key
       - run:
