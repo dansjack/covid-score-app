@@ -93,6 +93,7 @@ jobs:
   build_debug:
     <<: *android_config
     steps:
+      - run: echo apikeys.properties > apikeys.properties
       - checkout
       - *restore_cache
       - run:
