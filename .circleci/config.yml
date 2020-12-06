@@ -86,6 +86,12 @@ references:
       name: Decode Google Cloud credentials
       command: echo $GCLOUD_SERVICE_KEY | base64 -di > ${HOME}/client-secret.json
 
+  # apikeys.properties
+  decode_apikeys_properties: &decode_apikeys_properties
+    run:
+      name: Decode apikeys.properties
+      command: echo $APIKEYS_PROPERTIES | base64 -di > apikeys.properties
+
 jobs:
 
   # Build debug APK for unit tests and an instrumented test APK
@@ -99,6 +105,7 @@ jobs:
           name: Download dependencies
           command: ./gradlew androidDependencies
       - *save_cache
+      - *decode_apikeys_properties
       - *export_gservices_key
       - *decode_gservices_key
       - run:
