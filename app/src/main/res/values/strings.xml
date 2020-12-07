@@ -43,7 +43,7 @@
         that we display to you.</string>
     <string name="aboutDataHeading">Data Sources</string>
     <string name="githubLabel">Check us out on GitHub</string>
-    <string name="versionText">0.5.0</string>
+    <string name="versionText">0.5.1</string>
     <string name="versionLabel">Version</string>
     <string name="appTitle">CovidScore</string>
     <string name="aboutTitle">About</string>
