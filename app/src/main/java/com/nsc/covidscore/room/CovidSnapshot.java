@@ -125,9 +125,13 @@ public class CovidSnapshot {
         return this.countsNotNull() && this.populationsNotNull();
     }
 
+    /**
+     * Checks if this CovidSnapshot is ready for entry into Room (can have null covidSnapshotId)
+     * @return true if all fields other than covidSnapshotId are not null, false otherwise
+     */
     public boolean hasFieldsSet() {
         // TODO: change this if the pandemic ends :)
-        return this.fieldsNotNull() && this.locationId != null;
+        return this.fieldsNotNull() && locationId != null;
     }
 
     // COMPARISON
