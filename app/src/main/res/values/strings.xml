@@ -2,7 +2,6 @@
     <string name="app_name">Covid Score</string>
     <string name="settings">Settings</string>
     <string name="manage_locations">Manage Locations</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="drawer_open">Open navigation drawer</string>
@@ -43,7 +42,7 @@
         that we display to you.</string>
     <string name="aboutDataHeading">Data Sources</string>
     <string name="githubLabel">Check us out on GitHub</string>
-    <string name="versionText">0.5.0</string>
+    <string name="versionText">0.5.1</string>
     <string name="versionLabel">Version</string>
     <string name="appTitle">CovidScore</string>
     <string name="aboutTitle">About</string>
