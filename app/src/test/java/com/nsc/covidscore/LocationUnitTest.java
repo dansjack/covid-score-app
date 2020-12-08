@@ -45,7 +45,6 @@ public class LocationUnitTest {
         TEST_LOCATION3.setCounty("Yuma");
         TEST_LOCATION3.setStateFips("00");
         TEST_LOCATION3.setCountyFips("11");
-        TEST_LOCATION3.setLastUpdated(calendar);
 
         TEST_LOCATION4 = new Location("Pierce", "Washington");
         TEST_LOCATION4.setCountyFips("99");
@@ -149,7 +148,6 @@ public class LocationUnitTest {
     public void locationGetMethodsTest() {
         assertEquals("11", TEST_LOCATION3.getCountyFips());
         assertEquals("00", TEST_LOCATION3.getStateFips());
-        assertEquals(calendar, TEST_LOCATION3.getLastUpdated());
     }
 
     @Test
