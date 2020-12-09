@@ -14,7 +14,7 @@ import java.util.Calendar;
 import java.util.Observable;
 
 @Entity(tableName = "covid_snapshot")
-public class CovidSnapshot extends Observable {
+public class CovidSnapshot {
 
     @NonNull
     @PrimaryKey(autoGenerate = true)
@@ -22,7 +22,6 @@ public class CovidSnapshot extends Observable {
     private Integer covidSnapshotId;
     public Integer getCovidSnapshotId() { return covidSnapshotId; }
     public void setCovidSnapshotId(Integer covidSnapshotId) {
-        propertyChangeSupport.firePropertyChange(Constants.COVID_SNAPSHOT_ID, this.covidSnapshotId, covidSnapshotId);
         this.covidSnapshotId = covidSnapshotId;
     }
 
@@ -31,7 +30,6 @@ public class CovidSnapshot extends Observable {
     private Integer locationId;
     public Integer getLocationId() { return locationId; }
     public void setLocationId(Integer locationId) {
-        propertyChangeSupport.firePropertyChange(Constants.LOCATION_ID_FK, this.locationId, locationId);
         this.locationId = locationId;
     }
 
@@ -39,7 +37,6 @@ public class CovidSnapshot extends Observable {
     private Integer countyActiveCount;
     public Integer getCountyActiveCount() { return countyActiveCount; }
     public void setCountyActiveCount(Integer countyActiveCount) {
-        propertyChangeSupport.firePropertyChange(Constants.ACTIVE_COUNTY, this.countyActiveCount, countyActiveCount);
         this.countyActiveCount = countyActiveCount;
     }
 
@@ -47,7 +44,6 @@ public class CovidSnapshot extends Observable {
     private Integer countyTotalPopulation;
     public Integer getCountyTotalPopulation() { return countyTotalPopulation; }
     public void setCountyTotalPopulation(Integer countyTotalPopulation) {
-        propertyChangeSupport.firePropertyChange(Constants.TOTAL_COUNTY, this.countyTotalPopulation, countyTotalPopulation);
         this.countyTotalPopulation = countyTotalPopulation;
     }
 
@@ -55,7 +51,6 @@ public class CovidSnapshot extends Observable {
     private Integer stateActiveCount;
     public Integer getStateActiveCount() { return stateActiveCount; }
     public void setStateActiveCount(Integer stateActiveCount) {
-        propertyChangeSupport.firePropertyChange(Constants.ACTIVE_STATE, this.stateActiveCount, stateActiveCount);
         this.stateActiveCount = stateActiveCount;
     }
 
@@ -63,7 +58,6 @@ public class CovidSnapshot extends Observable {
     private Integer stateTotalPopulation;
     public Integer getStateTotalPopulation() { return stateTotalPopulation; }
     public void setStateTotalPopulation(Integer stateTotalPopulation) {
-        propertyChangeSupport.firePropertyChange(Constants.TOTAL_STATE, this.stateTotalPopulation, stateTotalPopulation);
         this.stateTotalPopulation = stateTotalPopulation;
     }
 
@@ -71,7 +65,6 @@ public class CovidSnapshot extends Observable {
     private Integer countryActiveCount;
     public Integer getCountryActiveCount() { return countryActiveCount; }
     public void setCountryActiveCount(Integer countryActiveCount) {
-        propertyChangeSupport.firePropertyChange(Constants.ACTIVE_COUNTRY, this.countryActiveCount, countryActiveCount);
         this.countryActiveCount = countryActiveCount;
     }
 
@@ -79,7 +72,6 @@ public class CovidSnapshot extends Observable {
     private Integer countryTotalPopulation;
     public Integer getCountryTotalPopulation() { return countryTotalPopulation; }
     public void setCountryTotalPopulation(Integer countryTotalPopulation) {
-        propertyChangeSupport.firePropertyChange(Constants.TOTAL_COUNTRY, this.countryTotalPopulation, countryTotalPopulation);
         this.countryTotalPopulation = countryTotalPopulation;
     }
 
@@ -89,23 +81,9 @@ public class CovidSnapshot extends Observable {
     public void setLastUpdated(Calendar lastUpdated) {
         this.lastUpdated = lastUpdated; }
 
-    // For Observer
-
-    @Ignore
-    protected PropertyChangeSupport propertyChangeSupport;
-
-//    public void setListener(PropertyChangeListener listener) {
-//        propertyChangeSupport.addPropertyChangeListener(listener);
-//    }
-//
-//    public void removeListener(PropertyChangeListener listener) {
-//        propertyChangeSupport.removePropertyChangeListener(listener);
-//    }
-
     // CONSTRUCTOR
 
     public CovidSnapshot() {
-        propertyChangeSupport = new PropertyChangeSupport(this);
         this.lastUpdated = Calendar.getInstance();
     }
 
@@ -119,8 +97,9 @@ public class CovidSnapshot extends Observable {
         this.stateActiveCount = stateActiveCount;
         this.countryActiveCount = countryActiveCount;
         this.lastUpdated = lastUpdated;
-        propertyChangeSupport = new PropertyChangeSupport(this);
     }
+
+    // FORMATTING
 
     @Override
     public String toString() {
@@ -131,6 +110,8 @@ public class CovidSnapshot extends Observable {
                 + " Total Country: " + countryTotalPopulation
                 + " Last Updated: " + (lastUpdated != null ? date_format.format(lastUpdated.getTime()) : "null");
     }
+
+    // VALIDATION
 
     public boolean countsNotNull() {
         return countyActiveCount != null && stateActiveCount != null && countryActiveCount != null;
@@ -144,22 +125,23 @@ public class CovidSnapshot extends Observable {
         return this.countsNotNull() && this.populationsNotNull();
     }
 
+    /**
+     * Checks if this CovidSnapshot is ready for entry into Room (can have null covidSnapshotId)
+     * @return true if all fields other than covidSnapshotId are not null, false otherwise
+     */
     public boolean hasFieldsSet() {
         // TODO: change this if the pandemic ends :)
-        return this.fieldsNotNull() && (countryActiveCount != 0 && locationId != null);
+        return this.fieldsNotNull() && locationId != null;
     }
 
-    public boolean idsEqual(CovidSnapshot other) {
-        return this.covidSnapshotId.equals(other.covidSnapshotId) && this.locationId.equals(other.locationId);
-    }
-
-    public boolean equals(CovidSnapshot other) {
-        if (this.covidSnapshotId == null) { return false; }
-        return idsEqual(other) && this.hasSameData(other);
-    }
+    // COMPARISON
 
     public boolean hasSameLocation(CovidSnapshot other) {
         return this.locationId.equals(other.locationId);
+    }
+
+    public boolean idsEqual(CovidSnapshot other) {
+        return this.covidSnapshotId.equals(other.covidSnapshotId) && hasSameLocation(other);
     }
 
     public boolean hasSameCounts(CovidSnapshot other) {
@@ -177,5 +159,10 @@ public class CovidSnapshot extends Observable {
     public boolean hasSameData(CovidSnapshot other) {
         if (this.locationId == null || other.locationId == null) { return false; }
         return this.hasSameLocation(other) && this.hasSamePopulations(other) && this.hasSameCounts(other);
+    }
+
+    public boolean equals(CovidSnapshot other) {
+        if (this.covidSnapshotId == null) { return false; }
+        return idsEqual(other) && this.hasSameData(other);
     }
 }

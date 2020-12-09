@@ -143,7 +143,7 @@ public class CovidSnapshotUnitTest {
         TEST_SNAPSHOT20.setCountyActiveCount(1);
         TEST_SNAPSHOT20.setStateActiveCount(1);
         TEST_SNAPSHOT20.setCountryActiveCount(0);
-        TEST_SNAPSHOT20.setLocationId(1);
+        TEST_SNAPSHOT20.setCovidSnapshotId(1);
 
         TEST_SNAPSHOT21 = new CovidSnapshot();
         TEST_SNAPSHOT21.setCountyTotalPopulation(1);
